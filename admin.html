@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sunfara Admin Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/typography.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <!-- Admin Login Screen -->
+  <div id="admin-login" class="admin-login-screen">
+    <div class="admin-login-card">
+      <div class="admin-login-logo">🌿 Sunfara</div>
+      <h2>Admin Dashboard</h2>
+      <p style="color:var(--color-text-muted);margin-bottom:var(--space-6)">Login to manage your store</p>
+      <div style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div><label class="admin-label">Email</label><input class="admin-input" id="admin-email" type="email" placeholder="admin@sunfara.com" value="admin@sunfara.com"></div>
+        <div><label class="admin-label">Password</label><input class="admin-input" id="admin-password" type="password" placeholder="Password" value="admin123"></div>
+        <button class="admin-btn-primary" onclick="AdminAuth.login()">Login to Admin</button>
+        <p style="font-size:.8rem;color:var(--color-text-muted);text-align:center">Demo: admin@sunfara.com / admin123</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin App -->
+  <div id="admin-app" style="display:none">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span>🌿</span>
+        <span>Sunfara Admin</span>
+      </div>
+      <nav class="admin-nav">
+        <a class="admin-nav-item active" data-section="dashboard" onclick="Admin.showSection('dashboard')">📊 Dashboard</a>
+        <a class="admin-nav-item" data-section="products" onclick="Admin.showSection('products')">📦 Products</a>
+        <a class="admin-nav-item" data-section="orders" onclick="Admin.showSection('orders')">🛒 Orders</a>
+        <a class="admin-nav-item" data-section="customers" onclick="Admin.showSection('customers')">👥 Customers</a>
+        <a class="admin-nav-item" data-section="categories" onclick="Admin.showSection('categories')">🗂️ Categories</a>
+        <a class="admin-nav-item" data-section="coupons" onclick="Admin.showSection('coupons')">🏷️ Coupons</a>
+        <a class="admin-nav-item" data-section="analytics" onclick="Admin.showSection('analytics')">📈 Analytics</a>
+        <a class="admin-nav-item" data-section="settings" onclick="Admin.showSection('settings')">⚙️ Settings</a>
+        <hr style="border-color:rgba(255,255,255,.1);margin:var(--space-4) 0">
+        <a class="admin-nav-item" href="index.html" target="_blank">🏪 View Store ↗</a>
+        <a class="admin-nav-item" onclick="AdminAuth.logout()" style="color:#ff8a80">🚪 Logout</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="admin-main">
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <button class="admin-menu-toggle" onclick="Admin.toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+        <h1 class="admin-page-title" id="admin-page-title">Dashboard</h1>
+        <div class="admin-topbar-right">
+          <div class="admin-search-wrap"><input type="text" class="admin-search" placeholder="Search products, orders..." oninput="Admin.globalSearch(this.value)"></div>
+          <div class="admin-avatar" title="Admin User">A</div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="admin-content" id="admin-content"></div>
+    </div>
+  </div>
+
+  <div id="admin-toast" style="position:fixed;bottom:24px;right:24px;z-index:9999"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

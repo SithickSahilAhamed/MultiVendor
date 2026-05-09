@@ -1,0 +1,74 @@
+[
+  {
+    "id": "organic-skincare",
+    "name": "Organic Skincare",
+    "slug": "organic-skincare",
+    "icon": "🌱",
+    "image": "assets/images/categories/skincare.jpg",
+    "description": "Pure botanical formulas for radiant skin",
+    "productCount": 10
+  },
+  {
+    "id": "herbal-haircare",
+    "name": "Herbal Haircare",
+    "slug": "herbal-haircare",
+    "icon": "🌿",
+    "image": "assets/images/categories/haircare.jpg",
+    "description": "Nature-powered care for lustrous locks",
+    "productCount": 8
+  },
+  {
+    "id": "natural-soaps",
+    "name": "Natural Soaps",
+    "slug": "natural-soaps",
+    "icon": "🧼",
+    "image": "assets/images/categories/soaps.jpg",
+    "description": "Handcrafted bars of pure goodness",
+    "productCount": 8
+  },
+  {
+    "id": "essential-oils",
+    "name": "Essential Oils",
+    "slug": "essential-oils",
+    "icon": "💧",
+    "image": "assets/images/categories/oils.jpg",
+    "description": "100% pure cold-pressed essential oils",
+    "productCount": 7
+  },
+  {
+    "id": "organic-cosmetics",
+    "name": "Organic Cosmetics",
+    "slug": "organic-cosmetics",
+    "icon": "💄",
+    "image": "assets/images/categories/cosmetics.jpg",
+    "description": "Clean beauty that performs",
+    "productCount": 8
+  },
+  {
+    "id": "wellness",
+    "name": "Wellness",
+    "slug": "wellness",
+    "icon": "🧘",
+    "image": "assets/images/categories/wellness.jpg",
+    "description": "Rituals for mind, body and soul",
+    "productCount": 7
+  },
+  {
+    "id": "ayurvedic",
+    "name": "Ayurvedic",
+    "slug": "ayurvedic",
+    "icon": "🌾",
+    "image": "assets/images/categories/ayurvedic.jpg",
+    "description": "Ancient wisdom for modern wellness",
+    "productCount": 6
+  },
+  {
+    "id": "eco-personal-care",
+    "name": "Eco Personal Care",
+    "slug": "eco-personal-care",
+    "icon": "♻️",
+    "image": "assets/images/categories/eco.jpg",
+    "description": "Sustainable care for you and the planet",
+    "productCount": 6
+  }
+]

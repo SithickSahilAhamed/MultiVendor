@@ -1,0 +1,70 @@
+/* ================================================
+   pages.css — About, Blog, FAQ, Contact, Certifications
+   ================================================ */
+
+/* ── About Page ── */
+.about-hero { background: linear-gradient(135deg, var(--color-cream), var(--color-bg)); border-radius: var(--radius-xl); padding: var(--space-12); text-align: center; margin-bottom: var(--space-12); }
+.about-hero h1 { margin-bottom: var(--space-4); }
+.about-hero p { max-width: 600px; margin: 0 auto; font-size: var(--text-lg); }
+.brand-values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); margin-bottom: var(--space-12); }
+.value-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-6); text-align: center; box-shadow: var(--shadow-sm); }
+.value-icon { font-size: 2.5rem; margin-bottom: var(--space-4); }
+.value-card h3 { margin-bottom: var(--space-2); }
+.timeline { position: relative; padding: var(--space-6) 0; }
+.timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--color-border); transform: translateX(-50%); }
+.timeline-item { display: flex; gap: var(--space-8); margin-bottom: var(--space-8); position: relative; }
+.timeline-item:nth-child(even) { flex-direction: row-reverse; }
+.timeline-content { flex: 1; background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+.timeline-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--color-primary); border: 3px solid white; box-shadow: 0 0 0 2px var(--color-primary); position: absolute; left: 50%; transform: translateX(-50%); top: var(--space-4); flex-shrink: 0; }
+.timeline-year { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--color-primary); margin-bottom: var(--space-1); }
+.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+.team-card { text-align: center; }
+.team-avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: var(--text-3xl); font-family: var(--font-display); margin: 0 auto var(--space-4); }
+.team-name { font-weight: 600; margin-bottom: var(--space-1); }
+.team-role { font-size: var(--text-sm); color: var(--color-primary); margin-bottom: var(--space-2); }
+.team-bio { font-size: var(--text-sm); color: var(--color-text-muted); }
+
+/* ── Certifications Page ── */
+.cert-hero { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: white; border-radius: var(--radius-xl); padding: var(--space-12); text-align: center; margin-bottom: var(--space-12); }
+.cert-hero h1 { color: white; margin-bottom: var(--space-4); }
+.cert-hero p { color: rgba(255,255,255,0.85); font-size: var(--text-lg); max-width: 600px; margin: 0 auto; }
+.certifications-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); margin-bottom: var(--space-12); }
+.cert-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-6); text-align: center; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); }
+.cert-card-icon { font-size: 3rem; margin-bottom: var(--space-4); }
+.cert-card h3 { margin-bottom: var(--space-2); }
+.cert-card p { font-size: var(--text-sm); }
+.cert-card .customer-benefit { margin-top: var(--space-3); font-size: var(--text-xs); background: var(--color-cream); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); color: var(--color-primary); font-weight: 600; }
+.never-use-section { background: #fce4ec; border-radius: var(--radius-xl); padding: var(--space-8); margin-bottom: var(--space-12); }
+.never-use-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-6); }
+.never-item { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: #c0392b; }
+
+/* ── Blog Page ── */
+.blog-hero { text-align: center; margin-bottom: var(--space-12); }
+.blog-full-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
+
+/* ── FAQ Page ── */
+.faq-hero { text-align: center; margin-bottom: var(--space-12); }
+.faq-hero h1 { margin-bottom: var(--space-4); }
+.faq-categories { display: flex; justify-content: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-8); }
+.faq-cat-btn { padding: var(--space-2) var(--space-6); border: 1.5px solid var(--color-border); border-radius: var(--radius-full); font-size: var(--text-sm); cursor: pointer; transition: all var(--transition-fast); background: white; }
+.faq-cat-btn.active, .faq-cat-btn:hover { border-color: var(--color-primary); background: var(--color-primary); color: white; }
+.faq-section { margin-bottom: var(--space-8); }
+.faq-section-title { font-family: var(--font-display); font-size: var(--text-xl); margin-bottom: var(--space-4); color: var(--color-primary); }
+.faq-item { border: 1px solid var(--color-border); border-radius: var(--radius-lg); margin-bottom: var(--space-2); overflow: hidden; }
+.faq-question { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-5); cursor: pointer; font-weight: 500; font-size: var(--text-sm); transition: background var(--transition-fast); }
+.faq-question:hover { background: var(--color-bg); }
+.faq-icon { transition: transform var(--transition-base); color: var(--color-primary); font-size: 1.2rem; flex-shrink: 0; }
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height var(--transition-slow); }
+.faq-item.open .faq-answer { max-height: 300px; }
+.faq-answer-inner { padding: 0 var(--space-5) var(--space-4); font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.7; }
+
+/* ── Contact Page ── */
+.contact-layout { display: grid; grid-template-columns: 1fr 380px; gap: var(--space-8); }
+.contact-form-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-8); box-shadow: var(--shadow-sm); }
+.contact-info-card { display: flex; flex-direction: column; gap: var(--space-4); }
+.contact-info-item { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm); display: flex; align-items: flex-start; gap: var(--space-4); }
+.contact-info-icon { font-size: 1.5rem; flex-shrink: 0; }
+.contact-success { background: var(--color-primary); color: white; border-radius: var(--radius-xl); padding: var(--space-8); text-align: center; display: none; }
+.contact-success.visible { display: block; }
+.map-placeholder { background: var(--color-cream); border-radius: var(--radius-xl); height: 200px; display: flex; align-items: center; justify-content: center; font-size: var(--text-3xl); border: 2px dashed var(--color-border); }

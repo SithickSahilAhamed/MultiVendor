@@ -1,10 +1,40 @@
-# Sunfara — Pure. Natural. Conscious.
+# 🌿 Sunfara - Beauty & Natural Products Marketplace
 
-A complete, production-ready ecommerce SPA for a premium organic & wellness brand. Built with vanilla HTML, CSS, and JavaScript — no frameworks, no build step, zero dependencies.
+**Sunfara** is a modern, full-stack e-commerce platform for selling organic and natural beauty products, herbal care, and wellness items. This is an upgraded version of IQRAL with enhanced features, better UX, and modern technology stack.
 
----
+## 🎯 About Sunfara
 
-## Features
+Sunfara is the **Hub of Beauty and Natural Products**, offering:
+- **2100+ brands** with **1.3L+ products**
+- **Organic & certified** beauty and wellness products
+- **Multi-vendor** marketplace model
+- **Premium** organic skincare, herbal haircare, baby foods, and more
+
+### ✨ Key Features
+
+**For Customers:**
+- ✅ **Free Shipping** on orders above ₹499
+- ✅ **Easy 15-Day Returns** - hassle-free return policy
+- ✅ **100% Authentic Products** - guaranteed authenticity
+- ✅ **2100+ Brands** - massive product catalog
+- 🛒 Shopping cart with wishlist
+- 👤 User authentication and profiles
+- 📦 Order tracking and history
+- 💳 Secure checkout with multiple payment options
+- 🔍 Advanced search and filtering
+- ⭐ Product ratings and reviews
+- 🏪 Multi-vendor support
+
+**For Admins:**
+- 📊 Dashboard with analytics
+- 📦 Product management (add, edit, delete)
+- 👥 Customer management
+- 🛒 Order management
+- 🏷️ Coupon/discount management
+- 📈 Sales analytics
+- ⚙️ Store settings
+
+## 🚀 Tech Stack
 
 ### Storefront
 - **Hash-based SPA routing** — 16+ routes with dynamic params (`/product/:id`, `/category/:slug`)

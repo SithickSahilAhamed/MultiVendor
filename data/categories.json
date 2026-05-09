@@ -1,5 +1,32 @@
 [
   {
+    "id": "beauty-essentials",
+    "name": "Beauty And Essentials",
+    "slug": "beauty-essentials",
+    "icon": "💄",
+    "image": "assets/images/categories/beauty.jpg",
+    "description": "Premium beauty and personal care products",
+    "productCount": 12
+  },
+  {
+    "id": "herbal-powders",
+    "name": "Herbal Powders",
+    "slug": "herbal-powders",
+    "icon": "🌿",
+    "image": "assets/images/categories/herbal.jpg",
+    "description": "100% natural herbal powders and remedies",
+    "productCount": 8
+  },
+  {
+    "id": "baby-foods",
+    "name": "Baby Foods",
+    "slug": "baby-foods",
+    "icon": "👶",
+    "image": "assets/images/categories/baby.jpg",
+    "description": "Organic nutrition for your little ones",
+    "productCount": 6
+  },
+  {
     "id": "organic-skincare",
     "name": "Organic Skincare",
     "slug": "organic-skincare",
@@ -12,7 +39,7 @@
     "id": "herbal-haircare",
     "name": "Herbal Haircare",
     "slug": "herbal-haircare",
-    "icon": "🌿",
+    "icon": "💇",
     "image": "assets/images/categories/haircare.jpg",
     "description": "Nature-powered care for lustrous locks",
     "productCount": 8
@@ -39,7 +66,7 @@
     "id": "organic-cosmetics",
     "name": "Organic Cosmetics",
     "slug": "organic-cosmetics",
-    "icon": "💄",
+    "icon": "✨",
     "image": "assets/images/categories/cosmetics.jpg",
     "description": "Clean beauty that performs",
     "productCount": 8

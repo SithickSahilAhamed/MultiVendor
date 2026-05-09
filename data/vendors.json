@@ -1,0 +1,86 @@
+[
+  {
+    "id": "haaniya",
+    "name": "Haaniya",
+    "slug": "haaniya",
+    "description": "Premium natural and organic beauty products",
+    "logo": "assets/images/vendors/haaniya-logo.jpg",
+    "verified": true,
+    "rating": 4.5,
+    "reviewCount": 156,
+    "productsCount": 25,
+    "followers": 1240
+  },
+  {
+    "id": "sunfara-organics",
+    "name": "Sunfara Organics",
+    "slug": "sunfara-organics",
+    "description": "100% organic and certified skincare and wellness products",
+    "logo": "assets/images/vendors/sunfara-logo.jpg",
+    "verified": true,
+    "rating": 4.8,
+    "reviewCount": 2450,
+    "productsCount": 45,
+    "followers": 5600
+  },
+  {
+    "id": "mamaearth",
+    "name": "Mamaearth",
+    "slug": "mamaearth",
+    "description": "Clean beauty and safe natural products for the whole family",
+    "logo": "assets/images/vendors/mamaearth-logo.jpg",
+    "verified": true,
+    "rating": 4.6,
+    "reviewCount": 1890,
+    "productsCount": 38,
+    "followers": 4200
+  },
+  {
+    "id": "biotique",
+    "name": "Biotique",
+    "slug": "biotique",
+    "description": "Ayurvedic skincare and personal care brand",
+    "logo": "assets/images/vendors/biotique-logo.jpg",
+    "verified": true,
+    "rating": 4.4,
+    "reviewCount": 1200,
+    "productsCount": 32,
+    "followers": 2800
+  },
+  {
+    "id": "dot-key",
+    "name": "Dot & Key",
+    "slug": "dot-key",
+    "description": "Science-backed natural skincare solutions",
+    "logo": "assets/images/vendors/dot-key-logo.jpg",
+    "verified": true,
+    "rating": 4.7,
+    "reviewCount": 890,
+    "productsCount": 28,
+    "followers": 3100
+  },
+  {
+    "id": "plum",
+    "name": "Plum",
+    "slug": "plum",
+    "description": "Korean-inspired natural beauty and wellness",
+    "logo": "assets/images/vendors/plum-logo.jpg",
+    "verified": true,
+    "rating": 4.5,
+    "reviewCount": 765,
+    "productsCount": 24,
+    "followers": 2400
+  },
+  {
+    "id": "kama-ayurveda",
+    "name": "Kama Ayurveda",
+    "slug": "kama-ayurveda",
+    "description": "Luxury Ayurvedic skincare and wellness brand",
+    "logo": "assets/images/vendors/kama-logo.jpg",
+    "verified": true,
+    "rating": 4.9,
+    "reviewCount": 1560,
+    "productsCount": 35,
+    "followers": 4800
+  }
+]

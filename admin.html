@@ -70,6 +70,13 @@
 
   <div id="admin-toast" style="position:fixed;bottom:24px;right:24px;z-index:9999"></div>
 
+  <!-- Firebase Configuration -->
+  <script type="module">
+    import { app, analytics, auth, database, storage, db } from "./js/firebase-config.js";
+    // Firebase is now initialized and available globally
+    window.firebase = { app, analytics, auth, database, storage, db };
+  </script>
+
   <script src="js/utils.js"></script>
   <script src="js/data.js"></script>
   <script src="js/store.js"></script>

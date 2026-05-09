@@ -69,6 +69,13 @@
   <!-- Back to top button -->
   <button id="back-to-top" aria-label="Back to top">↑</button>
 
+  <!-- Firebase Configuration -->
+  <script type="module">
+    import { app, analytics, auth, database, storage, db } from "./js/firebase-config.js";
+    // Firebase is now initialized and available globally
+    window.firebase = { app, analytics, auth, database, storage, db };
+  </script>
+
   <!-- JS load order: utils → data → store → components → pages → router (last) -->
   <script src="js/utils.js"></script>
   <script src="js/data.js"></script>

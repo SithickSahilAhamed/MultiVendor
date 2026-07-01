@@ -1,0 +1,74 @@
+/* Admin Panel Design System Variables */
+
+:root {
+  /* Admin-specific colors */
+  --admin-primary: #22c55e;
+  --admin-primary-dark: #16a34a;
+  --admin-primary-light: #dcfce7;
+  
+  --admin-bg-light: #ffffff;
+  --admin-bg-secondary: #f9fafb;
+  --admin-bg-tertiary: #f3f4f6;
+  
+  --admin-border: #e5e7eb;
+  --admin-border-dark: #d1d5db;
+  
+  --admin-text-primary: #111827;
+  --admin-text-secondary: #6b7280;
+  --admin-text-muted: #9ca3af;
+  
+  --admin-sidebar-bg: #ffffff;
+  --admin-sidebar-text: #374151;
+  --admin-sidebar-hover: #f3f4f6;
+  --admin-sidebar-active: #dcfce7;
+  
+  --admin-success: #10b981;
+  --admin-warning: #f59e0b;
+  --admin-error: #ef4444;
+  --admin-info: #0ea5e9;
+  
+  /* Dark mode */
+  --admin-dark-bg: #0f1419;
+  --admin-dark-card: #1a1f2e;
+  --admin-dark-border: #2d3748;
+  --admin-dark-text: #e5e7eb;
+  --admin-dark-text-muted: #9ca3af;
+}
+
+/* Dark Mode */
+body.admin-dark-mode {
+  --admin-bg-light: var(--admin-dark-card);
+  --admin-bg-secondary: var(--admin-dark-bg);
+  --admin-bg-tertiary: var(--admin-dark-border);
+  --admin-border: var(--admin-dark-border);
+  --admin-text-primary: var(--admin-dark-text);
+  --admin-text-secondary: var(--admin-dark-text-muted);
+  --admin-sidebar-bg: var(--admin-dark-card);
+  --admin-sidebar-text: var(--admin-dark-text);
+  --admin-sidebar-hover: var(--admin-dark-border);
+}
+
+/* Spacing */
+--admin-space-1: 4px;
+--admin-space-2: 8px;
+--admin-space-3: 12px;
+--admin-space-4: 16px;
+--admin-space-6: 24px;
+--admin-space-8: 32px;
+
+/* Typography */
+--admin-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+--admin-font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+
+/* Shadows */
+--admin-shadow-sm: 0 1px 2px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.06);
+--admin-shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
+--admin-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+--admin-shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+
+/* Z-index */
+--admin-z-dropdown: 10;
+--admin-z-modal-overlay: 100;
+--admin-z-modal: 101;
+--admin-z-topnav: 50;
+--admin-z-sidebar: 40;

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "hair-loss-treatment",
+    "name": "Hair Loss Treatment",
+    "slug": "hair-loss-treatment",
+    "icon": "💇",
+    "description": "Specialized products to prevent hair fall and promote hair growth",
+    "image": "assets/images/health-categories/hair-loss.jpg"
+  },
+  {
+    "id": "kidney-care",
+    "name": "Kidney Care",
+    "slug": "kidney-care",
+    "icon": "🫘",
+    "description": "Natural herbal solutions for kidney health and function",
+    "image": "assets/images/health-categories/kidney-care.jpg"
+  },
+  {
+    "id": "pain-relief",
+    "name": "Pain Relief",
+    "slug": "pain-relief",
+    "icon": "🛡️",
+    "description": "Herbal pain management oils and remedies for joint and muscle pain",
+    "image": "assets/images/health-categories/pain-relief.jpg"
+  },
+  {
+    "id": "diabetes-care",
+    "name": "Diabetes Care",
+    "slug": "diabetes-care",
+    "icon": "🩺",
+    "description": "Natural supplements and wellness products for diabetes management",
+    "image": "assets/images/health-categories/diabetes-care.jpg"
+  },
+  {
+    "id": "period-care",
+    "name": "Period Care",
+    "slug": "period-care",
+    "icon": "🌸",
+    "description": "Natural solutions for period comfort and women's wellness",
+    "image": "assets/images/health-categories/period-care.jpg"
+  },
+  {
+    "id": "piles-care",
+    "name": "Piles Care",
+    "slug": "piles-care",
+    "icon": "💚",
+    "description": "Ayurvedic remedies for piles relief and prevention",
+    "image": "assets/images/health-categories/piles-care.jpg"
+  },
+  {
+    "id": "weightloss",
+    "name": "Weight Loss",
+    "slug": "weightloss",
+    "icon": "⚖️",
+    "description": "Natural weight management teas, supplements, and wellness products",
+    "image": "assets/images/health-categories/weightloss.jpg"
+  },
+  {
+    "id": "acne-care",
+    "name": "Acne & Pimple Care",
+    "slug": "acne-care",
+    "icon": "✨",
+    "description": "Targeted treatments for acne-prone and oily skin",
+    "image": "assets/images/health-categories/acne-care.jpg"
+  },
+  {
+    "id": "immunity-boost",
+    "name": "Immunity Booster",
+    "slug": "immunity-boost",
+    "icon": "💪",
+    "description": "Natural immunity-boosting supplements and herbal teas",
+    "image": "assets/images/health-categories/immunity-boost.jpg"
+  },
+  {
+    "id": "digestion-care",
+    "name": "Digestion Care",
+    "slug": "digestion-care",
+    "icon": "🌿",
+    "description": "Natural remedies for digestive health and gut wellness",
+    "image": "assets/images/health-categories/digestion-care.jpg"
+  }
+]

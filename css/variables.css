@@ -1,0 +1,77 @@
+/* ================================================
+   variables.css — Design Tokens for Sunfara
+   All CSS custom properties (colors, fonts, spacing)
+   ================================================ */
+:root {
+  /* Brand Colors */
+  --color-primary: #4a7c59;
+  --color-primary-light: #6a9e78;
+  --color-primary-dark: #2e5c3a;
+  --color-secondary: #c17f3b;
+  --color-accent: #e8c99a;
+  --color-cream: #faf6ef;
+  --color-earth: #8b5e3c;
+
+  /* Neutrals */
+  --color-white: #ffffff;
+  --color-bg: #f9f6f0;
+  --color-surface: #ffffff;
+  --color-border: #e8e0d5;
+  --color-text-primary: #2c2416;
+  --color-text-secondary: #6b5b4e;
+  --color-text-muted: #a89880;
+
+  /* Semantic */
+  --color-success: #4a7c59;
+  --color-error: #c0392b;
+  --color-warning: #e67e22;
+  --color-info: #2980b9;
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', 'Segoe UI', sans-serif;
+
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(44,36,22,0.08);
+  --shadow-md: 0 4px 12px rgba(44,36,22,0.10);
+  --shadow-lg: 0 8px 24px rgba(44,36,22,0.12);
+  --shadow-xl: 0 16px 48px rgba(44,36,22,0.15);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Layout */
+  --container-max: 1280px;
+  --navbar-height: 64px;
+  --sidebar-width: 260px;
+}

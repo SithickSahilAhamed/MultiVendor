@@ -1,0 +1,37 @@
+[
+  {
+    "id": "rec-skincare-routine",
+    "name": "Complete Skincare Routine",
+    "description": "Recommended for: Skincare enthusiasts",
+    "type": "category-based",
+    "productIds": ["IQRAL001", "IQRAL005", "IQRAL007"]
+  },
+  {
+    "id": "rec-hair-wellness",
+    "name": "Hair & Scalp Wellness",
+    "description": "Recommended for: Hair health and growth",
+    "type": "category-based",
+    "productIds": ["IQRAL003"]
+  },
+  {
+    "id": "rec-natural-living",
+    "name": "Natural Living Essentials",
+    "description": "Recommended for: Complete natural lifestyle",
+    "type": "category-based",
+    "productIds": ["IQRAL002", "IQRAL004"]
+  },
+  {
+    "id": "rec-bestsellers",
+    "name": "Customer Favorites",
+    "description": "Our best-selling products loved by customers",
+    "type": "bestseller",
+    "productIds": ["IQRAL001", "IQRAL002", "IQRAL005"]
+  },
+  {
+    "id": "rec-new-arrivals",
+    "name": "New Arrivals",
+    "description": "Latest products added to our collection",
+    "type": "new",
+    "productIds": []
+  }
+]

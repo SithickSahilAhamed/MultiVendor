@@ -1,58 +1,49 @@
-# ═══════════════════════════════════════════════════════════════════════════════
-# netlify.toml — Sunfara Deployment Configuration
-# Zero-build deployment for vanilla HTML/CSS/JS ecommerce + admin panel
-# ═══════════════════════════════════════════════════════════════════════════════
-
 [build]
-  # No build step required — pure static HTML/CSS/JS
-  command = "echo 'Sunfara ready for deployment'"
-  publish = "sunfara"
+  publish = "."
+  command = ""
 
-# Redirect all 404s to index.html for SPA hash routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Admin panel also uses hash routing
 [[redirects]]
   from = "/admin*"
-  to = "/sunfara/admin.html"
+  to = "/admin.html"
   status = 200
 
-# Cache static assets for 30 days
 [[headers]]
   for = "/*"
   [headers.values]
-    Cache-Control = "public, max-age=2592000, immutable"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
-# Disable caching for HTML files (index, admin)
 [[headers]]
-  for = "/*.html"
+  for = "/css/*"
   [headers.values]
-    Cache-Control = "public, max-age=3600"
+    Cache-Control = "public, max-age=31536000, immutable"
 
-# JSON data files cache for 1 hour
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/**/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
 [[headers]]
   for = "/data/*"
   [headers.values]
     Cache-Control = "public, max-age=3600"
     Content-Type = "application/json; charset=utf-8"
 
-# Optimize images
-[[headers]]
-  for = "/assets/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+[context.production]
+  environment = { NODE_ENV = "production" }
 
-# Environment variables for production (optional Firebase)
-[context.production.environment]
-  VITE_FIREBASE_CONFIG = "true"
-
-# Deploy preview context
 [context.deploy-preview]
-  command = "echo 'Preview build ready'"
-
-# Dev context
-[context.development]
-  command = "echo 'Development mode'"
+  environment = { NODE_ENV = "development" }

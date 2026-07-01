@@ -1,0 +1,30 @@
+[
+  {
+    "id": "shipping",
+    "title": "Shipping & Delivery",
+    "slug": "shipping",
+    "icon": "🚚",
+    "content": "## Shipping & Delivery Policy\n\n### Free Shipping\n**Get free shipping on all orders above ₹499!**\n\nWe offer fast and reliable delivery across India through trusted logistics partners.\n\n### Delivery Timeline\n- **Standard Delivery**: 4-6 business days\n- **Express Delivery**: 2-3 business days (Available in select areas)\n\n### Shipping Charges\n- **Orders below ₹499**: ₹50 flat rate\n- **Orders above ₹499**: Completely FREE\n\n### Tracking Your Order\nOnce your order is shipped, you'll receive a tracking number via SMS and email. You can track your order in real-time on our website.\n\n### Delivery Zones\nWe deliver to all major cities and towns across India, including:\n- Metro areas (NCR, Mumbai, Bangalore, etc.)\n- Tier 1 cities\n- Tier 2 cities\n- Select tier 3 locations\n\nNote: Some remote areas may have extended delivery times.\n\n### Undelivered Packages\nIf a package is undelivered due to incorrect address or customer unavailability, we'll contact you for re-delivery or return."
+  },
+  {
+    "id": "returns",
+    "title": "Returns & Refunds",
+    "slug": "returns",
+    "icon": "↩️",
+    "content": "## Returns & Refunds Policy\n\n### Easy 15-Day Returns\n**Return any product within 15 days of delivery for a full refund!**\n\nWe want you to be completely satisfied with your purchase. If you're not happy, simply return it.\n\n### Return Eligibility\n- Product must be unused and in original packaging\n- All original labels and tags must be intact\n- Product must be in resalable condition\n- Return must be initiated within 15 days of delivery\n\n### How to Return\n1. Contact our customer support team\n2. Get your return authorization number\n3. Ship the product back to us (we'll provide address)\n4. Refund processed within 7-10 days of receiving your return\n\n### Non-Returnable Items\n- Used or opened products\n- Items without original packaging\n- Products damaged due to misuse\n- Items outside the 15-day return window\n\n### Refund Process\n- Refunds are processed to the original payment method\n- Bank transfers may take 5-10 business days to reflect\n- Credit card refunds typically show within 2-3 billing cycles\n\n### Damaged or Defective Products\nReceived a damaged item? Contact us immediately with photos. We'll replace it for free or issue a full refund."
+  },
+  {
+    "id": "authenticity",
+    "title": "100% Authenticity Guarantee",
+    "slug": "authenticity",
+    "icon": "✅",
+    "content": "## 100% Authenticity Guarantee\n\n### We Guarantee Authentic Products\nEvery product sold on Sunfara is **100% authentic** and sourced directly from authorized distributors and brand partners.\n\n### Quality Assurance\n- All products are tested for quality before dispatch\n- We maintain strict vendor verification processes\n- Regular audits ensure compliance with standards\n\n### What We Guarantee\n✅ Authentic products from verified brands\n✅ Expiry dates at least 6 months from purchase\n✅ Original packaging and labels\n✅ Products in pristine condition\n✅ Full refund if authenticity is questioned\n\n### Verification Process\n- Every brand partner is thoroughly vetted\n- We maintain direct relationships with manufacturers\n- Regular stock audits and quality checks\n- Customer satisfaction is our priority\n\n### Report Counterfeit\nIf you suspect a product is counterfeit, please contact us immediately at support@sunfara.com with photos and details. We'll investigate and take appropriate action."
+  },
+  {
+    "id": "vendor-terms",
+    "title": "Vendor Terms & Policies",
+    "slug": "vendor-terms",
+    "icon": "📋",
+    "content": "## Vendor Terms & Policies\n\n### For Sellers & Vendors\nWelcome to Sunfara Marketplace! Here are our terms and policies for vendors.\n\n### Vendor Registration\n- Complete vendor verification process\n- Valid GST registration (mandatory for businesses)\n- PAN card and bank details\n- Legal business documentation\n- Quality compliance certifications\n\n### Product Guidelines\n- All products must be original and authentic\n- Proper documentation and certifications required\n- Clear product descriptions and accurate pricing\n- High-quality product images (minimum 3 images)\n- Detailed ingredient/content information\n\n### Commission Structure\n- Commission varies by category (10-25%)\n- Payment terms: Net 7 days after order completion\n- Refund processing fee: 2% of refunded amount\n\n### Performance Metrics\n- Minimum 4.0 star rating required\n- Order fulfillment rate: Minimum 95%\n- Return processing: Within 48 hours\n- Customer response time: Within 24 hours\n\n### Prohibited Items\nVendors cannot sell:\n- Counterfeit or replica products\n- Expired items\n- Products without proper certifications\n- Restricted or banned items\n\n### Compliance & Quality\n- Regular audits and inspections\n- Product quality verification\n- Customer feedback monitoring\n- Violation penalties and suspension policies\n\n### Support\nFor vendor support, visit vendor.sunfara.com or contact vendorsupport@sunfara.com"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Pure. Natural. Conscious.",
+    "subtitle": "Discover our certified organic skincare range",
+    "cta": "Shop Skincare",
+    "ctaLink": "#/category/organic-skincare",
+    "image": "assets/images/banners/banner1.jpg",
+    "bgColor": "#e8f0e9"
+  },
+  {
+    "id": 2,
+    "title": "Ancient Wisdom, Modern Care",
+    "subtitle": "Explore our Ayurvedic collection",
+    "cta": "Shop Ayurvedic",
+    "ctaLink": "#/category/ayurvedic",
+    "image": "assets/images/banners/banner2.jpg",
+    "bgColor": "#f0ebe0"
+  },
+  {
+    "id": 3,
+    "title": "Good for You. Good for Earth.",
+    "subtitle": "Sustainable eco-friendly personal care",
+    "cta": "Shop Eco Care",
+    "ctaLink": "#/category/eco-personal-care",
+    "image": "assets/images/banners/banner3.jpg",
+    "bgColor": "#e9f0e8"
+  }
+]

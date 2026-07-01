@@ -14,6 +14,8 @@ yarn.lock
 # Firebase
 firebase-service-key.json
 firebase-config-private.js
+serviceAccountKey.json
+**/serviceAccountKey.json
 
 # IDE
 .vscode/
@@ -30,6 +32,13 @@ coverage/
 # Build output
 dist/
 build/
+
+# .NET build artifacts
+bin/
+obj/
+*.user
+*.suo
+.vs/
 
 # Logs
 logs/

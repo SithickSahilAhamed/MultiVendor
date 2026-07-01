@@ -1,12 +1,13 @@
-﻿// Firebase Configuration
+// Firebase Configuration
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "sunfara-YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "sunfara-YOUR_PROJECT_ID",
-  storageBucket: "sunfara-YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyBN-0IvpsqfHULbddiauMFz9Dh3iL5aXw0",
+  authDomain: "sunfara-500b0.firebaseapp.com",
+  databaseURL: "https://sunfara-500b0-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "sunfara-500b0",
+  storageBucket: "sunfara-500b0.firebasestorage.app",
+  messagingSenderId: "678617069984",
+  appId: "1:678617069984:web:c807a635452f3d1f6c4cc5",
+  measurementId: "G-48EC735003"
 };
 
 // Export for both frontend and backend use

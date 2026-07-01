@@ -1,3 +1,5 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -5,6 +7,19 @@ using Sunfara.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var projectId = builder.Configuration["Firebase:ProjectId"] ?? Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ?? "sunfara-500b0";
+
+// Load service account key
+var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
+var credFullPath = Path.GetFullPath(credPath);
+if (!File.Exists(credFullPath))
+    credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
+
+if (File.Exists(credFullPath))
+{
+    Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credFullPath);
+    if (FirebaseApp.DefaultInstance == null)
+        FirebaseApp.Create(new AppOptions { Credential = GoogleCredential.FromFile(credFullPath) });
+}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

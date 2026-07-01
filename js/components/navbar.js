@@ -71,6 +71,9 @@ const Navbar = {
       <div class="navbar-categories">
         <div class="category-tabs">
           ${cats.map(c => `<a class="category-tab" href="#/category/${c.slug}">${c.icon} ${c.name}</a>`).join('')}
+          <a class="category-tab" href="#/vendors">🏢 Vendors</a>
+          <a class="category-tab" href="#/bundles">🎁 Bundles</a>
+          <a class="category-tab" href="#/health">💚 Health</a>
           <a class="category-tab" href="#/about">🌿 Our Story</a>
         </div>
       </div>
@@ -86,6 +89,10 @@ const Navbar = {
           <a class="mobile-nav-link" href="#/" onclick="Navbar.closeMobileNav()">🏠 Home</a>
           <div class="mobile-nav-divider"></div>
           ${cats.map(c => `<a class="mobile-nav-link" href="#/category/${c.slug}" onclick="Navbar.closeMobileNav()">${c.icon} ${c.name}</a>`).join('')}
+          <div class="mobile-nav-divider"></div>
+          <a class="mobile-nav-link" href="#/vendors" onclick="Navbar.closeMobileNav()">🏢 Vendors</a>
+          <a class="mobile-nav-link" href="#/bundles" onclick="Navbar.closeMobileNav()">🎁 Combo Bundles</a>
+          <a class="mobile-nav-link" href="#/health" onclick="Navbar.closeMobileNav()">💚 Health & Wellness</a>
           <div class="mobile-nav-divider"></div>
           <a class="mobile-nav-link" href="#/blog" onclick="Navbar.closeMobileNav()">📝 Blog</a>
           <a class="mobile-nav-link" href="#/about" onclick="Navbar.closeMobileNav()">🌿 About Us</a>

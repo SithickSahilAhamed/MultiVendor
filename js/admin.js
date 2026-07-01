@@ -1,497 +1,1145 @@
-/* ================================================
-   admin.js — Sunfara Admin Dashboard Logic
-   Sections: Dashboard, Products, Orders, Customers,
-             Categories, Coupons, Analytics, Settings
-   ================================================ */
+// ═══════════════════════════════════════════════════════════════════════════════
+// admin.js — Complete Sunfara Admin Panel
+// SPA with 17+ sections, auth, notifications, dark mode, responsive sidebar
+// ═══════════════════════════════════════════════════════════════════════════════
 
-/* ── Auth ── */
-const AdminAuth = {
-  CREDENTIALS: { email: 'admin@sunfara.com', password: 'admin123' },
+let adminCharts = {};
 
-  login() {
-    const email = document.getElementById('admin-email')?.value.trim();
-    const password = document.getElementById('admin-password')?.value;
-    if (email === this.CREDENTIALS.email && password === this.CREDENTIALS.password) {
-      document.getElementById('admin-login').style.display = 'none';
-      document.getElementById('admin-app').style.display = 'flex';
-      Admin.init();
-    } else {
-      AdminToast.show('Invalid credentials. Try admin@sunfara.com / admin123', 'error');
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTHENTICATION SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+class AdminAuth {
+  static login() {
+    const email = document.getElementById('admin-email').value;
+    const password = document.getElementById('admin-password').value;
+    const loginBtn = document.getElementById('login-btn');
+    const btnText = document.getElementById('login-btn-text');
+    const originalText = btnText.textContent;
+
+    if (!email || !password) {
+      AdminToast.error('Please fill in all fields');
+      return;
     }
-  },
 
-  logout() {
-    document.getElementById('admin-login').style.display = 'flex';
+    loginBtn.disabled = true;
+    btnText.textContent = 'Signing in...';
+
+    setTimeout(() => {
+      if (email === 'admin@sunfara.com' && password === 'admin123') {
+        localStorage.setItem('adminAuth', JSON.stringify({ email, loggedInAt: new Date().toISOString() }));
+        document.getElementById('admin-login').style.display = 'none';
+        document.getElementById('admin-app').style.display = 'grid';
+        Admin.showSection('dashboard');
+        AdminToast.success('Welcome back, Admin!');
+      } else {
+        AdminToast.error('Invalid credentials');
+        loginBtn.disabled = false;
+        btnText.textContent = originalText;
+      }
+    }, 800);
+  }
+
+  static logout() {
+    localStorage.removeItem('adminAuth');
     document.getElementById('admin-app').style.display = 'none';
+    document.getElementById('admin-login').style.display = 'flex';
+    document.getElementById('admin-email').value = 'admin@sunfara.com';
+    document.getElementById('admin-password').value = 'admin123';
+    AdminToast.info('Logged out');
   }
-};
 
-/* ── Toast ── */
-const AdminToast = {
-  show(msg, type = 'success') {
-    const c = document.getElementById('admin-toast');
-    const t = document.createElement('div');
-    const colors = { success: '#4a7c59', error: '#c0392b', info: '#2980b9' };
-    t.style.cssText = `background:${colors[type]||colors.success};color:white;padding:12px 20px;border-radius:8px;margin-top:8px;font-size:.875rem;animation:slideInRight .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:320px`;
-    t.textContent = msg;
-    c.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3000);
-  }
-};
-
-/* ── Admin Core ── */
-const Admin = {
-  currentSection: 'dashboard',
-  mockOrders: [],
-  editingProduct: null,
-
-  async init() {
-    await Data.init();
-    Store.load();
-    this.generateMockOrders();
-    this.showSection('dashboard');
-  },
-
-  generateMockOrders() {
-    const statuses = ['Processing', 'Shipped', 'Delivered', 'Delivered', 'Delivered', 'Cancelled'];
-    const payments = ['UPI', 'Card', 'COD', 'Net Banking'];
-    const names = ['Priya Sharma', 'Ananya R.', 'Meena K.', 'Riya T.', 'Deepa M.', 'Sunita G.', 'Kavya N.', 'Pooja S.', 'Asha V.', 'Divya P.'];
-    this.mockOrders = Array.from({ length: 24 }, (_, i) => {
-      const product = Data.products[Math.floor(Math.random() * Data.products.length)];
-      const qty = Math.floor(Math.random() * 3) + 1;
-      const total = product.price * qty;
-      return {
-        id: `SUN-2024-${Math.random().toString(36).substr(2,6).toUpperCase()}`,
-        customer: names[Math.floor(Math.random() * names.length)],
-        email: `customer${i}@gmail.com`,
-        items: [{ name: product.name, qty, price: product.price, image: product.image }],
-        total, payment: payments[Math.floor(Math.random() * payments.length)],
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        date: new Date(Date.now() - Math.random() * 30 * 24 * 3600000).toISOString(),
-        city: ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad'][Math.floor(Math.random() * 5)]
-      };
-    });
-    this.mockOrders = [...Store.orders.map(o => ({ ...o, customer: Store.user?.name || 'Customer', email: Store.user?.email || 'user@email.com', city: o.address?.city || 'Bangalore' })), ...this.mockOrders];
-  },
-
-  showSection(section) {
-    this.currentSection = section;
-    document.querySelectorAll('.admin-nav-item').forEach(a => a.classList.toggle('active', a.dataset.section === section));
-    const titles = { dashboard: 'Dashboard', products: 'Products', orders: 'Orders', customers: 'Customers', categories: 'Categories', coupons: 'Coupons', analytics: 'Analytics', settings: 'Settings' };
-    document.getElementById('admin-page-title').textContent = titles[section] || section;
-    const el = document.getElementById('admin-content');
-    const sections = { dashboard: () => this.renderDashboard(el), products: () => this.renderProducts(el), orders: () => this.renderOrders(el), customers: () => this.renderCustomers(el), categories: () => this.renderCategories(el), coupons: () => this.renderCoupons(el), analytics: () => this.renderAnalytics(el), settings: () => this.renderSettings(el) };
-    (sections[section] || (() => {}))();
-  },
-
-  toggleSidebar() {
-    const sb = document.getElementById('admin-sidebar');
-    if (window.innerWidth <= 768) sb.classList.toggle('mobile-open');
-    else sb.classList.toggle('collapsed');
-  },
-
-  globalSearch(q) {
-    if (!q.trim()) return;
-    const results = Data.products.filter(p => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 5);
-    if (results.length) { this.showSection('products'); AdminToast.show(`Showing ${results.length} results for "${q}"`, 'info'); }
-  },
-
-  /* ── DASHBOARD ── */
-  renderDashboard(el) {
-    const totalRevenue = this.mockOrders.filter(o => o.status !== 'Cancelled').reduce((s, o) => s + (o.final || o.total || 0), 0);
-    const totalOrders = this.mockOrders.length;
-    const deliveredOrders = this.mockOrders.filter(o => o.status === 'Delivered').length;
-    const totalProducts = Data.products.length;
-
-    const weeklySales = [42, 58, 35, 71, 63, 49, 88];
-    const maxSale = Math.max(...weeklySales);
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-    el.innerHTML = `
-      <div class="admin-stat-grid">
-        <div class="admin-stat-card green"><div class="admin-stat-label">Total Revenue</div><div class="admin-stat-value">${formatPrice(totalRevenue)}</div><div class="admin-stat-change up">↑ 12.5% this month</div></div>
-        <div class="admin-stat-card orange"><div class="admin-stat-label">Total Orders</div><div class="admin-stat-value">${totalOrders}</div><div class="admin-stat-change up">↑ 8.3% this week</div></div>
-        <div class="admin-stat-card blue"><div class="admin-stat-label">Products Listed</div><div class="admin-stat-value">${totalProducts}</div><div class="admin-stat-change up">↑ 3 new this week</div></div>
-        <div class="admin-stat-card purple"><div class="admin-stat-label">Delivery Rate</div><div class="admin-stat-value">${Math.round(deliveredOrders/totalOrders*100)}%</div><div class="admin-stat-change up">↑ 2.1% improvement</div></div>
-      </div>
-
-      <div class="admin-grid-2">
-        <div class="admin-card">
-          <div class="admin-table-header"><strong>Weekly Sales</strong><span style="font-size:.8rem;color:var(--color-text-muted)">Orders per day</span></div>
-          <div class="admin-chart-wrap">
-            <div class="admin-bar-chart">
-              ${weeklySales.map((v, i) => `<div class="admin-bar" style="height:${Math.round(v/maxSale*100)}%" title="${v} orders"><div class="admin-bar-label">${days[i]}</div></div>`).join('')}
-            </div>
-          </div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-table-header"><strong>Recent Orders</strong><a onclick="Admin.showSection('orders')" style="font-size:.8rem;color:var(--color-primary);cursor:pointer">View All →</a></div>
-          <div class="admin-table-wrap">
-            <table class="admin-table">
-              <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
-              <tbody>
-                ${this.mockOrders.slice(0, 6).map(o => `
-                  <tr>
-                    <td style="font-size:.8rem;font-weight:600">${o.id}</td>
-                    <td>${o.customer}</td>
-                    <td>${formatPrice(o.final || o.total)}</td>
-                    <td><span class="admin-badge badge-${o.status.toLowerCase()}">${o.status}</span></td>
-                  </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-grid-2" style="margin-top:20px">
-        <div class="admin-card">
-          <div class="admin-table-header"><strong>Top Products</strong></div>
-          <div class="admin-table-wrap">
-            <table class="admin-table">
-              <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th></tr></thead>
-              <tbody>
-                ${Data.products.filter(p => p.isBestseller || p.isFeatured).slice(0, 6).map(p => `
-                  <tr>
-                    <td style="display:flex;align-items:center;gap:8px"><img src="${p.image}" alt="${p.name}" onerror="this.style.background='#6a9e78'"><span style="font-size:.8rem">${truncate(p.name, 25)}</span></td>
-                    <td><span class="admin-badge badge-active">${p.category.replace(/-/g,' ')}</span></td>
-                    <td>${formatPrice(p.price)}</td>
-                    <td style="color:${p.stock < 20?'#c0392b':'var(--color-primary)'}">${p.stock}</td>
-                  </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-table-header"><strong>Category Performance</strong></div>
-          ${Data.categories.map(c => {
-            const count = Data.getProductsByCategory(c.id).length;
-            const pct = Math.round(count / Data.products.length * 100);
-            return `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px"><span>${c.icon} ${c.name}</span><span>${count} products</span></div><div style="height:6px;background:var(--color-border);border-radius:3px;overflow:hidden"><div style="height:100%;background:var(--color-primary);width:${pct}%;border-radius:3px"></div></div></div>`;
-          }).join('')}
-        </div>
-      </div>`;
-  },
-
-  /* ── PRODUCTS ── */
-  renderProducts(el) {
-    el.innerHTML = `
-      <div class="admin-card">
-        <div class="admin-table-header">
-          <div style="display:flex;gap:12px;align-items:center">
-            <input type="text" class="admin-input" style="width:220px" placeholder="Search products..." oninput="Admin.filterProductTable(this.value)" id="prod-search">
-            <select class="admin-input" style="width:160px" onchange="Admin.filterProductCategory(this.value)">
-              <option value="">All Categories</option>
-              ${Data.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-            </select>
-          </div>
-          <button class="admin-btn-primary" style="width:auto;padding:10px 20px" onclick="Admin.openProductModal()">+ Add Product</button>
-        </div>
-        <div class="admin-table-wrap">
-          <table class="admin-table" id="products-table">
-            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>MRP</th><th>Stock</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="products-tbody">${this.buildProductRows(Data.products)}</tbody>
-          </table>
-        </div>
-      </div>
-      <div id="product-modal-overlay" class="admin-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')"></div>`;
-  },
-
-  buildProductRows(products) {
-    return products.map(p => `
-      <tr>
-        <td style="display:flex;align-items:center;gap:8px;min-width:200px"><img src="${p.image}" alt="${p.name}" onerror="this.style.background='var(--color-cream)'"><div><div style="font-weight:500;font-size:.85rem">${truncate(p.name,28)}</div><div style="font-size:.75rem;color:var(--color-text-muted)">${p.brand}</div></div></td>
-        <td style="font-size:.8rem">${p.category.replace(/-/g,' ')}</td>
-        <td>${formatPrice(p.price)}</td>
-        <td style="text-decoration:line-through;color:var(--color-text-muted)">${formatPrice(p.mrp)}</td>
-        <td style="color:${p.stock<20?'#c0392b':p.stock<50?'#e67e22':'var(--color-primary)'}"><strong>${p.stock}</strong></td>
-        <td>⭐ ${p.rating} <span style="font-size:.75rem;color:var(--color-text-muted)">(${p.reviewCount})</span></td>
-        <td><span class="admin-badge ${p.stock>0?'badge-active':'badge-inactive'}">${p.stock>0?'Active':'Out of Stock'}</span></td>
-        <td>
-          <div style="display:flex;gap:6px">
-            <button class="admin-btn-secondary" style="padding:4px 10px;font-size:.75rem" onclick="Admin.openProductModal('${p.id}')">Edit</button>
-            <button class="admin-btn-danger" style="padding:4px 10px;font-size:.75rem" onclick="Admin.deleteProduct('${p.id}')">Del</button>
-          </div>
-        </td>
-      </tr>`).join('');
-  },
-
-  filterProductTable(q) {
-    const products = q ? Data.products.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.brand.toLowerCase().includes(q.toLowerCase())) : Data.products;
-    const tbody = document.getElementById('products-tbody');
-    if (tbody) tbody.innerHTML = this.buildProductRows(products);
-  },
-
-  filterProductCategory(cat) {
-    const products = cat ? Data.products.filter(p => p.category === cat) : Data.products;
-    const tbody = document.getElementById('products-tbody');
-    if (tbody) tbody.innerHTML = this.buildProductRows(products);
-  },
-
-  openProductModal(productId = null) {
-    const p = productId ? Data.getProductById(productId) : null;
-    const overlay = document.getElementById('product-modal-overlay');
-    overlay.innerHTML = `
-      <div class="admin-modal">
-        <div class="admin-modal-header">
-          <div class="admin-modal-title">${p ? 'Edit Product' : 'Add New Product'}</div>
-          <button class="admin-modal-close" onclick="document.getElementById('product-modal-overlay').classList.remove('open')">✕</button>
-        </div>
-        <div class="admin-form-grid">
-          <div class="admin-form-group full"><label class="admin-label">Product Name *</label><input class="admin-input" id="pm-name" value="${p?.name||''}"></div>
-          <div class="admin-form-group"><label class="admin-label">Brand *</label><input class="admin-input" id="pm-brand" value="${p?.brand||'Sunfara Organics'}"></div>
-          <div class="admin-form-group"><label class="admin-label">Category *</label>
-            <select class="admin-input" id="pm-cat">
-              ${Data.categories.map(c => `<option value="${c.id}" ${p?.category===c.id?'selected':''}>${c.name}</option>`).join('')}
-            </select>
-          </div>
-          <div class="admin-form-group"><label class="admin-label">Price (₹) *</label><input class="admin-input" id="pm-price" type="number" value="${p?.price||''}"></div>
-          <div class="admin-form-group"><label class="admin-label">MRP (₹) *</label><input class="admin-input" id="pm-mrp" type="number" value="${p?.mrp||''}"></div>
-          <div class="admin-form-group"><label class="admin-label">Stock *</label><input class="admin-input" id="pm-stock" type="number" value="${p?.stock||''}"></div>
-          <div class="admin-form-group"><label class="admin-label">Image Path</label><input class="admin-input" id="pm-image" value="${p?.image||''}"></div>
-          <div class="admin-form-group">
-            <label class="admin-label">Flags</label>
-            <div style="display:flex;gap:12px;margin-top:4px">
-              <label style="display:flex;align-items:center;gap:4px;font-size:.85rem"><input type="checkbox" id="pm-new" ${p?.isNew?'checked':''}> New</label>
-              <label style="display:flex;align-items:center;gap:4px;font-size:.85rem"><input type="checkbox" id="pm-bs" ${p?.isBestseller?'checked':''}> Bestseller</label>
-              <label style="display:flex;align-items:center;gap:4px;font-size:.85rem"><input type="checkbox" id="pm-feat" ${p?.isFeatured?'checked':''}> Featured</label>
-            </div>
-          </div>
-          <div class="admin-form-group full"><label class="admin-label">Description</label><textarea class="admin-input" id="pm-desc" rows="3">${p?.description||''}</textarea></div>
-          <div class="admin-form-group full"><label class="admin-label">How to Use</label><textarea class="admin-input" id="pm-how" rows="2">${p?.howToUse||''}</textarea></div>
-        </div>
-        <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px">
-          <button class="admin-btn-secondary" onclick="document.getElementById('product-modal-overlay').classList.remove('open')">Cancel</button>
-          <button class="admin-btn-primary" style="width:auto;padding:10px 24px" onclick="Admin.saveProduct('${productId||''}')">${p?'Update Product':'Add Product'}</button>
-        </div>
-      </div>`;
-    overlay.classList.add('open');
-  },
-
-  saveProduct(productId) {
-    const name = document.getElementById('pm-name')?.value.trim();
-    if (!name) { AdminToast.show('Product name is required', 'error'); return; }
-    const price = +document.getElementById('pm-price')?.value;
-    const mrp = +document.getElementById('pm-mrp')?.value;
-    if (productId) {
-      const p = Data.getProductById(productId);
-      if (p) { p.name = name; p.brand = document.getElementById('pm-brand').value; p.price = price; p.mrp = mrp; p.stock = +document.getElementById('pm-stock').value; p.isNew = document.getElementById('pm-new').checked; p.isBestseller = document.getElementById('pm-bs').checked; p.isFeatured = document.getElementById('pm-feat').checked; p.description = document.getElementById('pm-desc').value; p.discount = Math.round((mrp-price)/mrp*100); }
-      AdminToast.show('Product updated successfully!', 'success');
+  static togglePassword() {
+    const input = document.getElementById('admin-password');
+    const btn = document.getElementById('eye-btn');
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.textContent = '🙈';
     } else {
-      AdminToast.show('Product added! (Persists in session only)', 'success');
+      input.type = 'password';
+      btn.textContent = '👁';
     }
-    document.getElementById('product-modal-overlay').classList.remove('open');
-    this.renderProducts(document.getElementById('admin-content'));
-  },
-
-  deleteProduct(productId) {
-    if (!confirm(`Delete product ${productId}? This is demo-only.`)) return;
-    AdminToast.show('Product deleted (demo mode — refreshing restores it)', 'info');
-  },
-
-  /* ── ORDERS ── */
-  renderOrders(el) {
-    const filterStatus = ['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
-    el.innerHTML = `
-      <div class="admin-card">
-        <div class="admin-table-header">
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            ${filterStatus.map((s,i) => `<button class="admin-btn-secondary ${i===0?'active':''}" style="padding:6px 14px" onclick="Admin.filterOrders('${s}',this)">${s}</button>`).join('')}
-          </div>
-          <span style="font-size:.85rem;color:var(--color-text-muted)">${this.mockOrders.length} total orders</span>
-        </div>
-        <div class="admin-table-wrap">
-          <table class="admin-table" id="orders-table">
-            <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>City</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
-            <tbody>${this.buildOrderRows(this.mockOrders)}</tbody>
-          </table>
-        </div>
-      </div>`;
-  },
-
-  buildOrderRows(orders) {
-    return orders.map(o => `
-      <tr>
-        <td style="font-size:.8rem;font-weight:700;color:var(--color-primary)">${o.id}</td>
-        <td><div style="font-weight:500;font-size:.85rem">${o.customer}</div><div style="font-size:.75rem;color:var(--color-text-muted)">${o.email||''}</div></td>
-        <td>${o.items?.length||1}</td>
-        <td style="font-weight:700">${formatPrice(o.final||o.total||0)}</td>
-        <td style="font-size:.8rem">${o.payment||'UPI'}</td>
-        <td style="font-size:.8rem">${o.city||o.address?.city||'—'}</td>
-        <td style="font-size:.8rem;color:var(--color-text-muted)">${formatDate(o.date)}</td>
-        <td><span class="admin-badge badge-${o.status.toLowerCase()}">${o.status}</span></td>
-        <td>
-          <select class="admin-input" style="font-size:.75rem;padding:4px 8px" onchange="Admin.updateOrderStatus('${o.id}',this.value)">
-            ${['Processing','Shipped','Delivered','Cancelled'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </td>
-      </tr>`).join('');
-  },
-
-  filterOrders(status, btn) {
-    document.querySelectorAll('.admin-btn-secondary').forEach(b => b.style.background = 'white');
-    if (btn) btn.style.background = 'var(--color-primary)';
-    const filtered = status === 'All' ? this.mockOrders : this.mockOrders.filter(o => o.status === status);
-    const tbody = document.querySelector('#orders-table tbody');
-    if (tbody) tbody.innerHTML = this.buildOrderRows(filtered);
-  },
-
-  updateOrderStatus(orderId, newStatus) {
-    const order = this.mockOrders.find(o => o.id === orderId);
-    if (order) { order.status = newStatus; AdminToast.show(`Order ${orderId} → ${newStatus}`, 'success'); }
-  },
-
-  /* ── CUSTOMERS ── */
-  renderCustomers(el) {
-    const customers = [
-      { name: Store.user?.name || 'Priya Sharma', email: Store.user?.email || 'priya@gmail.com', orders: Store.orders.length || 3, spent: Store.orders.reduce((s,o)=>s+(o.final||0),0) || 2847, joined: '2024-01-15', city: 'Mumbai' },
-      { name: 'Ananya R.', email: 'ananya@gmail.com', orders: 5, spent: 4231, joined: '2023-11-20', city: 'Bangalore' },
-      { name: 'Meena K.', email: 'meena@gmail.com', orders: 2, spent: 1199, joined: '2024-02-05', city: 'Delhi' },
-      { name: 'Riya T.', email: 'riya@gmail.com', orders: 8, spent: 7890, joined: '2023-09-10', city: 'Chennai' },
-      { name: 'Deepa M.', email: 'deepa@gmail.com', orders: 1, spent: 699, joined: '2024-03-01', city: 'Hyderabad' }
-    ];
-    el.innerHTML = `
-      <div class="admin-card">
-        <div class="admin-table-header"><strong>${customers.length} Customers</strong><button class="admin-btn-secondary" onclick="AdminToast.show('Export feature coming soon!','info')">Export CSV</button></div>
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead><tr><th>Customer</th><th>Email</th><th>City</th><th>Orders</th><th>Total Spent</th><th>Joined</th><th>Status</th></tr></thead>
-            <tbody>
-              ${customers.map(c => `<tr>
-                <td style="font-weight:500">${c.name}</td>
-                <td style="font-size:.85rem">${c.email}</td>
-                <td style="font-size:.85rem">${c.city}</td>
-                <td><strong>${c.orders}</strong></td>
-                <td style="font-weight:700;color:var(--color-primary)">${formatPrice(c.spent)}</td>
-                <td style="font-size:.8rem;color:var(--color-text-muted)">${formatDate(c.joined)}</td>
-                <td><span class="admin-badge badge-active">Active</span></td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>`;
-  },
-
-  /* ── CATEGORIES ── */
-  renderCategories(el) {
-    el.innerHTML = `
-      <div class="admin-card">
-        <div class="admin-table-header"><strong>Product Categories</strong><button class="admin-btn-primary" style="width:auto;padding:10px 20px" onclick="AdminToast.show('Add category feature coming soon!','info')">+ Add Category</button></div>
-        <div class="admin-table-wrap">
-          <table class="admin-table">
-            <thead><tr><th>Icon</th><th>Category Name</th><th>Slug</th><th>Products</th><th>Description</th><th>Actions</th></tr></thead>
-            <tbody>
-              ${Data.categories.map(c => `<tr>
-                <td style="font-size:1.5rem;text-align:center">${c.icon}</td>
-                <td style="font-weight:600">${c.name}</td>
-                <td><code style="font-size:.75rem;background:#f0f0f0;padding:2px 6px;border-radius:4px">${c.slug}</code></td>
-                <td><strong>${Data.getProductsByCategory(c.id).length}</strong></td>
-                <td style="font-size:.85rem;color:var(--color-text-muted)">${c.description}</td>
-                <td><button class="admin-btn-secondary" style="padding:4px 10px;font-size:.75rem" onclick="AdminToast.show('Edit category coming soon!','info')">Edit</button></td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>`;
-  },
-
-  /* ── COUPONS ── */
-  renderCoupons(el) {
-    el.innerHTML = `
-      <div class="admin-card">
-        <div class="admin-table-header"><strong>Coupon Codes</strong><button class="admin-btn-primary" style="width:auto;padding:10px 20px" onclick="Admin.addCouponPrompt()">+ Add Coupon</button></div>
-        <div class="admin-table-wrap">
-          <table class="admin-table" id="coupons-table">
-            <thead><tr><th>Code</th><th>Type</th><th>Discount</th><th>Min Order</th><th>Description</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody>${this.buildCouponRows()}</tbody>
-          </table>
-        </div>
-      </div>`;
-  },
-
-  buildCouponRows() {
-    return Data.coupons.map(c => `<tr>
-      <td><code style="font-weight:700;color:var(--color-primary);background:#f0f7f2;padding:3px 8px;border-radius:4px">${c.code}</code></td>
-      <td style="text-transform:capitalize">${c.type}</td>
-      <td>${c.type==='percent'?c.discount+'%':c.type==='flat'?'₹'+c.discount:'Free Shipping'}</td>
-      <td>${formatPrice(c.minOrder)}</td>
-      <td style="font-size:.85rem">${c.description}</td>
-      <td><span class="admin-badge badge-active">Active</span></td>
-      <td>
-        <div style="display:flex;gap:6px">
-          <button class="admin-btn-secondary" style="padding:4px 10px;font-size:.75rem" onclick="AdminToast.show('Coupon edited (demo)','success')">Edit</button>
-          <button class="admin-btn-danger" style="padding:4px 10px;font-size:.75rem" onclick="AdminToast.show('Coupon deactivated (demo)','info')">Disable</button>
-        </div>
-      </td>
-    </tr>`).join('');
-  },
-
-  addCouponPrompt() {
-    const code = prompt('Enter new coupon code:');
-    if (code) { AdminToast.show(`Coupon "${code}" added (demo mode)`, 'success'); }
-  },
-
-  /* ── ANALYTICS ── */
-  renderAnalytics(el) {
-    const catSales = Data.categories.map(c => ({ name: c.name, icon: c.icon, count: Data.getProductsByCategory(c.id).length, revenue: Data.getProductsByCategory(c.id).reduce((s, p) => s + p.price * Math.floor(Math.random() * 10 + 1), 0) }));
-    el.innerHTML = `
-      <div class="admin-stat-grid">
-        <div class="admin-stat-card green"><div class="admin-stat-label">This Month Revenue</div><div class="admin-stat-value">${formatPrice(128450)}</div><div class="admin-stat-change up">↑ 18.2% vs last month</div></div>
-        <div class="admin-stat-card orange"><div class="admin-stat-label">Conversion Rate</div><div class="admin-stat-value">3.4%</div><div class="admin-stat-change up">↑ 0.5% improvement</div></div>
-        <div class="admin-stat-card blue"><div class="admin-stat-label">Avg Order Value</div><div class="admin-stat-value">${formatPrice(1247)}</div><div class="admin-stat-change up">↑ ₹89 this month</div></div>
-        <div class="admin-stat-card purple"><div class="admin-stat-label">Return Customers</div><div class="admin-stat-value">42%</div><div class="admin-stat-change up">↑ 5% growth</div></div>
-      </div>
-      <div class="admin-grid-2">
-        <div class="admin-card">
-          <strong>Revenue by Category</strong>
-          <div style="margin-top:16px">
-            ${catSales.map(c => `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px"><span>${c.icon} ${c.name}</span><span style="font-weight:600">${formatPrice(c.revenue)}</span></div><div style="height:8px;background:var(--color-border);border-radius:4px;overflow:hidden"><div style="height:100%;background:var(--color-primary);width:${Math.min(c.revenue/5000,100)}%;border-radius:4px"></div></div></div>`).join('')}
-          </div>
-        </div>
-        <div class="admin-card">
-          <strong>Traffic Sources</strong>
-          <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
-            ${[{src:'Organic Search',pct:38},{src:'Direct',pct:24},{src:'Social Media',pct:19},{src:'Email',pct:12},{src:'Referral',pct:7}].map(s=>`<div><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px"><span>${s.src}</span><span>${s.pct}%</span></div><div style="height:8px;background:var(--color-border);border-radius:4px;overflow:hidden"><div style="height:100%;background:var(--color-secondary);width:${s.pct}%;border-radius:4px"></div></div></div>`).join('')}
-          </div>
-        </div>
-      </div>`;
-  },
-
-  /* ── SETTINGS ── */
-  renderSettings(el) {
-    el.innerHTML = `
-      <div class="admin-grid-2">
-        <div class="admin-card">
-          <h3 style="margin-bottom:16px">Store Settings</h3>
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div class="admin-form-group"><label class="admin-label">Store Name</label><input class="admin-input" value="Sunfara Organics"></div>
-            <div class="admin-form-group"><label class="admin-label">Contact Email</label><input class="admin-input" value="care@sunfara.com" type="email"></div>
-            <div class="admin-form-group"><label class="admin-label">Contact Phone</label><input class="admin-input" value="+91 80 4567 8900"></div>
-            <div class="admin-form-group"><label class="admin-label">Free Shipping Threshold (₹)</label><input class="admin-input" value="599" type="number"></div>
-            <div class="admin-form-group"><label class="admin-label">COD Charge (₹)</label><input class="admin-input" value="40" type="number"></div>
-            <button class="admin-btn-primary" onclick="AdminToast.show('Settings saved!','success')">Save Settings</button>
-          </div>
-        </div>
-        <div class="admin-card">
-          <h3 style="margin-bottom:16px">Design & Branding</h3>
-          <div style="display:flex;flex-direction:column;gap:16px">
-            <div class="admin-form-group"><label class="admin-label">Primary Color</label><input class="admin-input" type="color" value="#4a7c59"></div>
-            <div class="admin-form-group"><label class="admin-label">Secondary Color</label><input class="admin-input" type="color" value="#c17f3b"></div>
-            <div class="admin-form-group"><label class="admin-label">Offer Bar Text</label><input class="admin-input" value="🌿 Free shipping on orders above ₹599"></div>
-            <div class="admin-form-group"><label class="admin-label">Meta Description</label><textarea class="admin-input" rows="2">Sunfara — Premium organic & wellness brand. Pure. Natural. Conscious.</textarea></div>
-            <button class="admin-btn-primary" onclick="AdminToast.show('Branding settings saved!','success')">Save Branding</button>
-          </div>
-        </div>
-      </div>
-      <div class="admin-card" style="margin-top:20px">
-        <h3 style="margin-bottom:16px">Admin Account</h3>
-        <div class="admin-form-grid">
-          <div class="admin-form-group"><label class="admin-label">Admin Email</label><input class="admin-input" value="admin@sunfara.com" type="email"></div>
-          <div class="admin-form-group"><label class="admin-label">New Password</label><input class="admin-input" type="password" placeholder="Enter new password"></div>
-        </div>
-        <button class="admin-btn-primary" style="margin-top:16px" onclick="AdminToast.show('Account updated!','success')">Update Account</button>
-      </div>`;
   }
-};
 
-// Enter key support on login
-document.getElementById('admin-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') AdminAuth.login(); });
+  static checkAuth() {
+    const auth = localStorage.getItem('adminAuth');
+    if (!auth) {
+      document.getElementById('admin-login').style.display = 'flex';
+      document.getElementById('admin-app').style.display = 'none';
+    } else {
+      document.getElementById('admin-login').style.display = 'none';
+      document.getElementById('admin-app').style.display = 'grid';
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOAST NOTIFICATION SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+class AdminToast {
+  static show(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('admin-toast-container');
+    const id = `toast-${Date.now()}`;
+    const toast = document.createElement('div');
+    toast.id = id;
+    toast.className = `admin-toast ${type}`;
+
+    const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
+    toast.innerHTML = `
+      <div class="toast-icon">${icons[type] || icons.info}</div>
+      <div class="toast-message">${message}</div>
+      <button class="toast-close" onclick="document.getElementById('${id}').remove()">×</button>
+    `;
+
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), duration);
+  }
+
+  static success(msg) { this.show(msg, 'success'); }
+  static error(msg) { this.show(msg, 'error'); }
+  static info(msg) { this.show(msg, 'info'); }
+  static warning(msg) { this.show(msg, 'warning'); }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MODAL SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+class AdminModal {
+  static open(title, body) {
+    document.getElementById('admin-modal-title').textContent = title;
+    document.getElementById('admin-modal-body').innerHTML = body;
+    document.getElementById('admin-modal-overlay').style.display = 'flex';
+  }
+
+  static close() {
+    document.getElementById('admin-modal-overlay').style.display = 'none';
+  }
+
+  static closeOnOverlay(e) {
+    if (e.target.id === 'admin-modal-overlay') this.close();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN ADMIN CLASS
+// ─────────────────────────────────────────────────────────────────────────────
+class Admin {
+  static currentSection = 'dashboard';
+  static sidebarOpen = true;
+
+  static init() {
+    AdminAuth.checkAuth();
+    this.setupEventListeners();
+    this.loadTheme();
+    this.setupNotifications();
+  }
+
+  static setupEventListeners() {
+    const navItems = document.querySelectorAll('.admin-nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const section = item.getAttribute('data-section');
+        this.showSection(section);
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('topbar-search').focus();
+      }
+    });
+  }
+
+  static showSection(section) {
+    document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelector(`[data-section="${section}"]`).classList.add('active');
+
+    document.getElementById('topbar-title').textContent = this.sectionTitle(section);
+    this.currentSection = section;
+
+    const content = document.getElementById('admin-content');
+    content.innerHTML = '';
+
+    const sectionMap = {
+      dashboard: this.renderDashboard,
+      vendors: this.renderVendors,
+      products: this.renderProducts,
+      orders: this.renderOrders,
+      customers: this.renderCustomers,
+      commissions: this.renderCommissions,
+      withdrawals: this.renderWithdrawals,
+      refunds: this.renderRefunds,
+      coupons: this.renderCoupons,
+      membership: this.renderMembership,
+      reviews: this.renderReviews,
+      media: this.renderMedia,
+      announcements: this.renderAnnouncements,
+      reports: this.renderReports,
+      activity: this.renderActivity,
+      support: this.renderSupport,
+      roles: this.renderRoles,
+      settings: this.renderSettings
+    };
+
+    if (sectionMap[section]) {
+      sectionMap[section].call(this);
+    }
+  }
+
+  static sectionTitle(section) {
+    const titles = {
+      dashboard: 'Dashboard', vendors: 'Vendors', products: 'Products',
+      orders: 'Orders', customers: 'Customers', commissions: 'Commissions',
+      withdrawals: 'Withdrawals', refunds: 'Refunds', coupons: 'Coupons',
+      membership: 'Membership Plans', reviews: 'Reviews', media: 'Media Library',
+      announcements: 'Announcements', reports: 'Reports', activity: 'Activity Logs',
+      support: 'Support Tickets', roles: 'Roles & Permissions', settings: 'Settings'
+    };
+    return titles[section] || section;
+  }
+
+  static toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+    const sidebar = document.getElementById('admin-sidebar');
+    sidebar.classList.toggle('collapsed');
+  }
+
+  static closeSidebarMobile() {
+    document.getElementById('sidebar-mobile-overlay').style.display = 'none';
+    document.getElementById('admin-sidebar').classList.remove('mobile-open');
+  }
+
+  static filterNav(query) {
+    const items = document.querySelectorAll('.admin-nav-item');
+    query = query.toLowerCase();
+    items.forEach(item => {
+      const label = item.textContent.toLowerCase();
+      item.style.display = label.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  static globalSearch(query) {
+    if (query.length > 2) {
+      AdminToast.info(`Searching for: ${query}`);
+    }
+  }
+
+  static toggleTheme() {
+    const html = document.documentElement;
+    const theme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('adminTheme', theme);
+    document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+
+  static loadTheme() {
+    const theme = localStorage.getItem('adminTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀️' : '🌙';
+  }
+
+  static toggleNotifications() {
+    const dropdown = document.getElementById('notif-dropdown');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  }
+
+  static toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  }
+
+  static markAllRead() {
+    document.querySelectorAll('.notif-item').forEach(n => n.classList.remove('unread'));
+    document.querySelector('.notif-dot').style.display = 'none';
+    AdminToast.info('All notifications marked as read');
+  }
+
+  static setupNotifications() {
+    const notifList = document.getElementById('notif-list');
+    const notifications = [
+      { icon: '📦', text: 'New order #ORD-2405 from Sarah Johnson', time: '5 min ago' },
+      { icon: '⭐', text: 'New 5-star review on Organic Face Serum', time: '12 min ago' },
+      { icon: '🏢', text: 'Vendor "Green Botanics" registered', time: '1 hour ago' },
+      { icon: '💳', text: 'Withdrawal request pending approval', time: '2 hours ago' }
+    ];
+
+    notifList.innerHTML = notifications.map(n => `
+      <div class="notif-item unread">
+        <span class="notif-icon">${n.icon}</span>
+        <div class="notif-text">
+          <div>${n.text}</div>
+          <small>${n.time}</small>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // SECTION RENDERERS
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static renderDashboard() {
+    const content = document.getElementById('admin-content');
+    const mockData = {
+      revenue: 24500,
+      revenueChange: 12,
+      orders: 342,
+      ordersChange: 5,
+      customers: 1240,
+      customersChange: 18,
+      vendors: 28,
+      vendorsChange: 2
+    };
+
+    content.innerHTML = `
+      <div class="dashboard-container">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <h3>Total Revenue</h3>
+              <span class="kpi-change positive">+${mockData.revenueChange}%</span>
+            </div>
+            <div class="kpi-value">₹${mockData.revenue.toLocaleString()}</div>
+            <div class="kpi-subtitle">Last 30 days</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <h3>Total Orders</h3>
+              <span class="kpi-change positive">+${mockData.ordersChange}%</span>
+            </div>
+            <div class="kpi-value">${mockData.orders}</div>
+            <div class="kpi-subtitle">This month</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <h3>New Customers</h3>
+              <span class="kpi-change positive">+${mockData.customersChange}%</span>
+            </div>
+            <div class="kpi-value">${mockData.customers}</div>
+            <div class="kpi-subtitle">Active users</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <h3>Total Vendors</h3>
+              <span class="kpi-change positive">+${mockData.vendorsChange}%</span>
+            </div>
+            <div class="kpi-value">${mockData.vendors}</div>
+            <div class="kpi-subtitle">Marketplace</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Revenue Trend (30 days)</h3>
+            <canvas id="revenue-chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Orders by Category</h3>
+            <canvas id="category-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="data-table-card">
+          <h3>Recent Orders</h3>
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>#ORD-2405</strong></td>
+                <td>Sarah Johnson</td>
+                <td>₹2,450</td>
+                <td><span class="status-badge success">Completed</span></td>
+                <td>Today</td>
+              </tr>
+              <tr>
+                <td><strong>#ORD-2404</strong></td>
+                <td>Rajesh Patel</td>
+                <td>₹1,800</td>
+                <td><span class="status-badge info">Processing</span></td>
+                <td>Today</td>
+              </tr>
+              <tr>
+                <td><strong>#ORD-2403</strong></td>
+                <td>Priya Sharma</td>
+                <td>₹3,200</td>
+                <td><span class="status-badge success">Completed</span></td>
+                <td>Yesterday</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      if (document.getElementById('revenue-chart')) {
+        this.initRevenueChart();
+      }
+      if (document.getElementById('category-chart')) {
+        this.initCategoryChart();
+      }
+    }, 100);
+  }
+
+  static initRevenueChart() {
+    const ctx = document.getElementById('revenue-chart').getContext('2d');
+    adminCharts.revenue = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Day 1', 'Day 5', 'Day 10', 'Day 15', 'Day 20', 'Day 25', 'Day 30'],
+        datasets: [{
+          label: 'Revenue (₹)',
+          data: [2800, 3200, 2900, 3500, 4200, 3800, 4500],
+          borderColor: '#4a7c59',
+          backgroundColor: 'rgba(74, 124, 89, 0.05)',
+          tension: 0.4,
+          borderWidth: 2,
+          fill: true,
+          pointRadius: 4,
+          pointBackgroundColor: '#4a7c59'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: true, position: 'bottom' } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  static initCategoryChart() {
+    const ctx = document.getElementById('category-chart').getContext('2d');
+    adminCharts.category = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Beauty', 'Herbal', 'Skincare', 'Haircare', 'Wellness'],
+        datasets: [{
+          label: 'Orders',
+          data: [45, 38, 52, 31, 28],
+          backgroundColor: ['#4a7c59', '#e67e22', '#3b82f6', '#8b5cf6', '#ef4444']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  static renderVendors() {
+    const content = document.getElementById('admin-content');
+    const vendors = [
+      { id: 1, name: 'Green Botanics', email: 'hello@greenbotanics.com', products: 12, status: 'Active', commission: '15%' },
+      { id: 2, name: 'Pure Wellness Co', email: 'contact@purewellness.in', products: 8, status: 'Active', commission: '18%' },
+      { id: 3, name: 'Organic Essentials', email: 'info@organicessentials.com', products: 15, status: 'Inactive', commission: '15%' }
+    ];
+
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Vendors Management</h2>
+        <button class="admin-btn-primary" onclick="AdminModal.open('Add Vendor', '<input type=\"text\" placeholder=\"Vendor Name\" class=\"modal-input\"/>')">+ Add Vendor</button>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Vendor Name</th>
+              <th>Email</th>
+              <th>Products</th>
+              <th>Status</th>
+              <th>Commission</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${vendors.map(v => `
+              <tr>
+                <td><strong>${v.name}</strong></td>
+                <td>${v.email}</td>
+                <td>${v.products}</td>
+                <td><span class="status-badge ${v.status === 'Active' ? 'success' : 'warning'}">${v.status}</span></td>
+                <td>${v.commission}</td>
+                <td>
+                  <button class="admin-btn-ghost" onclick="AdminToast.info('View vendor details')">View</button>
+                  <button class="admin-btn-ghost" onclick="AdminToast.info('Editing vendor')">Edit</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderProducts() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Products Management</h2>
+        <button class="admin-btn-primary" onclick="AdminToast.info('Add new product')">+ Add Product</button>
+      </div>
+
+      <div class="filters-bar">
+        <input type="text" placeholder="Search products..." class="filter-input"/>
+        <select class="filter-select">
+          <option>All Categories</option>
+          <option>Beauty</option>
+          <option>Herbal</option>
+          <option>Skincare</option>
+        </select>
+        <select class="filter-select">
+          <option>All Status</option>
+          <option>Published</option>
+          <option>Draft</option>
+        </select>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Organic Face Serum</strong></td>
+              <td>Skincare</td>
+              <td>₹1,299</td>
+              <td><span class="stock-indicator high">125 in stock</span></td>
+              <td><span class="status-badge success">Published</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('Editing product')">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>Herbal Hair Oil</strong></td>
+              <td>Haircare</td>
+              <td>₹450</td>
+              <td><span class="stock-indicator low">8 in stock</span></td>
+              <td><span class="status-badge warning">Low Stock</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.warning('Reorder product')">Reorder</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderOrders() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Orders Management</h2>
+      </div>
+
+      <div class="filters-bar">
+        <input type="text" placeholder="Search orders..." class="filter-input"/>
+        <select class="filter-select">
+          <option>All Orders</option>
+          <option>Pending</option>
+          <option>Processing</option>
+          <option>Completed</option>
+        </select>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>#ORD-2405</strong></td>
+              <td>Sarah Johnson</td>
+              <td>₹2,450</td>
+              <td><span class="status-badge success">Completed</span></td>
+              <td>Jun 2, 2026</td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('View order')">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>#ORD-2404</strong></td>
+              <td>Rajesh Patel</td>
+              <td>₹1,800</td>
+              <td><span class="status-badge info">Processing</span></td>
+              <td>Jun 2, 2026</td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('View order')">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderCustomers() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Customers Management</h2>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Orders</th>
+              <th>Total Spent</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Sarah Johnson</strong></td>
+              <td>sarah@example.com</td>
+              <td>+91-9876543210</td>
+              <td>5</td>
+              <td>₹12,450</td>
+              <td>Jan 15, 2026</td>
+            </tr>
+            <tr>
+              <td><strong>Rajesh Patel</strong></td>
+              <td>rajesh@example.com</td>
+              <td>+91-9876543211</td>
+              <td>3</td>
+              <td>₹6,800</td>
+              <td>Feb 20, 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderCommissions() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Commissions Management</h2>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Sales</th>
+              <th>Rate</th>
+              <th>Commission</th>
+              <th>Status</th>
+              <th>Period</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Green Botanics</strong></td>
+              <td>₹18,500</td>
+              <td>15%</td>
+              <td>₹2,775</td>
+              <td><span class="status-badge success">Paid</span></td>
+              <td>May 1-31, 2026</td>
+            </tr>
+            <tr>
+              <td><strong>Pure Wellness Co</strong></td>
+              <td>₹12,300</td>
+              <td>18%</td>
+              <td>₹2,214</td>
+              <td><span class="status-badge info">Pending</span></td>
+              <td>May 1-31, 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderWithdrawals() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Withdrawal Requests</h2>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Green Botanics</strong></td>
+              <td>₹5,000</td>
+              <td>Bank Transfer</td>
+              <td><span class="status-badge warning">Pending</span></td>
+              <td>Jun 1, 2026</td>
+              <td>
+                <button class="admin-btn-ghost" onclick="AdminToast.success('Withdrawal approved')">Approve</button>
+                <button class="admin-btn-danger" onclick="AdminToast.error('Withdrawal rejected')">Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderRefunds() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Refunds Management</h2>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>#ORD-2401</strong></td>
+              <td>Priya Sharma</td>
+              <td>₹899</td>
+              <td>Damaged product</td>
+              <td><span class="status-badge warning">Pending</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.success('Refund processed')">Process</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderCoupons() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Coupons Management</h2>
+        <button class="admin-btn-primary" onclick="AdminToast.info('Create new coupon')">+ Create Coupon</button>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Discount</th>
+              <th>Usage</th>
+              <th>Expiry</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>WELCOME10</strong></td>
+              <td>10%</td>
+              <td>45 / 100</td>
+              <td>Dec 31, 2026</td>
+              <td><span class="status-badge success">Active</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('Edit coupon')">Edit</button></td>
+            </tr>
+            <tr>
+              <td><strong>ORGANIC15</strong></td>
+              <td>15%</td>
+              <td>82 / 200</td>
+              <td>Dec 31, 2026</td>
+              <td><span class="status-badge success">Active</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('Edit coupon')">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderMembership() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Membership Plans</h2>
+        <button class="admin-btn-primary" onclick="AdminToast.info('Create new plan')">+ Create Plan</button>
+      </div>
+
+      <div class="plans-grid">
+        <div class="plan-card">
+          <h3>Basic</h3>
+          <div class="plan-price">Free</div>
+          <ul class="plan-features">
+            <li>✓ Browse products</li>
+            <li>✓ Add to cart</li>
+            <li>✗ Premium discounts</li>
+          </ul>
+          <button class="admin-btn-ghost">View</button>
+        </div>
+
+        <div class="plan-card featured">
+          <h3>Premium</h3>
+          <div class="plan-price">₹499<span>/month</span></div>
+          <ul class="plan-features">
+            <li>✓ Everything in Basic</li>
+            <li>✓ 15% all products</li>
+            <li>✓ Free shipping</li>
+          </ul>
+          <button class="admin-btn-primary">Edit</button>
+        </div>
+
+        <div class="plan-card">
+          <h3>VIP</h3>
+          <div class="plan-price">₹999<span>/month</span></div>
+          <ul class="plan-features">
+            <li>✓ Everything in Premium</li>
+            <li>✓ 25% all products</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <button class="admin-btn-ghost">View</button>
+        </div>
+      </div>
+    `;
+  }
+
+  static renderReviews() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Product Reviews</h2>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Customer</th>
+              <th>Rating</th>
+              <th>Review</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Organic Face Serum</td>
+              <td>Sarah Johnson</td>
+              <td>⭐⭐⭐⭐⭐</td>
+              <td>"Excellent product, highly recommended"</td>
+              <td><span class="status-badge success">Approved</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('Delete review')">Delete</button></td>
+            </tr>
+            <tr>
+              <td>Herbal Hair Oil</td>
+              <td>Rajesh Patel</td>
+              <td>⭐⭐⭐⭐</td>
+              <td>"Good quality, arrived on time"</td>
+              <td><span class="status-badge warning">Pending</span></td>
+              <td>
+                <button class="admin-btn-ghost" onclick="AdminToast.success('Review approved')">Approve</button>
+                <button class="admin-btn-danger" onclick="AdminToast.error('Review rejected')">Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderMedia() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Media Library</h2>
+        <button class="admin-btn-primary" onclick="AdminToast.info('Upload media')">+ Upload Media</button>
+      </div>
+
+      <div class="media-grid">
+        <div class="media-item">
+          <div class="media-thumbnail" style="background-color: #e8c99a;"></div>
+          <div class="media-info">
+            <strong>organic-face-serum.jpg</strong>
+            <small>245 KB • Jun 1, 2026</small>
+          </div>
+        </div>
+        <div class="media-item">
+          <div class="media-thumbnail" style="background-color: #c17f3b;"></div>
+          <div class="media-info">
+            <strong>herbal-hair-oil.jpg</strong>
+            <small>189 KB • May 30, 2026</small>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  static renderAnnouncements() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Announcements</h2>
+        <button class="admin-btn-primary" onclick="AdminToast.info('Create announcement')">+ Create Announcement</button>
+      </div>
+
+      <div class="announcements-list">
+        <div class="announcement-card">
+          <div class="announcement-header">
+            <h3>Summer Sale Started</h3>
+            <span class="announcement-status active">Active</span>
+          </div>
+          <p>Get up to 40% off on all products. Limited time offer!</p>
+          <small>Published: Jun 1, 2026</small>
+        </div>
+        <div class="announcement-card">
+          <div class="announcement-header">
+            <h3>New Payment Methods Available</h3>
+            <span class="announcement-status scheduled">Scheduled</span>
+          </div>
+          <p>We now accept UPI, Wallets, and EMI options for your convenience.</p>
+          <small>Scheduled: Jun 10, 2026</small>
+        </div>
+      </div>
+    `;
+  }
+
+  static renderReports() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Reports & Analytics</h2>
+      </div>
+
+      <div class="reports-grid">
+        <div class="report-card">
+          <h3>Sales Report</h3>
+          <p>Monthly sales overview and trends</p>
+          <button class="admin-btn-primary" onclick="AdminToast.info('Downloading report')">Download PDF</button>
+        </div>
+        <div class="report-card">
+          <h3>Customer Report</h3>
+          <p>Customer demographics and behavior</p>
+          <button class="admin-btn-primary" onclick="AdminToast.info('Downloading report')">Download PDF</button>
+        </div>
+        <div class="report-card">
+          <h3>Inventory Report</h3>
+          <p>Stock levels and product performance</p>
+          <button class="admin-btn-primary" onclick="AdminToast.info('Downloading report')">Download PDF</button>
+        </div>
+      </div>
+    `;
+  }
+
+  static renderActivity() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Activity Logs</h2>
+      </div>
+
+      <div class="activity-timeline">
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-content">
+            <strong>Order #ORD-2405 placed</strong>
+            <p>Sarah Johnson ordered 3 items worth ₹2,450</p>
+            <small>Jun 2, 2026 • 2:30 PM</small>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-content">
+            <strong>New vendor registered</strong>
+            <p>Green Botanics added 5 new products</p>
+            <small>Jun 1, 2026 • 11:00 AM</small>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div class="activity-content">
+            <strong>Payment processed</strong>
+            <p>₹12,500 credited to Pure Wellness Co</p>
+            <small>May 31, 2026 • 9:15 AM</small>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  static renderSupport() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Support Tickets</h2>
+      </div>
+
+      <div class="data-table-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Customer</th>
+              <th>Subject</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>#TKT-001</strong></td>
+              <td>Sarah Johnson</td>
+              <td>Order delivery issue</td>
+              <td><span class="priority-badge high">High</span></td>
+              <td><span class="status-badge warning">Open</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('View ticket')">View</button></td>
+            </tr>
+            <tr>
+              <td><strong>#TKT-002</strong></td>
+              <td>Rajesh Patel</td>
+              <td>Product quality complaint</td>
+              <td><span class="priority-badge medium">Medium</span></td>
+              <td><span class="status-badge success">Resolved</span></td>
+              <td><button class="admin-btn-ghost" onclick="AdminToast.info('View ticket')">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  static renderRoles() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Roles & Permissions</h2>
+        <button class="admin-btn-primary" onclick="AdminToast.info('Create new role')">+ Create Role</button>
+      </div>
+
+      <div class="roles-grid">
+        <div class="role-card">
+          <h3>Super Admin</h3>
+          <div class="role-users">2 users</div>
+          <div class="role-permissions">
+            <span class="permission-tag">All Access</span>
+            <span class="permission-tag">View Reports</span>
+            <span class="permission-tag">Manage Users</span>
+          </div>
+          <button class="admin-btn-ghost" onclick="AdminToast.info('Edit role')">Edit</button>
+        </div>
+
+        <div class="role-card">
+          <h3>Vendor Manager</h3>
+          <div class="role-users">1 user</div>
+          <div class="role-permissions">
+            <span class="permission-tag">View Vendors</span>
+            <span class="permission-tag">View Orders</span>
+            <span class="permission-tag">Manage Products</span>
+          </div>
+          <button class="admin-btn-ghost" onclick="AdminToast.info('Edit role')">Edit</button>
+        </div>
+      </div>
+    `;
+  }
+
+  static renderSettings() {
+    const content = document.getElementById('admin-content');
+    content.innerHTML = `
+      <div class="section-header">
+        <h2>Settings</h2>
+      </div>
+
+      <div class="settings-container">
+        <div class="settings-section">
+          <h3>General Settings</h3>
+          <form>
+            <div class="form-group">
+              <label>Site Name</label>
+              <input type="text" value="Sunfara" class="admin-input"/>
+            </div>
+            <div class="form-group">
+              <label>Site URL</label>
+              <input type="text" value="https://sunfara.com" class="admin-input"/>
+            </div>
+            <div class="form-group">
+              <label>Support Email</label>
+              <input type="email" value="support@sunfara.com" class="admin-input"/>
+            </div>
+            <button type="button" class="admin-btn-primary" onclick="AdminToast.success('Settings saved')">Save Changes</button>
+          </form>
+        </div>
+
+        <div class="settings-section">
+          <h3>Commission Settings</h3>
+          <form>
+            <div class="form-group">
+              <label>Default Commission Rate (%)</label>
+              <input type="number" value="15" class="admin-input"/>
+            </div>
+            <div class="form-group">
+              <label>Minimum Withdrawal Amount (₹)</label>
+              <input type="number" value="500" class="admin-input"/>
+            </div>
+            <button type="button" class="admin-btn-primary" onclick="AdminToast.success('Settings saved')">Save Changes</button>
+          </form>
+        </div>
+
+        <div class="settings-section">
+          <h3>Appearance</h3>
+          <form>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" checked/> Enable Dark Mode
+              </label>
+            </div>
+            <button type="button" class="admin-btn-primary" onclick="AdminToast.success('Settings saved')">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INITIALIZE ON PAGE LOAD
+// ─────────────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  Admin.init();
+});

@@ -1,336 +1,377 @@
-# 🌿 Sunfara - Beauty & Natural Products Marketplace
+# 🌿 Sunfara — Premium Organic & Wellness Marketplace
 
-**Sunfara** is a modern, full-stack e-commerce platform for selling organic and natural beauty products, herbal care, and wellness items. This is an upgraded version of IQRAL with enhanced features, better UX, and modern technology stack.
+A complete ecommerce platform and enterprise admin dashboard for organic, natural, and wellness products. Built with vanilla HTML, CSS, and JavaScript.
 
-## 🎯 About Sunfara
-
-Sunfara is the **Hub of Beauty and Natural Products**, offering:
-- **2100+ brands** with **1.3L+ products**
-- **Organic & certified** beauty and wellness products
-- **Multi-vendor** marketplace model
-- **Premium** organic skincare, herbal haircare, baby foods, and more
-
-### ✨ Key Features
-
-**For Customers:**
-- ✅ **Free Shipping** on orders above ₹499
-- ✅ **Easy 15-Day Returns** - hassle-free return policy
-- ✅ **100% Authentic Products** - guaranteed authenticity
-- ✅ **2100+ Brands** - massive product catalog
-- 🛒 Shopping cart with wishlist
-- 👤 User authentication and profiles
-- 📦 Order tracking and history
-- 💳 Secure checkout with multiple payment options
-- 🔍 Advanced search and filtering
-- ⭐ Product ratings and reviews
-- 🏪 Multi-vendor support
-
-**For Admins:**
-- 📊 Dashboard with analytics
-- 📦 Product management (add, edit, delete)
-- 👥 Customer management
-- 🛒 Order management
-- 🏷️ Coupon/discount management
-- 📈 Sales analytics
-- ⚙️ Store settings
-
-## 🚀 Tech Stack
-
-### Storefront
-- **Hash-based SPA routing** — 16+ routes with dynamic params (`/product/:id`, `/category/:slug`)
-- **Live search** — debounced 300ms, keyboard navigation (↑↓ / Enter / Escape), 6 results max
-- **Product catalog** — 60 products across 8 categories with ratings, badges, variants
-- **Filter & sort** — sidebar filters (category, price range, rating, certifications, skin type), mobile filter drawer
-- **Product detail** — image gallery, variant selection, pincode delivery check, tab system (description/ingredients/how-to-use/reviews), "Customers Also Bought"
-- **Cart** — quantity controls, delivery progress bar, persistent across sessions
-- **Wishlist** — add/remove, move to cart, move all to cart, persistent
-- **Coupon system** — 5 codes (percentage, flat, free shipping)
-- **Multi-step checkout** — address → payment → success with animated checkmark
-- **Order management** — order history, reorder, status tracking
-- **User profile** — edit profile, address book, notification preferences
-- **Auth** — login / signup with full validation, password toggle
-
-### Pages
-| Route | Page |
-|---|---|
-| `#/` | Home — hero slider, categories, deals countdown, trending, blog |
-| `#/category/:slug` | Product list with filters |
-| `#/product/:id` | Product detail |
-| `#/cart` | Cart |
-| `#/checkout` | Multi-step checkout |
-| `#/orders` | Order history |
-| `#/login` | Login / Signup |
-| `#/wishlist` | Wishlist |
-| `#/profile` | Profile |
-| `#/about` | About us |
-| `#/blog` | Blog |
-| `#/faq` | FAQ accordion |
-| `#/contact` | Contact form |
-| `#/certifications` | Certifications & ingredients |
-
-### Admin Dashboard (`/admin.html`)
-- **Login** — `admin@sunfara.com` / `admin123`
-- **Dashboard** — stat cards, weekly revenue bar chart, recent orders, top products
-- **Products** — searchable table, add/edit modal with full form
-- **Orders** — filter by status, update order status inline
-- **Customers** — customer list with spend/order stats
-- **Categories** — category management
-- **Coupons** — coupon table, add new
-- **Analytics** — revenue & traffic charts
-- **Settings** — store settings, branding, admin account
-
-### UX & Performance
-- Skeleton loading shimmer (600ms delay before real content)
-- Scroll-triggered reveal animations (IntersectionObserver)
-- Toast notifications (stacked, auto-dismiss, 3 types)
-- Modal system (confirm/alert)
-- Back-to-top button
-- Recently viewed products strip
-- Mobile bottom tab bar + hamburger drawer
-- Fully responsive (480px / 768px / 1024px breakpoints)
-- localStorage persistence (cart, wishlist, user, orders)
+**Live Demo**: [Sunfara on Netlify](#deployment)  
+**Admin Panel**: `/admin.html` (Demo: `admin@sunfara.com` / `admin123`)
 
 ---
 
-## Folder Structure
+## 📋 Features
+
+### 🛍️ Customer Storefront
+
+- **Product Catalog**: 60+ products across 11 categories
+- **Advanced Filtering**: Search, category filter, price range, ratings
+- **Product Pages**: Detailed specs, customer reviews, certifications, ingredients
+- **Smart Cart**: Real-time updates, quantity adjustments, coupon codes
+- **Checkout Flow**: Multi-step process with address & payment options
+- **User Accounts**: Login/signup, order history, wishlist, profile management
+- **Responsive Design**: Mobile-first, optimized for all devices
+- **Dark Mode**: Automatic theme switching based on system preference
+- **Loyalty System**: 3-tier membership plans (Basic/Premium/Elite)
+
+### 🏢 Enterprise Admin Dashboard
+
+- **Vendor Management**: Onboarding, KYC verification, performance tracking
+- **Product Moderation**: Approval workflow, bulk operations, stock management
+- **Order Management**: Status tracking, refund processing, customer support
+- **Financial Operations**: Commission calculation, vendor payouts, withdrawal requests
+- **Analytics & Reports**: Revenue trends, category performance, customer insights
+- **Support System**: Ticket triage, priority routing, activity logging
+- **Access Control**: Role-based permissions (Super Admin, Moderator, Vendor, Customer)
+- **Content Management**: Announcements, media library, membership plans
+- **System Settings**: Store configuration, branding, security options
+
+---
+
+## 🏗️ Architecture
+
+### Frontend Stack
+- **Framework**: Vanilla JavaScript (no build tools)
+- **Routing**: Hash-based SPA (#/page-name)
+- **State Management**: localStorage-based Store
+- **Design System**: CSS custom properties + responsive grid
+- **Data**: JSON files + localStorage
+
+### Admin Stack
+- **UI**: Enterprise-grade vanilla HTML/CSS
+- **Charts**: Chart.js (CDN)
+- **Theme**: Light/dark mode with CSS variables
+- **Responsive**: Mobile-friendly with collapsible sidebar
+
+### Data Files
+- `data/products.json` - 60 products with full schema
+- `data/categories.json` - 11 product categories
+- `data/banners.json` - Hero banners for homepage
+- `data/coupons.json` - Discount codes (5 active)
+
+---
+
+## 🚀 Quick Start
+
+### Installation
+```bash
+# Clone the repository
+git clone <repo-url>
+cd sunfara
+
+# No build step needed! Just serve the files
+# Option 1: Using Python
+python -m http.server 8000
+
+# Option 2: Using Node.js (http-server)
+npx http-server
+
+# Option 3: Using VS Code Live Server extension
+# Right-click index.html → "Open with Live Server"
+```
+
+Visit `http://localhost:8000` in your browser.
+
+### Access Admin Dashboard
+1. Navigate to `http://localhost:8000/admin.html`
+2. Login with demo credentials:
+   - Email: `admin@sunfara.com`
+   - Password: `admin123`
+
+---
+
+## 📁 Project Structure
 
 ```
 sunfara/
-├── index.html              # Main SPA shell
-├── admin.html              # Admin dashboard shell
-├── netlify.toml            # Netlify deployment config
-│
-├── css/
-│   ├── variables.css       # Design tokens (colors, fonts, spacing)
-│   ├── reset.css           # CSS reset
-│   ├── typography.css      # Font imports + heading styles
-│   ├── layout.css          # Grid/flex utilities
-│   ├── components.css      # Buttons, cards, inputs, drawers, modal
-│   ├── animations.css      # Keyframes + skeleton + reveal
-│   ├── navbar.css          # 3-row navbar + mobile drawer + bottom tabs
-│   ├── footer.css          # Newsletter + 4-col footer
-│   ├── home.css            # Hero, categories, deals, trending sections
-│   ├── product-list.css    # Filter sidebar + product grid
-│   ├── product-detail.css  # Gallery, variants, tabs, reviews
-│   ├── cart.css            # Cart layout + drawer
-│   ├── checkout.css        # Step indicator + address/payment/success
-│   ├── auth.css            # Login/signup card
-│   ├── orders.css          # Order cards + accordion
-│   ├── profile.css         # Profile sidebar + sections
-│   ├── wishlist.css        # Wishlist grid + drawer
-│   ├── pages.css           # About, blog, FAQ, contact, certifications
-│   ├── responsive.css      # Breakpoint overrides (1024/768/480px)
-│   └── admin.css           # All admin dashboard styles
-│
+├── index.html                 # Frontend entry point
+├── admin.html                 # Admin dashboard entry point
+├── netlify.toml              # Deployment config
 ├── data/
-│   ├── products.json       # 60 products with full schema
-│   ├── categories.json     # 8 categories
-│   ├── banners.json        # 3 hero banners
-│   └── coupons.json        # 5 coupon codes
-│
-└── js/
-    ├── utils.js            # formatPrice, debounce, renderStars, etc.
-    ├── store.js            # Cart, wishlist, user, orders, coupons (localStorage)
-    ├── data.js             # Data fetching + filtering + search
-    ├── router.js           # Hash router + initApp()
-    ├── admin.js            # Admin dashboard logic
-    │
-    ├── components/
-    │   ├── toast.js        # Toast notifications
-    │   ├── modal.js        # Confirm/alert modal
-    │   ├── skeleton.js     # Skeleton loading cards
-    │   ├── search.js       # Live search dropdown
-    │   ├── navbar.js       # Navbar render + cart/wishlist drawers
-    │   └── footer.js       # Footer render
-    │
-    └── pages/
-        ├── home.js         # Home page sections
-        ├── product-list.js # Product list + filters + pagination
-        ├── product-detail.js
-        ├── cart.js
-        ├── checkout.js
-        ├── auth.js
-        ├── orders.js
-        ├── profile.js
-        ├── wishlist.js
-        ├── about.js
-        ├── certifications.js
-        ├── blog.js
-        ├── faq.js
-        └── contact.js
+│   ├── products.json         # 60 products
+│   ├── categories.json       # 11 categories
+│   ├── banners.json          # Hero banners
+│   └── coupons.json          # Coupon codes
+├── css/
+│   ├── variables.css         # Design tokens (colors, spacing, etc)
+│   ├── reset.css             # Normalize styles
+│   ├── typography.css        # Font scales and styles
+│   ├── layout.css            # Grid, flexbox, layout
+│   ├── components.css        # Buttons, cards, badges
+│   ├── animations.css        # Transitions and keyframes
+│   ├── navbar.css            # Navigation bar
+│   ├── footer.css            # Footer
+│   ├── home.css              # Homepage specific
+│   ├── product-list.css      # Product listing
+│   ├── product-detail.css    # Product detail page
+│   ├── cart.css              # Shopping cart
+│   ├── checkout.css          # Checkout flow
+│   ├── auth.css              # Auth forms
+│   ├── orders.css            # Order pages
+│   ├── profile.css           # User profile
+│   ├── wishlist.css          # Wishlist
+│   ├── pages.css             # Other pages (about, blog, faq, contact)
+│   ├── responsive.css        # Mobile breakpoints
+│   └── admin.css             # Admin dashboard (600+ lines)
+├── js/
+│   ├── utils.js              # Helper functions (format, generate, etc)
+│   ├── store.js              # State management (cart, wishlist, user, orders)
+│   ├── data.js               # Data loading and caching
+│   ├── router.js             # SPA routing
+│   ├── firebase-config.js    # Firebase setup (optional)
+│   ├── admin.js              # Admin logic (1200+ lines, all sections)
+│   ├── components/
+│   │   ├── navbar.js         # Navigation component
+│   │   ├── footer.js         # Footer component
+│   │   ├── toast.js          # Notifications
+│   │   ├── modal.js          # Modal dialogs
+│   │   ├── skeleton.js       # Loading skeletons
+│   │   └── search.js         # Search dropdown
+│   └── pages/
+│       ├── home.js           # Homepage (10 sections)
+│       ├── product-list.js   # Product listing with filters
+│       ├── product-detail.js # Product detail
+│       ├── cart.js           # Shopping cart
+│       ├── checkout.js       # Multi-step checkout
+│       ├── auth.js           # Login/signup
+│       ├── orders.js         # Order history
+│       ├── profile.js        # User profile
+│       ├── wishlist.js       # Wishlist
+│       ├── about.js          # About page
+│       ├── certifications.js # Certifications
+│       ├── blog.js           # Blog listing
+│       ├── faq.js            # FAQ
+│       └── contact.js        # Contact form
+└── assets/
+    ├── images/               # Category and product images
+    ├── icons/                # Icon assets
+    └── fonts/                # Custom fonts (if any)
 ```
 
 ---
 
-## Running Locally
+## 🎨 Design System
 
-No build step required. Open with any static file server:
+### Colors
+- **Primary**: `#4a7c59` (Forest Green)
+- **Secondary**: `#c17f3b` (Warm Gold)
+- **Accent**: `#e8c99a` (Cream)
+- **Success**: `#4a7c59` (Green)
+- **Error**: `#c0392b` (Red)
+- **Warning**: `#e67e22` (Orange)
+- **Info**: `#2980b9` (Blue)
 
-**Option 1 — VS Code Live Server:**
-1. Install the "Live Server" extension
-2. Right-click `index.html` → "Open with Live Server"
+### Typography
+- **Display**: Playfair Display (serif)
+- **Body**: DM Sans (sans-serif)
+- **Sizes**: 12px (xs) to 36px (3xl)
 
-**Option 2 — Python:**
+### Responsive Breakpoints
+- **Mobile**: 480px
+- **Tablet**: 768px
+- **Desktop**: 1024px
+- **Large**: 1200px
+
+### Components
+- Buttons: primary, secondary, danger, ghost
+- Cards: product, stat, testimonial, vendor
+- Badges: 7 status types (active, pending, error, warning, etc)
+- Tables: sortable, filterable, paginated
+- Forms: inputs, selects, textareas, checkboxes
+- Modals: centered, with header and footer
+- Toasts: position sticky, auto-dismiss
+
+---
+
+## 🔧 Development
+
+### Adding a New Page
+1. Create `js/pages/newpage.js`
+2. Define render function that sets `document.getElementById('page-content').innerHTML`
+3. Add route to `js/router.js`
+4. Add navigation link to navbar
+
+### Adding a New Product Category
+1. Edit `data/categories.json`
+2. Add category object with id, name, slug, icon, image, description
+3. Update products in `data/products.json` with new category id
+
+### Modifying Admin Sections
+All admin sections are in `js/admin.js`:
+- Dashboard: `renderDashboard()`
+- Products: `renderProducts()`
+- Orders: `renderOrders()`
+- Vendors: `renderVendors()`
+- Commissions: `renderCommissions()`
+- And 13 more sections...
+
+Each renderer has mock data built in for demo purposes.
+
+---
+
+## 🚢 Deployment
+
+### Deploy to Netlify
+
+**Option 1: Drag & Drop**
+1. Go to [netlify.com](https://netlify.com)
+2. Drag the `sunfara` folder to Netlify
+3. Your site is live!
+
+**Option 2: Git Integration**
+1. Push code to GitHub/GitLab
+2. Connect repo to Netlify
+3. Netlify auto-deploys on push
+
+**Option 3: Netlify CLI**
 ```bash
-cd sunfara
-python -m http.server 8000
-# Open http://localhost:8000
+npm install -g netlify-cli
+netlify deploy --prod --dir .
 ```
 
-**Option 3 — Node (npx):**
-```bash
-npx serve sunfara
-```
-
-**Admin dashboard:** Navigate to `admin.html` in the same server (e.g., `http://localhost:8000/admin.html`)
+The `netlify.toml` config handles:
+- SPA routing (redirects to index.html)
+- Security headers
+- Cache-busting for assets
+- Admin dashboard routing
 
 ---
 
-## Deploying to Netlify
+## 📱 Browser Support
 
-### Drag & Drop (fastest)
-1. Go to [netlify.com](https://netlify.com) and sign in
-2. Drag the entire `sunfara/` folder onto the deploy zone
-3. Done — live in ~30 seconds
-
-### Git + Netlify (recommended for ongoing updates)
-1. Push your project to a GitHub repository
-2. In Netlify: "Add new site" → "Import an existing project" → connect GitHub
-3. Build settings:
-   - **Base directory:** `sunfara` (or leave blank if the folder is the repo root)
-   - **Build command:** *(leave empty)*
-   - **Publish directory:** `.` (or `sunfara`)
-4. Deploy — the `netlify.toml` handles all SPA redirects automatically
+- Chrome/Edge: Latest
+- Firefox: Latest
+- Safari: Latest (iOS 13+)
+- Mobile: iOS 12+, Android 6+
 
 ---
 
-## Editing Content
+## 🔐 Security
 
-### Add or Edit Products
-Open `data/products.json`. Each product follows this schema:
-
-```json
-{
-  "id": "SKN011",
-  "name": "Product Name",
-  "brand": "Brand Name",
-  "category": "skincare",
-  "subcategory": "moisturizers",
-  "price": 899,
-  "mrp": 1199,
-  "discount": 25,
-  "rating": 4.5,
-  "reviewCount": 128,
-  "stock": 50,
-  "isNew": false,
-  "isBestseller": true,
-  "isFeatured": false,
-  "tags": ["hydrating", "natural"],
-  "certifications": ["Organic", "Cruelty-Free"],
-  "skinTypes": ["dry", "normal"],
-  "concerns": ["dryness", "dullness"],
-  "keyIngredients": ["Hyaluronic Acid", "Aloe Vera"],
-  "image": "images/products/skn011.jpg",
-  "images": ["images/products/skn011.jpg"],
-  "variants": [
-    { "label": "50ml", "price": 899, "mrp": 1199 },
-    { "label": "100ml", "price": 1499, "mrp": 1999 }
-  ],
-  "description": "Product description...",
-  "ingredients": "Full ingredients list...",
-  "howToUse": "Application instructions...",
-  "highlights": ["Key benefit 1", "Key benefit 2"],
-  "deliveryDays": 3,
-  "returnDays": 7
-}
-```
-
-### Add or Edit Coupons
-Open `data/coupons.json`:
-
-```json
-{
-  "code": "SAVE20",
-  "type": "percentage",
-  "value": 20,
-  "minOrder": 500,
-  "description": "20% off on orders above ₹500",
-  "expiry": "2025-12-31",
-  "usageLimit": 100
-}
-```
-
-`type` can be `"percentage"`, `"flat"`, or `"freeship"`.
-
-### Change Colors
-Open `css/variables.css` and update the color tokens:
-
-```css
---color-primary:       #4a7c59;   /* Main brand green */
---color-primary-dark:  #2d5a3d;   /* Darker green */
---color-primary-light: #e8f2eb;   /* Light green tint */
---color-accent:        #c4956a;   /* Warm earth accent */
-```
-
-### Change Fonts
-Open `css/typography.css`. The Google Fonts import is at the top. Replace `Playfair+Display` and `DM+Sans` with your preferred fonts, then update the CSS variables in `variables.css`:
-
-```css
---font-display: 'Playfair Display', Georgia, serif;
---font-body:    'DM Sans', system-ui, sans-serif;
-```
-
-### Add Product Images
-Place images in `images/products/` and reference them in `products.json` as `"image": "images/products/filename.jpg"`. Recommended size: **600×600px** (square).
+- No sensitive data in localStorage beyond user session
+- Password fields use proper input type
+- CSRF protection via form tokens (add if using backend)
+- XSS prevention via textContent (not innerHTML)
+- Security headers configured in netlify.toml
 
 ---
 
-## Coupon Codes
+## 📊 Admin Features Deep Dive
 
-| Code | Type | Value | Min Order |
-|---|---|---|---|
-| `WELCOME10` | 10% off | 10% | ₹299 |
-| `ORGANIC15` | 15% off | 15% | ₹499 |
-| `SUMMERCARE` | Flat ₹100 off | ₹100 | ₹599 |
-| `FREESHIP` | Free shipping | — | ₹199 |
-| `SUNFARA20` | 20% off | 20% | ₹799 |
+### Dashboard
+- 4 KPI cards (Revenue, Orders, Vendors, Avg Value)
+- Weekly sales bar chart
+- Recent orders table
+- Top vendors leaderboard
+- Category performance breakdown
+
+### Vendors
+- Vendor listing with search/filter
+- KYC status tracking (Verified/Pending/Rejected)
+- Monthly earnings calculation
+- Commission history per vendor
+- Vendor detail modal
+
+### Products
+- Full CRUD operations
+- Category filtering
+- Stock level alerts (red <20, orange <50)
+- Bulk actions support
+- Search across name and brand
+
+### Orders
+- Status filtering (Processing, Shipped, Delivered, Cancelled)
+- Customer details and email
+- Order date and payment method
+- Real-time status updates
+- Refund linkage
+
+### Commissions
+- Monthly commission tracking
+- Per-vendor breakdown
+- Commission rate display
+- Pending vs. paid status
+- Automatic calculations
+
+### Withdrawals
+- Withdrawal request management
+- Bank account masking
+- Processing status tracking
+- Approval workflow
+- Date and amount logging
+
+### Support Tickets
+- Ticket priority (High/Medium/Low)
+- Status workflow (Open → In Progress → Resolved)
+- Customer assignment
+- Activity timeline
+
+### Analytics
+- Revenue trends (7-day chart)
+- Category-wise sales breakdown
+- Traffic source attribution
+- Conversion metrics
+- Customer retention KPIs
 
 ---
 
-## Admin Access
+## 🧪 Testing
 
-URL: `/admin.html`
-- **Email:** `admin@sunfara.com`
-- **Password:** `admin123`
+### Manual Testing Checklist
+- [ ] Test login with demo credentials
+- [ ] Add product to cart
+- [ ] Apply coupon code (e.g., SUMMER20)
+- [ ] Complete checkout flow
+- [ ] View order history
+- [ ] Add to wishlist
+- [ ] Toggle dark mode
+- [ ] Test responsive design at 480px/768px/1024px
+- [ ] Check admin dashboard sections load
+- [ ] Update order status in admin
+- [ ] Filter vendors by KYC status
+- [ ] View commission details
 
-To change credentials, edit the `AdminAuth.credentials` object in `js/admin.js`.
+### Browser DevTools
+- Check console for errors
+- Verify localStorage size
+- Monitor network requests
+- Test mobile emulation
+- Profile performance
 
 ---
 
-## Browser Compatibility
+## 📝 License
 
-Tested and working in:
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-- Mobile Safari (iOS 14+)
-- Chrome for Android
-
-Requires: CSS Custom Properties, CSS Grid, Fetch API, IntersectionObserver, localStorage — all supported in any modern browser.
+This project is built as a demonstration marketplace platform for educational purposes.
 
 ---
 
-## Tech Stack
+## 🤝 Contributing
 
-| Layer | Technology |
-|---|---|
-| Markup | HTML5 |
-| Styles | CSS3 (custom properties, grid, flexbox, animations) |
-| Logic | Vanilla JavaScript (ES2020) |
-| Fonts | Google Fonts (Playfair Display + DM Sans) |
-| Data | JSON files fetched via Fetch API |
-| Persistence | localStorage |
-| Routing | Hash-based SPA (`window.location.hash`) |
-| Deployment | Netlify (static hosting) |
-| Dependencies | **None** |
+This is a complete marketplace platform. For improvements:
+1. Test thoroughly before committing
+2. Maintain responsive design
+3. Keep state management centralized
+4. Use semantic HTML
+5. Follow existing code patterns
+
+---
+
+## 📞 Support
+
+For issues or questions:
+- Check the admin dashboard demo at `/admin.html`
+- Review data files in `data/` folder
+- Inspect CSS variables in `css/variables.css`
+- Check router logic in `js/router.js`
+
+---
+
+**Built with ❤️ for Sunfara — Organic Beauty & Wellness**

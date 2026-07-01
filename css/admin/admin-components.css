@@ -1,0 +1,181 @@
+/* Admin Components */
+
+.admin-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-btn-primary {
+  background: var(--admin-primary);
+  color: white;
+}
+
+.admin-btn-primary:hover {
+  background: var(--admin-primary-dark);
+  transform: translateY(-1px);
+}
+
+.admin-btn-secondary {
+  background: var(--admin-bg-tertiary);
+  color: var(--admin-text-primary);
+  border: 1px solid var(--admin-border);
+}
+
+.admin-btn-secondary:hover {
+  background: var(--admin-border);
+}
+
+.admin-btn-danger {
+  background: var(--admin-error);
+  color: white;
+}
+
+.admin-btn-danger:hover {
+  background: #dc2626;
+}
+
+.admin-btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.admin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--admin-bg-light);
+  color: var(--admin-text-primary);
+  transition: all 150ms ease-out;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px var(--admin-primary-light);
+}
+
+.admin-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--admin-text-primary);
+}
+
+.admin-form-group {
+  margin-bottom: 20px;
+}
+
+.admin-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.admin-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--admin-bg-light);
+  color: var(--admin-text-primary);
+  cursor: pointer;
+}
+
+.admin-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.admin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.admin-status-active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.admin-status-pending {
+  background: #fef3c7;
+  color: #78350f;
+}
+
+.admin-status-rejected {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.admin-status-processing {
+  background: #cffafe;
+  color: #164e63;
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-page-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.admin-page-subtitle {
+  font-size: 14px;
+  color: var(--admin-text-secondary);
+  margin: 4px 0 0 0;
+}
+
+.admin-page-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.admin-empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.admin-empty-state-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.admin-empty-state-text {
+  color: var(--admin-text-secondary);
+  margin-bottom: 24px;
+}

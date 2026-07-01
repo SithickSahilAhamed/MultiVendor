@@ -21,6 +21,11 @@ const Router = {
     '/faq':               () => FaqPage.render(),
     '/contact':           () => ContactPage.render(),
     '/certifications':    () => CertificationsPage.render(),
+    '/vendors':           () => VendorsPage.render(),
+    '/vendor/:id':        (p) => VendorsPage.renderVendorDetail(p),
+    '/bundles':           () => BundlesPage.render(),
+    '/health':            () => HealthPage.renderCategories(),
+    '/health/:id':        (p) => HealthPage.renderHealthCategory(p.id),
   },
 
   /* Parse hash and dispatch to correct page handler */
@@ -101,6 +106,11 @@ const Router = {
       '/contact': 'Contact Us — Sunfara',
       '/certifications': 'Our Certifications — Sunfara',
       '/search': `Search: "${params.q}" — Sunfara`,
+      '/vendors': 'Marketplace Vendors — Sunfara',
+      '/vendor/:id': `${Data.getVendorById(params.id)?.name || 'Vendor'} — Sunfara`,
+      '/bundles': 'Combo Offers & Bundles — Sunfara',
+      '/health': 'Health & Wellness — Sunfara',
+      '/health/:id': `${Data.getHealthCategoryById(params.id)?.name || 'Health'} — Sunfara`,
     };
     document.title = titles[pattern] || 'Sunfara — Pure. Natural. Conscious.';
   },

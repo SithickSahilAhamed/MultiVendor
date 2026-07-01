@@ -8,21 +8,33 @@ const Data = {
   categories: [],
   banners: [],
   coupons: [],
+  vendors: [],
+  bundles: [],
+  healthCategories: [],
+  recommendations: [],
   loaded: false,
 
   /* Load all JSON files in parallel */
   async init() {
     try {
-      const [products, categories, banners, coupons] = await Promise.all([
-        fetch('data/products.json').then(r => r.json()),
-        fetch('data/categories.json').then(r => r.json()),
-        fetch('data/banners.json').then(r => r.json()),
-        fetch('data/coupons.json').then(r => r.json())
+      const [products, categories, banners, coupons, vendors, bundles, healthCategories, recommendations] = await Promise.all([
+        SunfaraAPI.get('/products').catch(() => fetch('data/products.json').then(r => r.json()).catch(() => [])),
+        SunfaraAPI.get('/categories').catch(() => fetch('data/categories.json').then(r => r.json()).catch(() => [])),
+        fetch('data/banners.json').then(r => r.json()).catch(() => []),
+        fetch('data/coupons.json').then(r => r.json()).catch(() => []),
+        SunfaraAPI.get('/vendors').catch(() => fetch('data/vendors.json').then(r => r.json()).catch(() => [])),
+        fetch('data/bundles.json').then(r => r.json()).catch(() => []),
+        fetch('data/health-categories.json').then(r => r.json()).catch(() => []),
+        fetch('data/recommendations.json').then(r => r.json()).catch(() => [])
       ]);
       this.products = products;
       this.categories = categories;
       this.banners = banners;
       this.coupons = coupons;
+      this.vendors = vendors;
+      this.bundles = bundles;
+      this.healthCategories = healthCategories;
+      this.recommendations = recommendations;
       this.loaded = true;
     } catch (e) {
       console.error('Failed to load data:', e);
@@ -55,6 +67,59 @@ const Data = {
 
   getCategoryById(id) {
     return this.categories.find(c => c.id === id) || null;
+  },
+
+  getVendorById(id) {
+    return this.vendors.find(v => v.id === id) || null;
+  },
+
+  getFeaturedVendors() {
+    return this.vendors.filter(v => v.isFeatured && v.isActive);
+  },
+
+  getBundleById(id) {
+    return this.bundles.find(b => b.id === id) || null;
+  },
+
+  getFeaturedBundles() {
+    return this.bundles.filter(b => b.isFeatured);
+  },
+
+  getBestsellerBundles() {
+    return this.bundles.filter(b => b.isBestseller);
+  },
+
+  getHealthCategoryById(id) {
+    return this.healthCategories.find(h => h.id === id) || null;
+  },
+
+  getProductsByHealth(healthCategoryId) {
+    const healthCat = this.getHealthCategoryById(healthCategoryId);
+    if (!healthCat) return [];
+    return this.products.filter(p =>
+      (p.concerns && p.concerns.some(c => healthCat.id.includes(c))) ||
+      (p.tags && p.tags.some(t => healthCat.slug.includes(t)))
+    );
+  },
+
+  getProductsByVendor(vendorId) {
+    return this.products.filter(p => p.vendor === vendorId);
+  },
+
+  getBundleProducts(bundleId) {
+    const bundle = this.getBundleById(bundleId);
+    if (!bundle) return [];
+    return bundle.productIds.map(id => this.getProductById(id)).filter(p => p);
+  },
+
+  getRecommendationById(id) {
+    return this.recommendations.find(r => r.id === id) || null;
+  },
+
+  getRecommendedProducts(recId) {
+    const rec = this.getRecommendationById(recId);
+    if (!rec || !rec.productIds) return [];
+    return rec.productIds.map(id => this.getProductById(id)).filter(p => p);
   },
 
   /* Search products by name, brand, tags, keyIngredients, concerns */

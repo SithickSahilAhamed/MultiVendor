@@ -1,38 +1,15 @@
-# Multi-stage build for optimal image size
-FROM node:22-alpine AS builder
-
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
+EXPOSE 8080
 
-# Copy package files
-COPY package*.json ./
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY sunfara-backend-dotnet/ ./
+RUN dotnet restore src/Sunfara.Api/Sunfara.Api.csproj
+RUN dotnet publish src/Sunfara.Api/Sunfara.Api.csproj -c Release -o /app/publish --no-restore
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Production stage
-FROM node:22-alpine
-
+FROM base AS final
 WORKDIR /app
-
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
-
-# Copy from builder
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --chown=nodejs:nodejs package*.json ./
-COPY --chown=nodejs:nodejs server.js .
-COPY --chown=nodejs:nodejs firebase-config.js .
-COPY --chown=nodejs:nodejs .env.example ./
-
-# Switch to non-root user
-USER nodejs
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
-
-# Expose port
-EXPOSE 5000
-
-# Start application
-CMD ["node", "server.js"]
+COPY --from=build /app/publish .
+ENV ASPNETCORE_URLS=http://+:8080
+ENTRYPOINT ["dotnet", "Sunfara.Api.dll"]

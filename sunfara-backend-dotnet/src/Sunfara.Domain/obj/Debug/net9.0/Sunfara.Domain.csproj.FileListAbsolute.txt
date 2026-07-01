@@ -1,0 +1,11 @@
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\bin\Debug\net9.0\Sunfara.Domain.deps.json
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\bin\Debug\net9.0\Sunfara.Domain.dll
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\bin\Debug\net9.0\Sunfara.Domain.pdb
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\Sunfara.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\Sunfara.Domain.AssemblyInfoInputs.cache
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\Sunfara.Domain.AssemblyInfo.cs
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\Sunfara.Domain.csproj.CoreCompileInputs.cache
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\Sunfara.Domain.dll
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\refint\Sunfara.Domain.dll
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\Sunfara.Domain.pdb
+C:\Users\sabee\Desktop\Abdulla ecom\sunfara-backend-dotnet\src\Sunfara.Domain\obj\Debug\net9.0\ref\Sunfara.Domain.dll

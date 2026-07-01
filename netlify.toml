@@ -1,50 +1,49 @@
-# Netlify Configuration for Sunfara Marketplace
-
 [build]
-# Static site - no build step needed
-publish = "."
-command = ""
+  publish = "."
+  command = ""
 
-# Redirect all routes to index.html for SPA routing
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
-# Cache headers for static assets
-[[headers]]
-for = "/**/*"
-[headers.values]
-  Cache-Control = "public, max-age=3600"
-
-[[headers]]
-for = "/css/*"
-[headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
+[[redirects]]
+  from = "/admin*"
+  to = "/admin.html"
+  status = 200
 
 [[headers]]
-for = "/js/*"
-[headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
 [[headers]]
-for = "/assets/**/*"
-[headers.values]
-  Cache-Control = "public, max-age=86400"
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
-# Security headers
 [[headers]]
-for = "/*"
-[headers.values]
-  X-Content-Type-Options = "nosniff"
-  X-Frame-Options = "SAMEORIGIN"
-  X-XSS-Protection = "1; mode=block"
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
-# Environment variables (set in Netlify dashboard)
+[[headers]]
+  for = "/assets/**/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/json; charset=utf-8"
+
 [context.production]
-environment = { NODE_ENV = "production" }
+  environment = { NODE_ENV = "production" }
 
 [context.deploy-preview]
-environment = { NODE_ENV = "development" }
+  environment = { NODE_ENV = "development" }

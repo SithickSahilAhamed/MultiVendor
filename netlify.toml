@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# netlify.toml — Sunfara Deployment Configuration
+# Zero-build deployment for vanilla HTML/CSS/JS ecommerce + admin panel
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[build]
+  # No build step required — pure static HTML/CSS/JS
+  command = "echo 'Sunfara ready for deployment'"
+  publish = "sunfara"
+
+# Redirect all 404s to index.html for SPA hash routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Admin panel also uses hash routing
+[[redirects]]
+  from = "/admin*"
+  to = "/sunfara/admin.html"
+  status = 200
+
+# Cache static assets for 30 days
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+# Disable caching for HTML files (index, admin)
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# JSON data files cache for 1 hour
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/json; charset=utf-8"
+
+# Optimize images
+[[headers]]
+  for = "/assets/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Environment variables for production (optional Firebase)
+[context.production.environment]
+  VITE_FIREBASE_CONFIG = "true"
+
+# Deploy preview context
+[context.deploy-preview]
+  command = "echo 'Preview build ready'"
+
+# Dev context
+[context.development]
+  command = "echo 'Development mode'"

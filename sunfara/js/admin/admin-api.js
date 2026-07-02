@@ -1,7 +1,9 @@
-/* API Client — connects to .NET backend at localhost:5084 */
+/* API Client — connects to the live .NET backend (Railway) or local dev backend */
 
 const AdminAPI = {
-  baseURL: "http://localhost:5084/api",
+  baseURL: (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+    ? "http://localhost:5187/api"
+    : "https://web-production-97b5f.up.railway.app/api",
   token: null,
 
   init: function(token) {

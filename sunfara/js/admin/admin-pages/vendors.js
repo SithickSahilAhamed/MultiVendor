@@ -130,25 +130,31 @@ const AdminVendors = {
   addVendor: async function() {
     const name = document.getElementById('vendor-name')?.value;
     const email = document.getElementById('vendor-email')?.value;
+    const phone = document.getElementById('vendor-phone')?.value;
+    const commission = parseFloat(document.getElementById('vendor-commission')?.value) || 8;
     if (!name || !email) { AdminToast.error('Please fill all required fields'); return; }
     try {
-      await AdminAPI.createVendor({ name, email, status: 'pending', commission: 8 });
-    } catch(e) { console.warn('API create vendor failed', e); }
-    AdminToast.success('Vendor added successfully!');
-    AdminModal.close();
-    await this.render();
+      await AdminAPI.createVendor({ name, email, phone, status: 'pending', commission });
+      AdminToast.success('Vendor added successfully!');
+      AdminModal.close();
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to add vendor'); }
   },
 
   approveVendor: async function(id) {
-    try { await AdminAPI.approveVendor(id); } catch(e) { console.warn('API approve vendor failed', e); }
-    AdminToast.success('Vendor approved!');
-    await this.render();
+    try {
+      await AdminAPI.approveVendor(id);
+      AdminToast.success('Vendor approved!');
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to approve vendor'); }
   },
 
   rejectVendor: async function(id) {
-    try { await AdminAPI.rejectVendor(id); } catch(e) { console.warn('API reject vendor failed', e); }
-    AdminToast.success('Vendor rejected.');
-    await this.render();
+    try {
+      await AdminAPI.rejectVendor(id);
+      AdminToast.success('Vendor rejected.');
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to reject vendor'); }
   },
 
   deleteVendor: function(id) {
@@ -156,10 +162,12 @@ const AdminVendors = {
   },
 
   confirmDelete: async function(id) {
-    try { await AdminAPI.deleteVendor(id); } catch(e) { console.warn('API delete vendor failed', e); }
-    AdminModal.close();
-    AdminToast.success('Vendor deleted!');
-    await this.render();
+    try {
+      await AdminAPI.deleteVendor(id);
+      AdminModal.close();
+      AdminToast.success('Vendor deleted!');
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to delete vendor'); }
   },
 
   editVendor: function(id) {
@@ -183,9 +191,11 @@ const AdminVendors = {
   saveEdit: async function(id) {
     const name = document.getElementById('edit-vendor-name')?.value;
     const commission = parseFloat(document.getElementById('edit-vendor-commission')?.value);
-    try { await AdminAPI.updateVendor(id, { name, commission }); } catch(e) { console.warn('API update vendor failed', e); }
-    AdminModal.close();
-    AdminToast.success('Vendor updated!');
-    await this.render();
+    try {
+      await AdminAPI.updateVendor(id, { name, commission });
+      AdminModal.close();
+      AdminToast.success('Vendor updated!');
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to update vendor'); }
   }
 };

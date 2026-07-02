@@ -22,7 +22,7 @@ const AdminProducts = {
         </div>
         <div class="admin-page-actions">
           <button class="admin-btn admin-btn-secondary">📥 Import</button>
-          <button class="admin-btn admin-btn-primary">➕ Add Product</button>
+          <button class="admin-btn admin-btn-primary" onclick="AdminProducts.showAddModal()">➕ Add Product</button>
         </div>
       </div>
 
@@ -111,14 +111,78 @@ const AdminProducts = {
   },
 
   approveProduct: async function(id) {
-    try { await AdminAPI.approveProduct(id); } catch(e) { console.warn('API approve product failed', e); }
-    AdminToast.success('Product approved!');
-    await this.render();
+    try {
+      await AdminAPI.approveProduct(id);
+      AdminToast.success('Product approved!');
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to approve product'); }
   },
 
   rejectProduct: async function(id) {
-    try { await AdminAPI.updateProduct(id, { status: 'rejected' }); } catch(e) { console.warn('API reject product failed', e); }
-    AdminToast.success('Product rejected!');
-    await this.render();
+    try {
+      await AdminAPI.updateProduct(id, { status: 'rejected' });
+      AdminToast.success('Product rejected!');
+      await this.render();
+    } catch(e) { AdminToast.error(e.message || 'Failed to reject product'); }
+  },
+
+  showAddModal: async function() {
+    let vendors = [];
+    try { vendors = await AdminStore.fetchVendors(); } catch (e) { /* fall through with empty list */ }
+    const vendorOptions = vendors.length
+      ? vendors.map(v => `<option value="${v.id}" data-name="${v.name}">${v.name}</option>`).join('')
+      : '<option value="">No vendors yet — add one first</option>';
+
+    AdminModal.show('Add New Product', `
+      <div class="admin-form-group">
+        <label class="admin-label">Product Name *</label>
+        <input type="text" class="admin-input" placeholder="Enter product name" id="product-name" />
+      </div>
+      <div class="admin-form-group">
+        <label class="admin-label">Vendor *</label>
+        <select class="admin-select" id="product-vendor" style="width:100%">${vendorOptions}</select>
+      </div>
+      <div class="admin-form-group">
+        <label class="admin-label">Category</label>
+        <input type="text" class="admin-input" placeholder="e.g. Skincare" id="product-category" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="admin-form-group">
+          <label class="admin-label">Price (₹) *</label>
+          <input type="number" class="admin-input" min="0" step="0.01" id="product-price" />
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Stock *</label>
+          <input type="number" class="admin-input" min="0" step="1" id="product-stock" />
+        </div>
+      </div>
+    `, [
+      { label: 'Cancel', class: 'admin-btn-secondary', onclick: 'AdminModal.close()' },
+      { label: 'Add Product', class: 'admin-btn-primary', onclick: 'AdminProducts.addProduct()' }
+    ]);
+  },
+
+  addProduct: async function() {
+    const name = document.getElementById('product-name')?.value.trim();
+    const vendorSelect = document.getElementById('product-vendor');
+    const vendorId = vendorSelect?.value;
+    const vendorName = vendorSelect?.selectedOptions?.[0]?.dataset?.name || '';
+    const category = document.getElementById('product-category')?.value.trim();
+    const price = parseFloat(document.getElementById('product-price')?.value);
+    const stock = parseInt(document.getElementById('product-stock')?.value, 10);
+
+    if (!name || !vendorId || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
+      AdminToast.error('Please fill all required fields with valid values');
+      return;
+    }
+
+    try {
+      await AdminAPI.createProduct({ name, vendorId, vendorName, category, price, stock, status: 'pending' });
+      AdminToast.success('Product added successfully!');
+      AdminModal.close();
+      await this.render();
+    } catch (e) {
+      AdminToast.error(e.message || 'Failed to add product');
+    }
   }
 };

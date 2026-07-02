@@ -13,21 +13,17 @@ const AdminRouter = {
         
         <div style="margin-bottom: 24px;">
           <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #111827;">Email</label>
-          <input type="email" id="login-email" value="admin@sunfara.com" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px;" />
+          <input type="email" id="login-email" placeholder="you@example.com" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px;" />
         </div>
 
         <div style="margin-bottom: 32px;">
           <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #111827;">Password</label>
-          <input type="password" id="login-password" value="admin123" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px;" />
+          <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px;" />
         </div>
 
         <button onclick="AdminRouter.login()" style="width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
           Login to Dashboard
         </button>
-
-        <div style="text-align: center; margin-top: 24px; font-size: 12px; color: #6b7280;">
-          <p>Demo credentials pre-filled</p>
-        </div>
       </div>
     </div>
   `,

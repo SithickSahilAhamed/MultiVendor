@@ -48,15 +48,6 @@ const AdminStore = {
 
       return true;
     } catch (firebaseError) {
-      console.warn("Firebase auth failed, trying demo:", firebaseError.message);
-
-      // Demo fallback for local dev
-      if (email === "admin@sunfara.com" && password === "admin123") {
-        this.user = { email, name: "Admin User", avatar: "A", loginTime: new Date() };
-        this.isLoggedIn = true;
-        AdminUtils.setItem("user", this.user);
-        return true;
-      }
       throw new Error(firebaseError.code === "auth/invalid-credential"
         ? "Invalid email or password"
         : firebaseError.message);

@@ -47,6 +47,28 @@ function normalizeProduct(p) {
   };
 }
 
+/* Same idea as normalizeProduct but for vendor storefronts: a
+   self-registered vendor doc only has name/email/phone/status/commission -
+   none of the storefront fields (tagline, logo, certifications,
+   description) the vendor listing/detail pages assume exist. */
+function normalizeVendor(v) {
+  const name = v.name || 'Seller';
+  return {
+    ...v,
+    tagline: v.tagline || 'Quality products, direct from the source.',
+    logo: v.logo || `https://placehold.co/300x300/4a7c59/ffffff.png?text=${encodeURIComponent(name.slice(0, 2).toUpperCase())}&font=montserrat`,
+    banner: v.banner || `https://placehold.co/1200x300/2e5c3a/ffffff.png?text=${encodeURIComponent(name)}&font=montserrat`,
+    rating: Number(v.rating) || 0,
+    reviewCount: Number(v.reviews ?? v.reviewCount) || 0,
+    productsCount: Number(v.products ?? v.productsCount) || 0,
+    certifications: v.certifications || [],
+    description: v.description || `${name} is a seller on Sunfara's marketplace.`,
+    address: v.address || '',
+    verified: !!v.verified,
+    joinedDate: v.joinedDate || v.createdAt || ''
+  };
+}
+
 /* Format date to readable string */
 function formatDate(dateStr) {
   const d = new Date(dateStr);

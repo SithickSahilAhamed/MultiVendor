@@ -55,4 +55,5 @@ builder.Services.AddCors(o => o.AddPolicy("Sunfara", p => p.WithOrigins(builder.
 
 var app = builder.Build();
 app.UseSwagger(); app.UseSwaggerUI(); app.UseCors("Sunfara"); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
+app.MapGet("/", () => Results.Ok(new { status = "ok", service = "Sunfara API", docs = "/swagger" }));
 app.Run();

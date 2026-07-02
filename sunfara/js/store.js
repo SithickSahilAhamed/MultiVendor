@@ -132,6 +132,9 @@ const Store = {
     this.user = null;
     this.save();
     this.emit('user-updated');
+    if (window.firebase?.auth && window.FirebaseAuth?.signOut) {
+      window.FirebaseAuth.signOut(window.firebase.auth).catch(() => {});
+    }
   },
 
   updateProfile(data) {

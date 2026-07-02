@@ -28,9 +28,9 @@ const AuthPage = {
                 <button class="password-toggle" onclick="AuthPage.togglePwd('login-password')" aria-label="Toggle password visibility">👁</button>
               </div>
             </div>
-            <button class="btn btn-primary btn-full btn-lg" onclick="AuthPage.login()">Login to Sunfara</button>
+            <button class="btn btn-primary btn-full btn-lg" id="login-submit-btn" onclick="AuthPage.login()">Login to Sunfara</button>
             <div class="auth-divider"><span>or continue with</span></div>
-            <button class="social-btn" onclick="Toast.show('Google sign-in coming soon!','info')"><span class="social-btn-icon">G</span> Continue with Google</button>
+            <button class="social-btn" id="google-signin-btn" onclick="AuthPage.googleSignIn()"><span class="social-btn-icon">G</span> Continue with Google</button>
             <p class="auth-switch">New to Sunfara? <a onclick="AuthPage.switchTab('signup')">Sign Up →</a></p>
           </div>
 
@@ -65,18 +65,58 @@ const AuthPage = {
     if (input) input.type = input.type === 'password' ? 'text' : 'password';
   },
 
-  login() {
+  /* Maps a Firebase Auth error code to a friendly message */
+  authErrorMessage(err) {
+    const map = {
+      'auth/user-not-found': 'No account found with that email. Try signing up instead.',
+      'auth/wrong-password': 'Incorrect password. Please try again.',
+      'auth/invalid-credential': 'Incorrect email or password.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/email-already-in-use': 'An account already exists with this email. Try logging in instead.',
+      'auth/weak-password': 'Password is too weak. Use at least 8 characters with a number.',
+      'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
+      'auth/cancelled-popup-request': 'Google sign-in was cancelled.',
+      'auth/popup-blocked': 'Your browser blocked the Google sign-in popup. Please allow popups and try again.',
+      'auth/operation-not-allowed': 'This sign-in method isn\'t enabled yet. Please contact support.',
+      'auth/unauthorized-domain': 'This site isn\'t authorized for Google sign-in yet. Please contact support.',
+      'auth/network-request-failed': 'Network error. Please check your connection and try again.',
+      'auth/too-many-requests': 'Too many attempts. Please wait a moment and try again.'
+    };
+    return map[err?.code] || err?.message || 'Something went wrong. Please try again.';
+  },
+
+  /* Builds the Store.user shape from a Firebase Auth user object */
+  userFromFirebase(fbUser) {
+    return {
+      id: fbUser.uid,
+      name: fbUser.displayName || fbUser.email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      email: fbUser.email,
+      phone: fbUser.phoneNumber || ''
+    };
+  },
+
+  async login() {
     const email = document.getElementById('login-email')?.value.trim();
     const password = document.getElementById('login-password')?.value;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { Toast.show('Please enter a valid email', 'error'); return; }
     if (!password || password.length < 6) { Toast.show('Please enter your password', 'error'); return; }
-    Store.login({ name: email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), email, phone: '' });
-    Toast.show(`Welcome back to Sunfara! 🌿`, 'success');
-    Navbar.render();
-    window.location.hash = '#/';
+
+    const btn = document.getElementById('login-submit-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Logging in…'; }
+    try {
+      const cred = await window.FirebaseAuth.signInWithEmailAndPassword(window.firebase.auth, email, password);
+      Store.login(this.userFromFirebase(cred.user));
+      Toast.show(`Welcome back to Sunfara! 🌿`, 'success');
+      Navbar.render();
+      window.location.hash = '#/';
+    } catch (err) {
+      Toast.show(this.authErrorMessage(err), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Login to Sunfara'; }
+    }
   },
 
-  signup() {
+  async signup() {
     const name = document.getElementById('reg-name')?.value.trim();
     const email = document.getElementById('reg-email')?.value.trim();
     const phone = document.getElementById('reg-phone')?.value.trim();
@@ -91,9 +131,36 @@ const AuthPage = {
     if (password !== confirm) { Toast.show('Passwords do not match', 'error'); return; }
     if (!terms) { Toast.show('Please accept the Terms & Privacy Policy', 'error'); return; }
 
-    Store.login({ name, email, phone });
-    Toast.show(`Welcome to Sunfara, ${name.split(' ')[0]}! 🌿`, 'success', 4000);
-    Navbar.render();
-    window.location.hash = '#/';
+    const btn = document.querySelector('#panel-signup .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Creating account…'; }
+    try {
+      const cred = await window.FirebaseAuth.createUserWithEmailAndPassword(window.firebase.auth, email, password);
+      await window.FirebaseAuth.updateProfile(cred.user, { displayName: name });
+      Store.login({ id: cred.user.uid, name, email, phone });
+      Toast.show(`Welcome to Sunfara, ${name.split(' ')[0]}! 🌿`, 'success', 4000);
+      Navbar.render();
+      window.location.hash = '#/';
+    } catch (err) {
+      Toast.show(this.authErrorMessage(err), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Create My Account 🌿'; }
+    }
+  },
+
+  async googleSignIn() {
+    const btn = document.getElementById('google-signin-btn');
+    if (btn) { btn.disabled = true; }
+    try {
+      const provider = new window.FirebaseAuth.GoogleAuthProvider();
+      const cred = await window.FirebaseAuth.signInWithPopup(window.firebase.auth, provider);
+      Store.login(this.userFromFirebase(cred.user));
+      Toast.show(`Welcome to Sunfara! 🌿`, 'success');
+      Navbar.render();
+      window.location.hash = '#/';
+    } catch (err) {
+      Toast.show(this.authErrorMessage(err), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; }
+    }
   }
 };

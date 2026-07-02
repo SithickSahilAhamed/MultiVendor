@@ -194,7 +194,7 @@ const HomePage = {
         <div><h2 class="section-title">New Arrivals</h2><p class="section-subtitle">Fresh off the formulation lab — just launched</p></div>
         <a class="section-link" href="#/search?new=true">View All New →</a>
       </div>
-      <div class="grid-4">
+      <div class="grid grid-4">
         ${products.map(p => this.productCard(p, 'reveal')).join('')}
       </div>`;
   },

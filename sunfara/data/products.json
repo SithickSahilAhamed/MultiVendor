@@ -1,422 +1,3734 @@
 [
   {
-    "id": "SKN001","name": "Rose Hip Brightening Face Serum","brand": "Sunfara Organics","category": "organic-skincare","subcategory": "serums","price": 799,"mrp": 1299,"discount": 38,"rating": 4.6,"reviewCount": 284,"stock": 45,"isNew": true,"isBestseller": false,"isFeatured": true,
-    "tags": ["brightening","anti-aging","vitamin-c","paraben-free","vegan"],"certifications": ["USDA Organic","Cruelty-Free","Vegan"],"skinTypes": ["dry","normal","combination"],"concerns": ["brightening","anti-aging","hyperpigmentation"],"keyIngredients": ["Rosehip Oil","Vitamin C","Hyaluronic Acid"],
-    "image": "assets/images/products/SKN001.jpg","images": ["assets/images/products/SKN001.jpg","assets/images/products/SKN001-2.jpg","assets/images/products/SKN001-3.jpg"],
-    "variants": [{"id": "v1","name": "30ml","price": 799},{"id": "v2","name": "60ml","price": 1399}],
-    "description": "A luxurious serum powered by cold-pressed rosehip oil and a potent 15% Vitamin C complex. Brightens dark spots, evens skin tone, and delivers a visible glow within 4 weeks.","ingredients": "Rosehip Oil (Rosa Canina), Ascorbic Acid, Sodium Hyaluronate, Niacinamide, Jojoba Oil, Aloe Vera, Tocopherol, Glycerin, Aqua","howToUse": "Apply 3-4 drops morning and evening after cleansing. Press gently into skin. Follow with moisturiser.","highlights": ["100% Cold-pressed Rosehip Oil","15% Vitamin C concentration","No parabens, sulfates, silicones","Dermatologically tested"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN001",
+    "name": "Rose Hip Brightening Face Serum",
+    "brand": "Sunfara Organics",
+    "category": "organic-skincare",
+    "subcategory": "serums",
+    "price": 799,
+    "mrp": 1299,
+    "discount": 38,
+    "rating": 4.6,
+    "reviewCount": 284,
+    "stock": 45,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "brightening",
+      "anti-aging",
+      "vitamin-c",
+      "paraben-free",
+      "vegan"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "combination"
+    ],
+    "concerns": [
+      "brightening",
+      "anti-aging",
+      "hyperpigmentation"
+    ],
+    "keyIngredients": [
+      "Rosehip Oil",
+      "Vitamin C",
+      "Hyaluronic Acid"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Rose%20Hip%20Brightening%20Face%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Rose%20Hip%20Brightening%20Face%20%E2%80%A6&font=montserrat",
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Rose%20Hip%20Brightening%20Face%20%E2%80%A6&font=montserrat",
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Rose%20Hip%20Brightening%20Face%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "30ml",
+        "price": 799
+      },
+      {
+        "id": "v2",
+        "name": "60ml",
+        "price": 1399
+      }
+    ],
+    "description": "A luxurious serum powered by cold-pressed rosehip oil and a potent 15% Vitamin C complex. Brightens dark spots, evens skin tone, and delivers a visible glow within 4 weeks.",
+    "ingredients": "Rosehip Oil (Rosa Canina), Ascorbic Acid, Sodium Hyaluronate, Niacinamide, Jojoba Oil, Aloe Vera, Tocopherol, Glycerin, Aqua",
+    "howToUse": "Apply 3-4 drops morning and evening after cleansing. Press gently into skin. Follow with moisturiser.",
+    "highlights": [
+      "100% Cold-pressed Rosehip Oil",
+      "15% Vitamin C concentration",
+      "No parabens, sulfates, silicones",
+      "Dermatologically tested"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SKN002","name": "Green Tea Mattifying Moisturiser","brand": "Sunfara Organics","category": "organic-skincare","subcategory": "moisturizers","price": 549,"mrp": 799,"discount": 31,"rating": 4.4,"reviewCount": 192,"stock": 60,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["oil-control","mattifying","oily-skin","green-tea","paraben-free"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["oily","combination"],"concerns": ["acne","oil-control","pores"],"keyIngredients": ["Green Tea Extract","Niacinamide","Zinc"],
-    "image": "assets/images/products/SKN002.jpg","images": ["assets/images/products/SKN002.jpg"],
-    "variants": [{"id": "v1","name": "50ml","price": 549}],
-    "description": "Lightweight oil-free moisturiser packed with green tea antioxidants. Controls shine, minimises pores, and keeps skin balanced all day.","ingredients": "Green Tea Extract, Niacinamide, Zinc PCA, Aloe Vera, Glycerin, Centella Asiatica, Aqua","howToUse": "Apply a pea-sized amount on cleansed face morning and night. Use under sunscreen.","highlights": ["Oil-free formula","Controls shine 8 hours","Minimises pores","Non-comedogenic"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN002",
+    "name": "Green Tea Mattifying Moisturiser",
+    "brand": "Sunfara Organics",
+    "category": "organic-skincare",
+    "subcategory": "moisturizers",
+    "price": 549,
+    "mrp": 799,
+    "discount": 31,
+    "rating": 4.4,
+    "reviewCount": 192,
+    "stock": 60,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "oil-control",
+      "mattifying",
+      "oily-skin",
+      "green-tea",
+      "paraben-free"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination"
+    ],
+    "concerns": [
+      "acne",
+      "oil-control",
+      "pores"
+    ],
+    "keyIngredients": [
+      "Green Tea Extract",
+      "Niacinamide",
+      "Zinc"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Green%20Tea%20Mattifying%20Moist%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Green%20Tea%20Mattifying%20Moist%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "50ml",
+        "price": 549
+      }
+    ],
+    "description": "Lightweight oil-free moisturiser packed with green tea antioxidants. Controls shine, minimises pores, and keeps skin balanced all day.",
+    "ingredients": "Green Tea Extract, Niacinamide, Zinc PCA, Aloe Vera, Glycerin, Centella Asiatica, Aqua",
+    "howToUse": "Apply a pea-sized amount on cleansed face morning and night. Use under sunscreen.",
+    "highlights": [
+      "Oil-free formula",
+      "Controls shine 8 hours",
+      "Minimises pores",
+      "Non-comedogenic"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SKN003","name": "Calendula Soothing Toner","brand": "Plum","category": "organic-skincare","subcategory": "toners","price": 349,"mrp": 499,"discount": 30,"rating": 4.3,"reviewCount": 145,"stock": 80,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["soothing","sensitive-skin","alcohol-free","calendula"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["sensitive","dry","normal"],"concerns": ["redness","soothing","hydration"],"keyIngredients": ["Calendula Extract","Chamomile","Rose Water"],
-    "image": "assets/images/products/SKN003.jpg","images": ["assets/images/products/SKN003.jpg"],
-    "variants": [{"id": "v1","name": "150ml","price": 349},{"id": "v2","name": "250ml","price": 549}],
-    "description": "Alcohol-free toner with calendula and chamomile. Calms irritated skin, reduces redness, and preps skin for the rest of your routine.","ingredients": "Rosa Damascena Water, Calendula Extract, Chamomile Extract, Glycerin, Panthenol, Aqua","howToUse": "After cleansing, apply on cotton pad or spray directly. Pat gently, do not rinse.","highlights": ["0% Alcohol","Calms redness instantly","pH balanced","Sensitive skin safe"],"deliveryDays": 3,"returnDays": 15
+    "id": "SKN003",
+    "name": "Calendula Soothing Toner",
+    "brand": "Plum",
+    "category": "organic-skincare",
+    "subcategory": "toners",
+    "price": 349,
+    "mrp": 499,
+    "discount": 30,
+    "rating": 4.3,
+    "reviewCount": 145,
+    "stock": 80,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "soothing",
+      "sensitive-skin",
+      "alcohol-free",
+      "calendula"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "sensitive",
+      "dry",
+      "normal"
+    ],
+    "concerns": [
+      "redness",
+      "soothing",
+      "hydration"
+    ],
+    "keyIngredients": [
+      "Calendula Extract",
+      "Chamomile",
+      "Rose Water"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Calendula%20Soothing%20Toner&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Calendula%20Soothing%20Toner&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "150ml",
+        "price": 349
+      },
+      {
+        "id": "v2",
+        "name": "250ml",
+        "price": 549
+      }
+    ],
+    "description": "Alcohol-free toner with calendula and chamomile. Calms irritated skin, reduces redness, and preps skin for the rest of your routine.",
+    "ingredients": "Rosa Damascena Water, Calendula Extract, Chamomile Extract, Glycerin, Panthenol, Aqua",
+    "howToUse": "After cleansing, apply on cotton pad or spray directly. Pat gently, do not rinse.",
+    "highlights": [
+      "0% Alcohol",
+      "Calms redness instantly",
+      "pH balanced",
+      "Sensitive skin safe"
+    ],
+    "deliveryDays": 3,
+    "returnDays": 15
   },
   {
-    "id": "SKN004","name": "Neem & Turmeric Purifying Cleanser","brand": "Sunfara Organics","category": "organic-skincare","subcategory": "cleansers","price": 299,"mrp": 449,"discount": 33,"rating": 4.5,"reviewCount": 310,"stock": 120,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["acne","purifying","neem","turmeric","sulfate-free"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["oily","combination","acne-prone"],"concerns": ["acne","brightening","oil-control"],"keyIngredients": ["Neem Extract","Turmeric","Tea Tree Oil"],
-    "image": "assets/images/products/SKN004.jpg","images": ["assets/images/products/SKN004.jpg"],
-    "variants": [{"id": "v1","name": "100ml","price": 299}],
-    "description": "Gentle yet powerful cleanser with neem and turmeric. Deep-cleans pores, fights acne bacteria, and leaves skin bright and clear.","ingredients": "Neem Extract, Turmeric Extract, Tea Tree Oil, Aloe Vera, Cocamidopropyl Betaine, Aqua","howToUse": "Wet face. Apply and massage 60 seconds. Rinse with lukewarm water. Use twice daily.","highlights": ["Sulfate-free","Anti-bacterial neem","Brightening turmeric","No harsh stripping"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN004",
+    "name": "Neem & Turmeric Purifying Cleanser",
+    "brand": "Sunfara Organics",
+    "category": "organic-skincare",
+    "subcategory": "cleansers",
+    "price": 299,
+    "mrp": 449,
+    "discount": 33,
+    "rating": 4.5,
+    "reviewCount": 310,
+    "stock": 120,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "acne",
+      "purifying",
+      "neem",
+      "turmeric",
+      "sulfate-free"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination",
+      "acne-prone"
+    ],
+    "concerns": [
+      "acne",
+      "brightening",
+      "oil-control"
+    ],
+    "keyIngredients": [
+      "Neem Extract",
+      "Turmeric",
+      "Tea Tree Oil"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Neem%20%26%20Turmeric%20Purifying%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Neem%20%26%20Turmeric%20Purifying%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100ml",
+        "price": 299
+      }
+    ],
+    "description": "Gentle yet powerful cleanser with neem and turmeric. Deep-cleans pores, fights acne bacteria, and leaves skin bright and clear.",
+    "ingredients": "Neem Extract, Turmeric Extract, Tea Tree Oil, Aloe Vera, Cocamidopropyl Betaine, Aqua",
+    "howToUse": "Wet face. Apply and massage 60 seconds. Rinse with lukewarm water. Use twice daily.",
+    "highlights": [
+      "Sulfate-free",
+      "Anti-bacterial neem",
+      "Brightening turmeric",
+      "No harsh stripping"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SKN005","name": "Multani Mitti Detox Face Mask","brand": "Biotique","category": "organic-skincare","subcategory": "masks","price": 249,"mrp": 399,"discount": 38,"rating": 4.2,"reviewCount": 98,"stock": 55,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["detox","clay","pores","oily-skin"],"certifications": ["Ayurvedic"],"skinTypes": ["oily","combination"],"concerns": ["pores","oil-control","acne"],"keyIngredients": ["Multani Mitti","Kaolin Clay","Sandalwood"],
-    "image": "assets/images/products/SKN005.jpg","images": ["assets/images/products/SKN005.jpg"],
-    "variants": [{"id": "v1","name": "100g","price": 249}],
-    "description": "Classic Multani Mitti mask with kaolin clay and sandalwood. Draws out impurities, tightens pores, and leaves skin soft and matte.","ingredients": "Fuller's Earth, Kaolin, Sandalwood Powder, Rose Water, Glycerin","howToUse": "Mix with rose water to paste. Apply 15 minutes. Rinse with cool water. Use 2x per week.","highlights": ["100% Natural clay","Deep pore cleansing","Instant mattifying","No artificial additives"],"deliveryDays": 5,"returnDays": 15
+    "id": "SKN005",
+    "name": "Multani Mitti Detox Face Mask",
+    "brand": "Biotique",
+    "category": "organic-skincare",
+    "subcategory": "masks",
+    "price": 249,
+    "mrp": 399,
+    "discount": 38,
+    "rating": 4.2,
+    "reviewCount": 98,
+    "stock": 55,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "detox",
+      "clay",
+      "pores",
+      "oily-skin"
+    ],
+    "certifications": [
+      "Ayurvedic"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination"
+    ],
+    "concerns": [
+      "pores",
+      "oil-control",
+      "acne"
+    ],
+    "keyIngredients": [
+      "Multani Mitti",
+      "Kaolin Clay",
+      "Sandalwood"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Multani%20Mitti%20Detox%20Face%20M%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Multani%20Mitti%20Detox%20Face%20M%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100g",
+        "price": 249
+      }
+    ],
+    "description": "Classic Multani Mitti mask with kaolin clay and sandalwood. Draws out impurities, tightens pores, and leaves skin soft and matte.",
+    "ingredients": "Fuller's Earth, Kaolin, Sandalwood Powder, Rose Water, Glycerin",
+    "howToUse": "Mix with rose water to paste. Apply 15 minutes. Rinse with cool water. Use 2x per week.",
+    "highlights": [
+      "100% Natural clay",
+      "Deep pore cleansing",
+      "Instant mattifying",
+      "No artificial additives"
+    ],
+    "deliveryDays": 5,
+    "returnDays": 15
   },
   {
-    "id": "SKN006","name": "Peptide Eye Revival Cream","brand": "Dot & Key","category": "organic-skincare","subcategory": "eye-creams","price": 699,"mrp": 999,"discount": 30,"rating": 4.5,"reviewCount": 167,"stock": 35,"isNew": true,"isBestseller": false,"isFeatured": true,
-    "tags": ["anti-aging","dark-circles","peptides","eye-cream"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["dark-circles","puffiness","anti-aging"],"keyIngredients": ["Peptide Complex","Caffeine","Vitamin K"],
-    "image": "assets/images/products/SKN006.jpg","images": ["assets/images/products/SKN006.jpg"],
-    "variants": [{"id": "v1","name": "15ml","price": 699}],
-    "description": "Targeted eye cream with peptides and caffeine. Visibly reduces dark circles, depuffs, and firms the delicate under-eye area.","ingredients": "Palmitoyl Tripeptide-1, Caffeine, Vitamin K, Niacinamide, Hyaluronic Acid, Shea Butter, Aqua","howToUse": "Dab a tiny amount around eye area morning and night. Pat gently with ring finger.","highlights": ["Reduces dark circles 4 weeks","De-puffs in minutes","Peptide-powered firming","Ophthalmologist tested"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN006",
+    "name": "Peptide Eye Revival Cream",
+    "brand": "Dot & Key",
+    "category": "organic-skincare",
+    "subcategory": "eye-creams",
+    "price": 699,
+    "mrp": 999,
+    "discount": 30,
+    "rating": 4.5,
+    "reviewCount": 167,
+    "stock": 35,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "anti-aging",
+      "dark-circles",
+      "peptides",
+      "eye-cream"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "dark-circles",
+      "puffiness",
+      "anti-aging"
+    ],
+    "keyIngredients": [
+      "Peptide Complex",
+      "Caffeine",
+      "Vitamin K"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Peptide%20Eye%20Revival%20Cream&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Peptide%20Eye%20Revival%20Cream&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "15ml",
+        "price": 699
+      }
+    ],
+    "description": "Targeted eye cream with peptides and caffeine. Visibly reduces dark circles, depuffs, and firms the delicate under-eye area.",
+    "ingredients": "Palmitoyl Tripeptide-1, Caffeine, Vitamin K, Niacinamide, Hyaluronic Acid, Shea Butter, Aqua",
+    "howToUse": "Dab a tiny amount around eye area morning and night. Pat gently with ring finger.",
+    "highlights": [
+      "Reduces dark circles 4 weeks",
+      "De-puffs in minutes",
+      "Peptide-powered firming",
+      "Ophthalmologist tested"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SKN007","name": "Hyaluronic Acid Deep Hydration Serum","brand": "Sunfara Organics","category": "organic-skincare","subcategory": "serums","price": 649,"mrp": 999,"discount": 35,"rating": 4.7,"reviewCount": 412,"stock": 90,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["hydration","plumping","all-skin","hyaluronic-acid"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["dry","normal","combination","sensitive"],"concerns": ["hydration","plumping","dullness"],"keyIngredients": ["3-Weight Hyaluronic Acid","Aloe Vera","Panthenol"],
-    "image": "assets/images/products/SKN007.jpg","images": ["assets/images/products/SKN007.jpg"],
-    "variants": [{"id": "v1","name": "30ml","price": 649}],
-    "description": "Lightweight water-based serum with three molecular weights of hyaluronic acid. Plumps fine lines and leaves skin dewy.","ingredients": "Sodium Hyaluronate (3 weights), Aloe Vera, Panthenol, Glycerin, Centella Asiatica, Aqua","howToUse": "Apply 3-4 drops to damp skin. Layer under moisturiser morning and night.","highlights": ["Triple-weight HA","72-hour hydration","Fragrance-free","All skin types"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN007",
+    "name": "Hyaluronic Acid Deep Hydration Serum",
+    "brand": "Sunfara Organics",
+    "category": "organic-skincare",
+    "subcategory": "serums",
+    "price": 649,
+    "mrp": 999,
+    "discount": 35,
+    "rating": 4.7,
+    "reviewCount": 412,
+    "stock": 90,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "hydration",
+      "plumping",
+      "all-skin",
+      "hyaluronic-acid"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "combination",
+      "sensitive"
+    ],
+    "concerns": [
+      "hydration",
+      "plumping",
+      "dullness"
+    ],
+    "keyIngredients": [
+      "3-Weight Hyaluronic Acid",
+      "Aloe Vera",
+      "Panthenol"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Hyaluronic%20Acid%20Deep%20Hydra%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Hyaluronic%20Acid%20Deep%20Hydra%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "30ml",
+        "price": 649
+      }
+    ],
+    "description": "Lightweight water-based serum with three molecular weights of hyaluronic acid. Plumps fine lines and leaves skin dewy.",
+    "ingredients": "Sodium Hyaluronate (3 weights), Aloe Vera, Panthenol, Glycerin, Centella Asiatica, Aqua",
+    "howToUse": "Apply 3-4 drops to damp skin. Layer under moisturiser morning and night.",
+    "highlights": [
+      "Triple-weight HA",
+      "72-hour hydration",
+      "Fragrance-free",
+      "All skin types"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SKN008","name": "Retinol & Bakuchiol Night Cream","brand": "Kama Ayurveda","category": "organic-skincare","subcategory": "moisturizers","price": 1299,"mrp": 1899,"discount": 32,"rating": 4.6,"reviewCount": 203,"stock": 28,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["anti-aging","night-cream","retinol","bakuchiol"],"certifications": ["Cruelty-Free"],"skinTypes": ["dry","normal","mature"],"concerns": ["anti-aging","wrinkles","firming"],"keyIngredients": ["Retinol","Bakuchiol","Squalane"],
-    "image": "assets/images/products/SKN008.jpg","images": ["assets/images/products/SKN008.jpg"],
-    "variants": [{"id": "v1","name": "50ml","price": 1299}],
-    "description": "Powerful night cream combining retinol and plant-based bakuchiol. Reduces fine lines, boosts collagen, and reveals smoother skin overnight.","ingredients": "Retinol, Bakuchiol, Squalane, Shea Butter, Peptide Complex, Niacinamide, Jojoba Oil, Aqua","howToUse": "Apply pea-size at night after serum. Avoid eye area. Start 2-3x/week, increase gradually.","highlights": ["Clinically proven retinol","Plant-based bakuchiol","Results in 8 weeks","Rich nourishing texture"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN008",
+    "name": "Retinol & Bakuchiol Night Cream",
+    "brand": "Kama Ayurveda",
+    "category": "organic-skincare",
+    "subcategory": "moisturizers",
+    "price": 1299,
+    "mrp": 1899,
+    "discount": 32,
+    "rating": 4.6,
+    "reviewCount": 203,
+    "stock": 28,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "anti-aging",
+      "night-cream",
+      "retinol",
+      "bakuchiol"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "mature"
+    ],
+    "concerns": [
+      "anti-aging",
+      "wrinkles",
+      "firming"
+    ],
+    "keyIngredients": [
+      "Retinol",
+      "Bakuchiol",
+      "Squalane"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Retinol%20%26%20Bakuchiol%20Night%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Retinol%20%26%20Bakuchiol%20Night%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "50ml",
+        "price": 1299
+      }
+    ],
+    "description": "Powerful night cream combining retinol and plant-based bakuchiol. Reduces fine lines, boosts collagen, and reveals smoother skin overnight.",
+    "ingredients": "Retinol, Bakuchiol, Squalane, Shea Butter, Peptide Complex, Niacinamide, Jojoba Oil, Aqua",
+    "howToUse": "Apply pea-size at night after serum. Avoid eye area. Start 2-3x/week, increase gradually.",
+    "highlights": [
+      "Clinically proven retinol",
+      "Plant-based bakuchiol",
+      "Results in 8 weeks",
+      "Rich nourishing texture"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SKN009","name": "Vitamin C Glow Booster Essence","brand": "Mamaearth","category": "organic-skincare","subcategory": "toners","price": 399,"mrp": 599,"discount": 33,"rating": 4.3,"reviewCount": 178,"stock": 70,"isNew": true,"isBestseller": false,"isFeatured": false,
-    "tags": ["brightening","vitamin-c","glow","all-skin"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["brightening","dullness","uneven-tone"],"keyIngredients": ["Stable Vitamin C","Niacinamide","Kojic Acid"],
-    "image": "assets/images/products/SKN009.jpg","images": ["assets/images/products/SKN009.jpg"],
-    "variants": [{"id": "v1","name": "100ml","price": 399}],
-    "description": "Watery essence with stable Vitamin C and kojic acid. Brightens dull skin, fades pigmentation, and gives an instant radiance boost.","ingredients": "Ascorbyl Glucoside, Niacinamide, Kojic Acid, Glycerin, Centella Asiatica, Aqua","howToUse": "After toning, pat a few drops onto skin. Follow with serum and moisturiser.","highlights": ["Stable Vitamin C","Instant glow","Fades dark spots","Lightweight texture"],"deliveryDays": 3,"returnDays": 15
+    "id": "SKN009",
+    "name": "Vitamin C Glow Booster Essence",
+    "brand": "Mamaearth",
+    "category": "organic-skincare",
+    "subcategory": "toners",
+    "price": 399,
+    "mrp": 599,
+    "discount": 33,
+    "rating": 4.3,
+    "reviewCount": 178,
+    "stock": 70,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "brightening",
+      "vitamin-c",
+      "glow",
+      "all-skin"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "brightening",
+      "dullness",
+      "uneven-tone"
+    ],
+    "keyIngredients": [
+      "Stable Vitamin C",
+      "Niacinamide",
+      "Kojic Acid"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Vitamin%20C%20Glow%20Booster%20Ess%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Vitamin%20C%20Glow%20Booster%20Ess%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100ml",
+        "price": 399
+      }
+    ],
+    "description": "Watery essence with stable Vitamin C and kojic acid. Brightens dull skin, fades pigmentation, and gives an instant radiance boost.",
+    "ingredients": "Ascorbyl Glucoside, Niacinamide, Kojic Acid, Glycerin, Centella Asiatica, Aqua",
+    "howToUse": "After toning, pat a few drops onto skin. Follow with serum and moisturiser.",
+    "highlights": [
+      "Stable Vitamin C",
+      "Instant glow",
+      "Fades dark spots",
+      "Lightweight texture"
+    ],
+    "deliveryDays": 3,
+    "returnDays": 15
   },
   {
-    "id": "SKN010","name": "Oat & Honey Sensitive Skin Cream","brand": "Sunfara Organics","category": "organic-skincare","subcategory": "moisturizers","price": 499,"mrp": 749,"discount": 33,"rating": 4.8,"reviewCount": 356,"stock": 65,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["sensitive","soothing","oat","honey","fragrance-free"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["sensitive","dry"],"concerns": ["redness","soothing","hydration"],"keyIngredients": ["Colloidal Oatmeal","Raw Honey","Allantoin"],
-    "image": "assets/images/products/SKN010.jpg","images": ["assets/images/products/SKN010.jpg"],
-    "variants": [{"id": "v1","name": "50ml","price": 499}],
-    "description": "Rich barrier-repairing cream with colloidal oatmeal and raw honey for sensitive and reactive skin. Fragrance-free and hypoallergenic.","ingredients": "Colloidal Oatmeal, Honey, Allantoin, Ceramide NP, Shea Butter, Glycerin, Aqua","howToUse": "Apply generously after toner and serum morning and night.","highlights": ["Colloidal oatmeal soothes","Honey locks moisture","Ceramide barrier repair","100% Fragrance-free"],"deliveryDays": 4,"returnDays": 15
+    "id": "SKN010",
+    "name": "Oat & Honey Sensitive Skin Cream",
+    "brand": "Sunfara Organics",
+    "category": "organic-skincare",
+    "subcategory": "moisturizers",
+    "price": 499,
+    "mrp": 749,
+    "discount": 33,
+    "rating": 4.8,
+    "reviewCount": 356,
+    "stock": 65,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "sensitive",
+      "soothing",
+      "oat",
+      "honey",
+      "fragrance-free"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "sensitive",
+      "dry"
+    ],
+    "concerns": [
+      "redness",
+      "soothing",
+      "hydration"
+    ],
+    "keyIngredients": [
+      "Colloidal Oatmeal",
+      "Raw Honey",
+      "Allantoin"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Oat%20%26%20Honey%20Sensitive%20Skin%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Oat%20%26%20Honey%20Sensitive%20Skin%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "50ml",
+        "price": 499
+      }
+    ],
+    "description": "Rich barrier-repairing cream with colloidal oatmeal and raw honey for sensitive and reactive skin. Fragrance-free and hypoallergenic.",
+    "ingredients": "Colloidal Oatmeal, Honey, Allantoin, Ceramide NP, Shea Butter, Glycerin, Aqua",
+    "howToUse": "Apply generously after toner and serum morning and night.",
+    "highlights": [
+      "Colloidal oatmeal soothes",
+      "Honey locks moisture",
+      "Ceramide barrier repair",
+      "100% Fragrance-free"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "HAR001","name": "Bhringraj & Amla Hair Growth Oil","brand": "Sunfara Organics","category": "herbal-haircare","subcategory": "hair-oils","price": 449,"mrp": 699,"discount": 36,"rating": 4.7,"reviewCount": 521,"stock": 85,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["hair-growth","bhringraj","amla","scalp","ayurvedic"],"certifications": ["USDA Organic","Ayurvedic"],"skinTypes": [],"concerns": ["hair-fall","hair-growth","scalp-health"],"keyIngredients": ["Bhringraj","Amla","Brahmi","Sesame Oil"],
-    "image": "assets/images/products/HAR001.jpg","images": ["assets/images/products/HAR001.jpg"],
-    "variants": [{"id": "v1","name": "100ml","price": 449},{"id": "v2","name": "200ml","price": 799}],
-    "description": "Ancient Ayurvedic hair oil with bhringraj, amla, and brahmi in sesame oil. Reduces hair fall, stimulates growth, and nourishes scalp.","ingredients": "Sesame Oil, Bhringraj Extract, Amla Extract, Brahmi, Fenugreek Extract","howToUse": "Warm oil. Massage into scalp 10-15 minutes. Leave 1-2 hours or overnight. Shampoo thoroughly.","highlights": ["Reduces hair fall 4 weeks","Stimulates new growth","Ancient Ayurvedic formula","No mineral oil"],"deliveryDays": 4,"returnDays": 15
+    "id": "HAR001",
+    "name": "Bhringraj & Amla Hair Growth Oil",
+    "brand": "Sunfara Organics",
+    "category": "herbal-haircare",
+    "subcategory": "hair-oils",
+    "price": 449,
+    "mrp": 699,
+    "discount": 36,
+    "rating": 4.7,
+    "reviewCount": 521,
+    "stock": 85,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "hair-growth",
+      "bhringraj",
+      "amla",
+      "scalp",
+      "ayurvedic"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Ayurvedic"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "hair-fall",
+      "hair-growth",
+      "scalp-health"
+    ],
+    "keyIngredients": [
+      "Bhringraj",
+      "Amla",
+      "Brahmi",
+      "Sesame Oil"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Bhringraj%20%26%20Amla%20Hair%20Grow%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Bhringraj%20%26%20Amla%20Hair%20Grow%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100ml",
+        "price": 449
+      },
+      {
+        "id": "v2",
+        "name": "200ml",
+        "price": 799
+      }
+    ],
+    "description": "Ancient Ayurvedic hair oil with bhringraj, amla, and brahmi in sesame oil. Reduces hair fall, stimulates growth, and nourishes scalp.",
+    "ingredients": "Sesame Oil, Bhringraj Extract, Amla Extract, Brahmi, Fenugreek Extract",
+    "howToUse": "Warm oil. Massage into scalp 10-15 minutes. Leave 1-2 hours or overnight. Shampoo thoroughly.",
+    "highlights": [
+      "Reduces hair fall 4 weeks",
+      "Stimulates new growth",
+      "Ancient Ayurvedic formula",
+      "No mineral oil"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "HAR002","name": "Argan & Keratin Repair Shampoo","brand": "Mamaearth","category": "herbal-haircare","subcategory": "shampoos","price": 349,"mrp": 499,"discount": 30,"rating": 4.3,"reviewCount": 289,"stock": 95,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["repair","argan","keratin","damaged-hair","sulfate-free"],"certifications": ["Cruelty-Free"],"skinTypes": [],"concerns": ["damage-repair","frizz","breakage"],"keyIngredients": ["Argan Oil","Keratin","Biotin"],
-    "image": "assets/images/products/HAR002.jpg","images": ["assets/images/products/HAR002.jpg"],
-    "variants": [{"id": "v1","name": "250ml","price": 349}],
-    "description": "Sulfate-free shampoo with argan oil and keratin. Repairs damaged hair, reduces frizz, and restores shine after first wash.","ingredients": "Argan Oil, Hydrolyzed Keratin, Biotin, Panthenol, Cocamidopropyl Betaine, Aqua","howToUse": "Lather on wet hair. Massage scalp. Rinse. Follow with conditioner.","highlights": ["Sulfate & Paraben free","Repairs in one wash","Frizz control","Color-safe"],"deliveryDays": 4,"returnDays": 15
+    "id": "HAR002",
+    "name": "Argan & Keratin Repair Shampoo",
+    "brand": "Mamaearth",
+    "category": "herbal-haircare",
+    "subcategory": "shampoos",
+    "price": 349,
+    "mrp": 499,
+    "discount": 30,
+    "rating": 4.3,
+    "reviewCount": 289,
+    "stock": 95,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "repair",
+      "argan",
+      "keratin",
+      "damaged-hair",
+      "sulfate-free"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "damage-repair",
+      "frizz",
+      "breakage"
+    ],
+    "keyIngredients": [
+      "Argan Oil",
+      "Keratin",
+      "Biotin"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Argan%20%26%20Keratin%20Repair%20Sha%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Argan%20%26%20Keratin%20Repair%20Sha%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "250ml",
+        "price": 349
+      }
+    ],
+    "description": "Sulfate-free shampoo with argan oil and keratin. Repairs damaged hair, reduces frizz, and restores shine after first wash.",
+    "ingredients": "Argan Oil, Hydrolyzed Keratin, Biotin, Panthenol, Cocamidopropyl Betaine, Aqua",
+    "howToUse": "Lather on wet hair. Massage scalp. Rinse. Follow with conditioner.",
+    "highlights": [
+      "Sulfate & Paraben free",
+      "Repairs in one wash",
+      "Frizz control",
+      "Color-safe"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "HAR003","name": "Coconut Milk Deep Conditioner","brand": "Sunfara Organics","category": "herbal-haircare","subcategory": "conditioners","price": 399,"mrp": 599,"discount": 33,"rating": 4.5,"reviewCount": 198,"stock": 70,"isNew": true,"isBestseller": false,"isFeatured": true,
-    "tags": ["moisturising","coconut","deep-conditioning","dry-hair"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["dryness","frizz","softness"],"keyIngredients": ["Coconut Milk","Shea Butter","Argan Oil"],
-    "image": "assets/images/products/HAR003.jpg","images": ["assets/images/products/HAR003.jpg"],
-    "variants": [{"id": "v1","name": "200ml","price": 399}],
-    "description": "Rich deep conditioner with coconut milk and shea butter. Transforms dry, brittle hair into soft, silky strands.","ingredients": "Coconut Milk, Shea Butter, Argan Oil, Cetearyl Alcohol, Panthenol, Aqua","howToUse": "After shampoo, apply mid-length to ends. Leave 3-5 minutes. Rinse with cool water.","highlights": ["Intense moisture boost","Reduces breakage","Detangling formula","No silicones"],"deliveryDays": 4,"returnDays": 15
+    "id": "HAR003",
+    "name": "Coconut Milk Deep Conditioner",
+    "brand": "Sunfara Organics",
+    "category": "herbal-haircare",
+    "subcategory": "conditioners",
+    "price": 399,
+    "mrp": 599,
+    "discount": 33,
+    "rating": 4.5,
+    "reviewCount": 198,
+    "stock": 70,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "moisturising",
+      "coconut",
+      "deep-conditioning",
+      "dry-hair"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "dryness",
+      "frizz",
+      "softness"
+    ],
+    "keyIngredients": [
+      "Coconut Milk",
+      "Shea Butter",
+      "Argan Oil"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Coconut%20Milk%20Deep%20Conditio%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Coconut%20Milk%20Deep%20Conditio%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "200ml",
+        "price": 399
+      }
+    ],
+    "description": "Rich deep conditioner with coconut milk and shea butter. Transforms dry, brittle hair into soft, silky strands.",
+    "ingredients": "Coconut Milk, Shea Butter, Argan Oil, Cetearyl Alcohol, Panthenol, Aqua",
+    "howToUse": "After shampoo, apply mid-length to ends. Leave 3-5 minutes. Rinse with cool water.",
+    "highlights": [
+      "Intense moisture boost",
+      "Reduces breakage",
+      "Detangling formula",
+      "No silicones"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "HAR004","name": "Onion & Black Seed Anti-Hairfall Mask","brand": "Sunfara Organics","category": "herbal-haircare","subcategory": "masks","price": 499,"mrp": 799,"discount": 38,"rating": 4.6,"reviewCount": 143,"stock": 40,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["anti-hairfall","onion","black-seed","scalp"],"certifications": ["Cruelty-Free"],"skinTypes": [],"concerns": ["hair-fall","scalp-health","thinning"],"keyIngredients": ["Onion Extract","Black Seed Oil","Castor Oil"],
-    "image": "assets/images/products/HAR004.jpg","images": ["assets/images/products/HAR004.jpg"],
-    "variants": [{"id": "v1","name": "200g","price": 499}],
-    "description": "Potent hair mask with onion extract and black seed oil. Strengthens roots, reduces hair fall, and promotes thicker hair.","ingredients": "Onion Extract, Black Seed Oil, Castor Oil, Biotin, Keratin, Aqua","howToUse": "Apply to scalp and hair. Massage well. Leave 30-60 minutes. Shampoo twice. Use weekly.","highlights": ["Clinically reduces hair fall","Strengthens from root","Odour-neutralised","No harsh chemicals"],"deliveryDays": 4,"returnDays": 15
+    "id": "HAR004",
+    "name": "Onion & Black Seed Anti-Hairfall Mask",
+    "brand": "Sunfara Organics",
+    "category": "herbal-haircare",
+    "subcategory": "masks",
+    "price": 499,
+    "mrp": 799,
+    "discount": 38,
+    "rating": 4.6,
+    "reviewCount": 143,
+    "stock": 40,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "anti-hairfall",
+      "onion",
+      "black-seed",
+      "scalp"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "hair-fall",
+      "scalp-health",
+      "thinning"
+    ],
+    "keyIngredients": [
+      "Onion Extract",
+      "Black Seed Oil",
+      "Castor Oil"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Onion%20%26%20Black%20Seed%20Anti-Ha%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Onion%20%26%20Black%20Seed%20Anti-Ha%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "200g",
+        "price": 499
+      }
+    ],
+    "description": "Potent hair mask with onion extract and black seed oil. Strengthens roots, reduces hair fall, and promotes thicker hair.",
+    "ingredients": "Onion Extract, Black Seed Oil, Castor Oil, Biotin, Keratin, Aqua",
+    "howToUse": "Apply to scalp and hair. Massage well. Leave 30-60 minutes. Shampoo twice. Use weekly.",
+    "highlights": [
+      "Clinically reduces hair fall",
+      "Strengthens from root",
+      "Odour-neutralised",
+      "No harsh chemicals"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "HAR005","name": "Hibiscus Scalp Serum","brand": "Dot & Key","category": "herbal-haircare","subcategory": "serums","price": 599,"mrp": 899,"discount": 33,"rating": 4.4,"reviewCount": 87,"stock": 30,"isNew": true,"isBestseller": false,"isFeatured": true,
-    "tags": ["scalp","hibiscus","growth","nourishing"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["hair-growth","scalp-health","dandruff"],"keyIngredients": ["Hibiscus Extract","Peppermint Oil","Biotin"],
-    "image": "assets/images/products/HAR005.jpg","images": ["assets/images/products/HAR005.jpg"],
-    "variants": [{"id": "v1","name": "50ml","price": 599}],
-    "description": "Targeted scalp serum with hibiscus and peppermint. Stimulates blood circulation, nourishes follicles, and promotes visible hair growth.","ingredients": "Hibiscus Extract, Peppermint Oil, Biotin, Niacinamide, Salicylic Acid, Aqua","howToUse": "Apply to scalp sections. Massage with fingertips. Do not rinse. Use daily.","highlights": ["Tingles on application","Stimulates follicles","No-rinse formula","Biotin-powered"],"deliveryDays": 4,"returnDays": 15
+    "id": "HAR005",
+    "name": "Hibiscus Scalp Serum",
+    "brand": "Dot & Key",
+    "category": "herbal-haircare",
+    "subcategory": "serums",
+    "price": 599,
+    "mrp": 899,
+    "discount": 33,
+    "rating": 4.4,
+    "reviewCount": 87,
+    "stock": 30,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "scalp",
+      "hibiscus",
+      "growth",
+      "nourishing"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "hair-growth",
+      "scalp-health",
+      "dandruff"
+    ],
+    "keyIngredients": [
+      "Hibiscus Extract",
+      "Peppermint Oil",
+      "Biotin"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Hibiscus%20Scalp%20Serum&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Hibiscus%20Scalp%20Serum&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "50ml",
+        "price": 599
+      }
+    ],
+    "description": "Targeted scalp serum with hibiscus and peppermint. Stimulates blood circulation, nourishes follicles, and promotes visible hair growth.",
+    "ingredients": "Hibiscus Extract, Peppermint Oil, Biotin, Niacinamide, Salicylic Acid, Aqua",
+    "howToUse": "Apply to scalp sections. Massage with fingertips. Do not rinse. Use daily.",
+    "highlights": [
+      "Tingles on application",
+      "Stimulates follicles",
+      "No-rinse formula",
+      "Biotin-powered"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "HAR006","name": "Tea Tree Dandruff Control Shampoo","brand": "Plum","category": "herbal-haircare","subcategory": "shampoos","price": 319,"mrp": 449,"discount": 29,"rating": 4.2,"reviewCount": 234,"stock": 110,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["anti-dandruff","tea-tree","scalp","oily-scalp"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["dandruff","itchy-scalp","oil-control"],"keyIngredients": ["Tea Tree Oil","Salicylic Acid","Zinc Pyrithione"],
-    "image": "assets/images/products/HAR006.jpg","images": ["assets/images/products/HAR006.jpg"],
-    "variants": [{"id": "v1","name": "250ml","price": 319}],
-    "description": "Powerful dandruff-fighting shampoo with tea tree oil and zinc pyrithione. Controls flakes, soothes itchy scalp.","ingredients": "Tea Tree Oil, Zinc Pyrithione, Salicylic Acid, Aloe Vera, Cocamidopropyl Betaine, Aqua","howToUse": "Lather on wet scalp. Leave 2-3 minutes. Rinse. Use 3 times a week.","highlights": ["Anti-dandruff proven","Soothes itchy scalp","Sulfate-free","48hr freshness"],"deliveryDays": 3,"returnDays": 15
+    "id": "HAR006",
+    "name": "Tea Tree Dandruff Control Shampoo",
+    "brand": "Plum",
+    "category": "herbal-haircare",
+    "subcategory": "shampoos",
+    "price": 319,
+    "mrp": 449,
+    "discount": 29,
+    "rating": 4.2,
+    "reviewCount": 234,
+    "stock": 110,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "anti-dandruff",
+      "tea-tree",
+      "scalp",
+      "oily-scalp"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "dandruff",
+      "itchy-scalp",
+      "oil-control"
+    ],
+    "keyIngredients": [
+      "Tea Tree Oil",
+      "Salicylic Acid",
+      "Zinc Pyrithione"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Tea%20Tree%20Dandruff%20Control%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Tea%20Tree%20Dandruff%20Control%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "250ml",
+        "price": 319
+      }
+    ],
+    "description": "Powerful dandruff-fighting shampoo with tea tree oil and zinc pyrithione. Controls flakes, soothes itchy scalp.",
+    "ingredients": "Tea Tree Oil, Zinc Pyrithione, Salicylic Acid, Aloe Vera, Cocamidopropyl Betaine, Aqua",
+    "howToUse": "Lather on wet scalp. Leave 2-3 minutes. Rinse. Use 3 times a week.",
+    "highlights": [
+      "Anti-dandruff proven",
+      "Soothes itchy scalp",
+      "Sulfate-free",
+      "48hr freshness"
+    ],
+    "deliveryDays": 3,
+    "returnDays": 15
   },
   {
-    "id": "HAR007","name": "Fenugreek Protein Hair Pack","brand": "Biotique","category": "herbal-haircare","subcategory": "masks","price": 279,"mrp": 399,"discount": 30,"rating": 4.1,"reviewCount": 112,"stock": 55,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["protein","fenugreek","strengthen","repair"],"certifications": ["Ayurvedic"],"skinTypes": [],"concerns": ["breakage","damage-repair","strength"],"keyIngredients": ["Fenugreek","Egg Protein","Almond Oil"],
-    "image": "assets/images/products/HAR007.jpg","images": ["assets/images/products/HAR007.jpg"],
-    "variants": [{"id": "v1","name": "150g","price": 279}],
-    "description": "Protein-rich hair pack with fenugreek and egg protein. Strengthens weak hair, reduces breakage, adds body and volume.","ingredients": "Fenugreek Seed Extract, Hydrolyzed Egg Protein, Almond Oil, Kaolin, Aqua","howToUse": "Apply on clean damp hair. Leave 20 minutes. Rinse with cool water.","highlights": ["Protein-rich formula","Reduces breakage 60%","Adds volume","No harsh chemicals"],"deliveryDays": 5,"returnDays": 15
+    "id": "HAR007",
+    "name": "Fenugreek Protein Hair Pack",
+    "brand": "Biotique",
+    "category": "herbal-haircare",
+    "subcategory": "masks",
+    "price": 279,
+    "mrp": 399,
+    "discount": 30,
+    "rating": 4.1,
+    "reviewCount": 112,
+    "stock": 55,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "protein",
+      "fenugreek",
+      "strengthen",
+      "repair"
+    ],
+    "certifications": [
+      "Ayurvedic"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "breakage",
+      "damage-repair",
+      "strength"
+    ],
+    "keyIngredients": [
+      "Fenugreek",
+      "Egg Protein",
+      "Almond Oil"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Fenugreek%20Protein%20Hair%20Pack&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Fenugreek%20Protein%20Hair%20Pack&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "150g",
+        "price": 279
+      }
+    ],
+    "description": "Protein-rich hair pack with fenugreek and egg protein. Strengthens weak hair, reduces breakage, adds body and volume.",
+    "ingredients": "Fenugreek Seed Extract, Hydrolyzed Egg Protein, Almond Oil, Kaolin, Aqua",
+    "howToUse": "Apply on clean damp hair. Leave 20 minutes. Rinse with cool water.",
+    "highlights": [
+      "Protein-rich formula",
+      "Reduces breakage 60%",
+      "Adds volume",
+      "No harsh chemicals"
+    ],
+    "deliveryDays": 5,
+    "returnDays": 15
   },
   {
-    "id": "HAR008","name": "Aloe Vera Lightweight Hair Gel","brand": "Sunfara Organics","category": "herbal-haircare","subcategory": "styling","price": 229,"mrp": 349,"discount": 34,"rating": 4.0,"reviewCount": 76,"stock": 90,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["styling","aloe","frizz-control","hold"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["frizz","styling","definition"],"keyIngredients": ["Aloe Vera Gel","Flaxseed Extract","Glycerin"],
-    "image": "assets/images/products/HAR008.jpg","images": ["assets/images/products/HAR008.jpg"],
-    "variants": [{"id": "v1","name": "200ml","price": 229}],
-    "description": "Light-hold hair gel from pure aloe vera and flaxseed. Tames frizz, defines curls, adds shine without crunch.","ingredients": "Aloe Barbadensis Leaf Juice, Flaxseed Extract, Glycerin, PVP (plant-derived), Aqua","howToUse": "Apply to damp or dry hair. Scrunch into curls or smooth through. Air dry or diffuse.","highlights": ["100% Aloe Vera base","No flaking","Crunch-free hold","Defines curls"],"deliveryDays": 4,"returnDays": 15
+    "id": "HAR008",
+    "name": "Aloe Vera Lightweight Hair Gel",
+    "brand": "Sunfara Organics",
+    "category": "herbal-haircare",
+    "subcategory": "styling",
+    "price": 229,
+    "mrp": 349,
+    "discount": 34,
+    "rating": 4,
+    "reviewCount": 76,
+    "stock": 90,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "styling",
+      "aloe",
+      "frizz-control",
+      "hold"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "frizz",
+      "styling",
+      "definition"
+    ],
+    "keyIngredients": [
+      "Aloe Vera Gel",
+      "Flaxseed Extract",
+      "Glycerin"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Aloe%20Vera%20Lightweight%20Hair%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Aloe%20Vera%20Lightweight%20Hair%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "200ml",
+        "price": 229
+      }
+    ],
+    "description": "Light-hold hair gel from pure aloe vera and flaxseed. Tames frizz, defines curls, adds shine without crunch.",
+    "ingredients": "Aloe Barbadensis Leaf Juice, Flaxseed Extract, Glycerin, PVP (plant-derived), Aqua",
+    "howToUse": "Apply to damp or dry hair. Scrunch into curls or smooth through. Air dry or diffuse.",
+    "highlights": [
+      "100% Aloe Vera base",
+      "No flaking",
+      "Crunch-free hold",
+      "Defines curls"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SOP001","name": "Activated Charcoal Detox Face Bar","brand": "Sunfara Organics","category": "natural-soaps","subcategory": "face-bars","price": 199,"mrp": 299,"discount": 33,"rating": 4.5,"reviewCount": 267,"stock": 150,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["charcoal","detox","pores","face-bar","vegan"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["oily","combination"],"concerns": ["pores","acne","oil-control"],"keyIngredients": ["Activated Charcoal","Tea Tree Oil","Kaolin Clay"],
-    "image": "assets/images/products/SOP001.jpg","images": ["assets/images/products/SOP001.jpg"],
-    "variants": [{"id": "v1","name": "100g","price": 199}],
-    "description": "Deep-cleansing face bar with activated charcoal and kaolin clay. Draws out impurities, unclogs pores, leaves skin clean.","ingredients": "Saponified Coconut Oil, Activated Charcoal, Kaolin, Tea Tree Oil, Glycerin","howToUse": "Lather in hands. Apply to face gently. Massage 30 seconds. Rinse with lukewarm water.","highlights": ["Cold-process crafted","Draws out impurities","No SLS/SLES","100% Vegan"],"deliveryDays": 4,"returnDays": 15
+    "id": "SOP001",
+    "name": "Activated Charcoal Detox Face Bar",
+    "brand": "Sunfara Organics",
+    "category": "natural-soaps",
+    "subcategory": "face-bars",
+    "price": 199,
+    "mrp": 299,
+    "discount": 33,
+    "rating": 4.5,
+    "reviewCount": 267,
+    "stock": 150,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "charcoal",
+      "detox",
+      "pores",
+      "face-bar",
+      "vegan"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination"
+    ],
+    "concerns": [
+      "pores",
+      "acne",
+      "oil-control"
+    ],
+    "keyIngredients": [
+      "Activated Charcoal",
+      "Tea Tree Oil",
+      "Kaolin Clay"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Activated%20Charcoal%20Detox%20F%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Activated%20Charcoal%20Detox%20F%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100g",
+        "price": 199
+      }
+    ],
+    "description": "Deep-cleansing face bar with activated charcoal and kaolin clay. Draws out impurities, unclogs pores, leaves skin clean.",
+    "ingredients": "Saponified Coconut Oil, Activated Charcoal, Kaolin, Tea Tree Oil, Glycerin",
+    "howToUse": "Lather in hands. Apply to face gently. Massage 30 seconds. Rinse with lukewarm water.",
+    "highlights": [
+      "Cold-process crafted",
+      "Draws out impurities",
+      "No SLS/SLES",
+      "100% Vegan"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SOP002","name": "Shea Butter & Lavender Body Bar","brand": "Sunfara Organics","category": "natural-soaps","subcategory": "body-bars","price": 149,"mrp": 249,"discount": 40,"rating": 4.6,"reviewCount": 389,"stock": 200,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["moisturising","lavender","shea-butter","body","relaxing"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["dry","sensitive"],"concerns": ["dryness","relaxation","softness"],"keyIngredients": ["Shea Butter","Lavender Essential Oil","Oat Milk"],
-    "image": "assets/images/products/SOP002.jpg","images": ["assets/images/products/SOP002.jpg"],
-    "variants": [{"id": "v1","name": "100g","price": 149}],
-    "description": "Creamy moisturising body bar handcrafted with shea butter and lavender. Cleanses gently, leaves skin baby-soft, provides aromatherapy relaxation.","ingredients": "Saponified Shea Butter, Saponified Coconut Oil, Lavender Oil, Oat Milk, Glycerin","howToUse": "Use on wet skin. Lather and massage. Rinse. Pat dry and moisturise.","highlights": ["Handcrafted small batches","Long-lasting bar","Calming lavender","Super soft skin"],"deliveryDays": 4,"returnDays": 15
+    "id": "SOP002",
+    "name": "Shea Butter & Lavender Body Bar",
+    "brand": "Sunfara Organics",
+    "category": "natural-soaps",
+    "subcategory": "body-bars",
+    "price": 149,
+    "mrp": 249,
+    "discount": 40,
+    "rating": 4.6,
+    "reviewCount": 389,
+    "stock": 200,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "moisturising",
+      "lavender",
+      "shea-butter",
+      "body",
+      "relaxing"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "dry",
+      "sensitive"
+    ],
+    "concerns": [
+      "dryness",
+      "relaxation",
+      "softness"
+    ],
+    "keyIngredients": [
+      "Shea Butter",
+      "Lavender Essential Oil",
+      "Oat Milk"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Shea%20Butter%20%26%20Lavender%20Bod%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Shea%20Butter%20%26%20Lavender%20Bod%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100g",
+        "price": 149
+      }
+    ],
+    "description": "Creamy moisturising body bar handcrafted with shea butter and lavender. Cleanses gently, leaves skin baby-soft, provides aromatherapy relaxation.",
+    "ingredients": "Saponified Shea Butter, Saponified Coconut Oil, Lavender Oil, Oat Milk, Glycerin",
+    "howToUse": "Use on wet skin. Lather and massage. Rinse. Pat dry and moisturise.",
+    "highlights": [
+      "Handcrafted small batches",
+      "Long-lasting bar",
+      "Calming lavender",
+      "Super soft skin"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SOP003","name": "Coffee & Walnut Body Scrub Bar","brand": "Sunfara Organics","category": "natural-soaps","subcategory": "scrub-bars","price": 179,"mrp": 279,"discount": 36,"rating": 4.4,"reviewCount": 156,"stock": 120,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["exfoliating","coffee","scrub","body","anti-cellulite"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["dullness","cellulite","exfoliation"],"keyIngredients": ["Ground Coffee","Walnut Shell Powder","Coconut Oil"],
-    "image": "assets/images/products/SOP003.jpg","images": ["assets/images/products/SOP003.jpg"],
-    "variants": [{"id": "v1","name": "100g","price": 179}],
-    "description": "Invigorating body scrub bar with ground coffee and walnut shell. Buffs dead skin, improves circulation, leaves skin smooth and glowing.","ingredients": "Saponified Coconut Oil, Coffee Grounds, Walnut Shell Powder, Coffee Essential Oil, Glycerin","howToUse": "Use on wet skin in circular motions. Rinse. Use 2-3 times per week.","highlights": ["Natural exfoliant","Boosts circulation","Caffeine firms skin","Energising coffee scent"],"deliveryDays": 4,"returnDays": 15
+    "id": "SOP003",
+    "name": "Coffee & Walnut Body Scrub Bar",
+    "brand": "Sunfara Organics",
+    "category": "natural-soaps",
+    "subcategory": "scrub-bars",
+    "price": 179,
+    "mrp": 279,
+    "discount": 36,
+    "rating": 4.4,
+    "reviewCount": 156,
+    "stock": 120,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "exfoliating",
+      "coffee",
+      "scrub",
+      "body",
+      "anti-cellulite"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "dullness",
+      "cellulite",
+      "exfoliation"
+    ],
+    "keyIngredients": [
+      "Ground Coffee",
+      "Walnut Shell Powder",
+      "Coconut Oil"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Coffee%20%26%20Walnut%20Body%20Scrub%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Coffee%20%26%20Walnut%20Body%20Scrub%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100g",
+        "price": 179
+      }
+    ],
+    "description": "Invigorating body scrub bar with ground coffee and walnut shell. Buffs dead skin, improves circulation, leaves skin smooth and glowing.",
+    "ingredients": "Saponified Coconut Oil, Coffee Grounds, Walnut Shell Powder, Coffee Essential Oil, Glycerin",
+    "howToUse": "Use on wet skin in circular motions. Rinse. Use 2-3 times per week.",
+    "highlights": [
+      "Natural exfoliant",
+      "Boosts circulation",
+      "Caffeine firms skin",
+      "Energising coffee scent"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SOP004","name": "Neem & Turmeric Antibacterial Soap","brand": "Biotique","category": "natural-soaps","subcategory": "body-bars","price": 99,"mrp": 149,"discount": 34,"rating": 4.3,"reviewCount": 445,"stock": 300,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["antibacterial","neem","turmeric","body","ayurvedic"],"certifications": ["Ayurvedic"],"skinTypes": ["oily","combination","acne-prone"],"concerns": ["acne","odour","bacteria"],"keyIngredients": ["Neem","Turmeric","Sandalwood"],
-    "image": "assets/images/products/SOP004.jpg","images": ["assets/images/products/SOP004.jpg"],
-    "variants": [{"id": "v1","name": "75g","price": 99},{"id": "v2","name": "75g × 3 Pack","price": 269}],
-    "description": "Classic Ayurvedic soap with neem, turmeric, and sandalwood. Kills bacteria, fights body acne, prevents odour.","ingredients": "Saponified Coconut Oil, Neem Extract, Turmeric, Sandalwood Powder, Glycerin","howToUse": "Use daily on wet body. Lather, massage, rinse.","highlights": ["99.9% antibacterial","Fights body acne","Ayurvedic formula","All ages"],"deliveryDays": 3,"returnDays": 15
+    "id": "SOP004",
+    "name": "Neem & Turmeric Antibacterial Soap",
+    "brand": "Biotique",
+    "category": "natural-soaps",
+    "subcategory": "body-bars",
+    "price": 99,
+    "mrp": 149,
+    "discount": 34,
+    "rating": 4.3,
+    "reviewCount": 445,
+    "stock": 300,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "antibacterial",
+      "neem",
+      "turmeric",
+      "body",
+      "ayurvedic"
+    ],
+    "certifications": [
+      "Ayurvedic"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination",
+      "acne-prone"
+    ],
+    "concerns": [
+      "acne",
+      "odour",
+      "bacteria"
+    ],
+    "keyIngredients": [
+      "Neem",
+      "Turmeric",
+      "Sandalwood"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Neem%20%26%20Turmeric%20Antibacter%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Neem%20%26%20Turmeric%20Antibacter%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "75g",
+        "price": 99
+      },
+      {
+        "id": "v2",
+        "name": "75g × 3 Pack",
+        "price": 269
+      }
+    ],
+    "description": "Classic Ayurvedic soap with neem, turmeric, and sandalwood. Kills bacteria, fights body acne, prevents odour.",
+    "ingredients": "Saponified Coconut Oil, Neem Extract, Turmeric, Sandalwood Powder, Glycerin",
+    "howToUse": "Use daily on wet body. Lather, massage, rinse.",
+    "highlights": [
+      "99.9% antibacterial",
+      "Fights body acne",
+      "Ayurvedic formula",
+      "All ages"
+    ],
+    "deliveryDays": 3,
+    "returnDays": 15
   },
   {
-    "id": "SOP005","name": "Rose & Geranium Luxury Bath Bar","brand": "Kama Ayurveda","category": "natural-soaps","subcategory": "body-bars","price": 349,"mrp": 499,"discount": 30,"rating": 4.7,"reviewCount": 134,"stock": 45,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["luxury","rose","geranium","floral","moisturising"],"certifications": ["Cruelty-Free"],"skinTypes": ["normal","dry"],"concerns": ["dryness","relaxation","softness"],"keyIngredients": ["Rose Absolute","Geranium Oil","Sweet Almond Oil"],
-    "image": "assets/images/products/SOP005.jpg","images": ["assets/images/products/SOP005.jpg"],
-    "variants": [{"id": "v1","name": "125g","price": 349}],
-    "description": "Luxurious bath bar with rose absolute and geranium. Transforms bath time into a spa ritual and leaves a lingering floral fragrance.","ingredients": "Saponified Sweet Almond Oil, Rose Absolute, Geranium Oil, Glycerin, Vitamin E","howToUse": "Use daily in bath or shower. Lather generously. Rinse and enjoy lasting fragrance.","highlights": ["Cold-process luxury bar","Real rose absolute","Lathers luxuriously","Leaves skin silky"],"deliveryDays": 4,"returnDays": 15
+    "id": "SOP005",
+    "name": "Rose & Geranium Luxury Bath Bar",
+    "brand": "Kama Ayurveda",
+    "category": "natural-soaps",
+    "subcategory": "body-bars",
+    "price": 349,
+    "mrp": 499,
+    "discount": 30,
+    "rating": 4.7,
+    "reviewCount": 134,
+    "stock": 45,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "luxury",
+      "rose",
+      "geranium",
+      "floral",
+      "moisturising"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "normal",
+      "dry"
+    ],
+    "concerns": [
+      "dryness",
+      "relaxation",
+      "softness"
+    ],
+    "keyIngredients": [
+      "Rose Absolute",
+      "Geranium Oil",
+      "Sweet Almond Oil"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Rose%20%26%20Geranium%20Luxury%20Bat%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Rose%20%26%20Geranium%20Luxury%20Bat%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "125g",
+        "price": 349
+      }
+    ],
+    "description": "Luxurious bath bar with rose absolute and geranium. Transforms bath time into a spa ritual and leaves a lingering floral fragrance.",
+    "ingredients": "Saponified Sweet Almond Oil, Rose Absolute, Geranium Oil, Glycerin, Vitamin E",
+    "howToUse": "Use daily in bath or shower. Lather generously. Rinse and enjoy lasting fragrance.",
+    "highlights": [
+      "Cold-process luxury bar",
+      "Real rose absolute",
+      "Lathers luxuriously",
+      "Leaves skin silky"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SOP006","name": "Charcoal Shampoo Bar","brand": "Sunfara Organics","category": "natural-soaps","subcategory": "shampoo-bars","price": 249,"mrp": 349,"discount": 29,"rating": 4.2,"reviewCount": 91,"stock": 60,"isNew": true,"isBestseller": false,"isFeatured": false,
-    "tags": ["shampoo-bar","charcoal","scalp","plastic-free","eco"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["scalp-health","oil-control","eco-friendly"],"keyIngredients": ["Activated Charcoal","Rosemary Oil","Peppermint Oil"],
-    "image": "assets/images/products/SOP006.jpg","images": ["assets/images/products/SOP006.jpg"],
-    "variants": [{"id": "v1","name": "60g","price": 249}],
-    "description": "Zero-waste shampoo bar with activated charcoal. Deeply cleanses scalp, removes buildup. Replaces 2 plastic bottles.","ingredients": "Saponified Coconut Oil, Activated Charcoal, Rosemary Oil, Peppermint Oil, Citric Acid","howToUse": "Wet bar and hair. Rub on scalp or lather in hands. Massage. Rinse thoroughly.","highlights": ["Replaces 2 plastic bottles","Lasts 60-80 washes","SLS-free","Travel-friendly"],"deliveryDays": 4,"returnDays": 15
+    "id": "SOP006",
+    "name": "Charcoal Shampoo Bar",
+    "brand": "Sunfara Organics",
+    "category": "natural-soaps",
+    "subcategory": "shampoo-bars",
+    "price": 249,
+    "mrp": 349,
+    "discount": 29,
+    "rating": 4.2,
+    "reviewCount": 91,
+    "stock": 60,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "shampoo-bar",
+      "charcoal",
+      "scalp",
+      "plastic-free",
+      "eco"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "scalp-health",
+      "oil-control",
+      "eco-friendly"
+    ],
+    "keyIngredients": [
+      "Activated Charcoal",
+      "Rosemary Oil",
+      "Peppermint Oil"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Charcoal%20Shampoo%20Bar&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Charcoal%20Shampoo%20Bar&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "60g",
+        "price": 249
+      }
+    ],
+    "description": "Zero-waste shampoo bar with activated charcoal. Deeply cleanses scalp, removes buildup. Replaces 2 plastic bottles.",
+    "ingredients": "Saponified Coconut Oil, Activated Charcoal, Rosemary Oil, Peppermint Oil, Citric Acid",
+    "howToUse": "Wet bar and hair. Rub on scalp or lather in hands. Massage. Rinse thoroughly.",
+    "highlights": [
+      "Replaces 2 plastic bottles",
+      "Lasts 60-80 washes",
+      "SLS-free",
+      "Travel-friendly"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "SOP007","name": "Oatmeal & Honey Baby Soap","brand": "Mamaearth","category": "natural-soaps","subcategory": "body-bars","price": 129,"mrp": 199,"discount": 35,"rating": 4.6,"reviewCount": 312,"stock": 200,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["baby","gentle","oatmeal","honey","sensitive"],"certifications": ["Cruelty-Free"],"skinTypes": ["sensitive"],"concerns": ["gentleness","moisture","soothing"],"keyIngredients": ["Colloidal Oatmeal","Honey","Calendula"],
-    "image": "assets/images/products/SOP007.jpg","images": ["assets/images/products/SOP007.jpg"],
-    "variants": [{"id": "v1","name": "75g","price": 129}],
-    "description": "Ultra-gentle soap safe for babies and sensitive skin. Made with colloidal oatmeal and honey. Cleanses without irritation.","ingredients": "Saponified Coconut Oil, Colloidal Oatmeal, Honey, Calendula Extract, Glycerin","howToUse": "Lather gently with water. Apply to skin. Rinse well. Suitable from 0 months.","highlights": ["Safe for newborns","Hypoallergenic","Dermatologist tested","25 harmful-ingredient free"],"deliveryDays": 3,"returnDays": 15
+    "id": "SOP007",
+    "name": "Oatmeal & Honey Baby Soap",
+    "brand": "Mamaearth",
+    "category": "natural-soaps",
+    "subcategory": "body-bars",
+    "price": 129,
+    "mrp": 199,
+    "discount": 35,
+    "rating": 4.6,
+    "reviewCount": 312,
+    "stock": 200,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "baby",
+      "gentle",
+      "oatmeal",
+      "honey",
+      "sensitive"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "sensitive"
+    ],
+    "concerns": [
+      "gentleness",
+      "moisture",
+      "soothing"
+    ],
+    "keyIngredients": [
+      "Colloidal Oatmeal",
+      "Honey",
+      "Calendula"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Oatmeal%20%26%20Honey%20Baby%20Soap&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Oatmeal%20%26%20Honey%20Baby%20Soap&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "75g",
+        "price": 129
+      }
+    ],
+    "description": "Ultra-gentle soap safe for babies and sensitive skin. Made with colloidal oatmeal and honey. Cleanses without irritation.",
+    "ingredients": "Saponified Coconut Oil, Colloidal Oatmeal, Honey, Calendula Extract, Glycerin",
+    "howToUse": "Lather gently with water. Apply to skin. Rinse well. Suitable from 0 months.",
+    "highlights": [
+      "Safe for newborns",
+      "Hypoallergenic",
+      "Dermatologist tested",
+      "25 harmful-ingredient free"
+    ],
+    "deliveryDays": 3,
+    "returnDays": 15
   },
   {
-    "id": "SOP008","name": "Peppermint & Eucalyptus Cooling Soap","brand": "Aroma Magic","category": "natural-soaps","subcategory": "body-bars","price": 159,"mrp": 229,"discount": 31,"rating": 4.3,"reviewCount": 178,"stock": 90,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["cooling","peppermint","eucalyptus","refreshing","summer"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["freshness","cooling","deodorising"],"keyIngredients": ["Peppermint Oil","Eucalyptus Oil","Aloe Vera"],
-    "image": "assets/images/products/SOP008.jpg","images": ["assets/images/products/SOP008.jpg"],
-    "variants": [{"id": "v1","name": "100g","price": 159}],
-    "description": "Invigorating cooling soap with peppermint and eucalyptus. Refreshes body, fights odour, delivers tingling clean.","ingredients": "Saponified Coconut Oil, Peppermint Oil, Eucalyptus Oil, Aloe Vera, Glycerin","howToUse": "Use daily in shower. Great for summer mornings.","highlights": ["Instant cooling sensation","Natural deodorising","Vegan","Long-lasting freshness"],"deliveryDays": 4,"returnDays": 15
+    "id": "SOP008",
+    "name": "Peppermint & Eucalyptus Cooling Soap",
+    "brand": "Aroma Magic",
+    "category": "natural-soaps",
+    "subcategory": "body-bars",
+    "price": 159,
+    "mrp": 229,
+    "discount": 31,
+    "rating": 4.3,
+    "reviewCount": 178,
+    "stock": 90,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "cooling",
+      "peppermint",
+      "eucalyptus",
+      "refreshing",
+      "summer"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "freshness",
+      "cooling",
+      "deodorising"
+    ],
+    "keyIngredients": [
+      "Peppermint Oil",
+      "Eucalyptus Oil",
+      "Aloe Vera"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Peppermint%20%26%20Eucalyptus%20Co%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Peppermint%20%26%20Eucalyptus%20Co%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100g",
+        "price": 159
+      }
+    ],
+    "description": "Invigorating cooling soap with peppermint and eucalyptus. Refreshes body, fights odour, delivers tingling clean.",
+    "ingredients": "Saponified Coconut Oil, Peppermint Oil, Eucalyptus Oil, Aloe Vera, Glycerin",
+    "howToUse": "Use daily in shower. Great for summer mornings.",
+    "highlights": [
+      "Instant cooling sensation",
+      "Natural deodorising",
+      "Vegan",
+      "Long-lasting freshness"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL001","name": "100% Pure Lavender Essential Oil","brand": "Sunfara Organics","category": "essential-oils","subcategory": "essential-oils","price": 499,"mrp": 799,"discount": 38,"rating": 4.8,"reviewCount": 467,"stock": 75,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["lavender","relaxing","aromatherapy","sleep","pure"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["relaxation","sleep","stress"],"keyIngredients": ["Lavandula Angustifolia Steam-distilled"],
-    "image": "assets/images/products/OIL001.jpg","images": ["assets/images/products/OIL001.jpg"],
-    "variants": [{"id": "v1","name": "10ml","price": 499},{"id": "v2","name": "30ml","price": 1299}],
-    "description": "Steam-distilled from Kashmiri lavender flowers. 100% pure essential oil promotes relaxation, aids sleep, soothes skin. GC/MS tested.","ingredients": "100% Lavandula Angustifolia (Lavender) Essential Oil","howToUse": "Diffuser: 3-5 drops. Topical: dilute 2% in carrier oil. Bath: 5-10 drops mixed with carrier.","highlights": ["GC/MS purity tested","Undiluted & unadulterated","Steam-distilled","USDA Organic"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL001",
+    "name": "100% Pure Lavender Essential Oil",
+    "brand": "Sunfara Organics",
+    "category": "essential-oils",
+    "subcategory": "essential-oils",
+    "price": 499,
+    "mrp": 799,
+    "discount": 38,
+    "rating": 4.8,
+    "reviewCount": 467,
+    "stock": 75,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "lavender",
+      "relaxing",
+      "aromatherapy",
+      "sleep",
+      "pure"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "relaxation",
+      "sleep",
+      "stress"
+    ],
+    "keyIngredients": [
+      "Lavandula Angustifolia Steam-distilled"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=100%25%20Pure%20Lavender%20Essenti%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=100%25%20Pure%20Lavender%20Essenti%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "10ml",
+        "price": 499
+      },
+      {
+        "id": "v2",
+        "name": "30ml",
+        "price": 1299
+      }
+    ],
+    "description": "Steam-distilled from Kashmiri lavender flowers. 100% pure essential oil promotes relaxation, aids sleep, soothes skin. GC/MS tested.",
+    "ingredients": "100% Lavandula Angustifolia (Lavender) Essential Oil",
+    "howToUse": "Diffuser: 3-5 drops. Topical: dilute 2% in carrier oil. Bath: 5-10 drops mixed with carrier.",
+    "highlights": [
+      "GC/MS purity tested",
+      "Undiluted & unadulterated",
+      "Steam-distilled",
+      "USDA Organic"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL002","name": "Tea Tree Antiseptic Essential Oil","brand": "Sunfara Organics","category": "essential-oils","subcategory": "essential-oils","price": 399,"mrp": 649,"discount": 39,"rating": 4.7,"reviewCount": 389,"stock": 90,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["tea-tree","antibacterial","acne","antiseptic","pure"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["oily","acne-prone"],"concerns": ["acne","bacteria","wound-care"],"keyIngredients": ["Melaleuca Alternifolia Steam-distilled"],
-    "image": "assets/images/products/OIL002.jpg","images": ["assets/images/products/OIL002.jpg"],
-    "variants": [{"id": "v1","name": "10ml","price": 399}],
-    "description": "Pure Australian tea tree oil with powerful antibacterial and antifungal properties. Spot-treats acne and cleanses wounds.","ingredients": "100% Melaleuca Alternifolia (Tea Tree) Essential Oil","howToUse": "Acne spot: dilute 1 drop in 9 drops carrier oil. Diffuser: 3-4 drops.","highlights": ["Australian Tea Tree","45% Terpinen-4-ol","GC/MS tested","Multi-use"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL002",
+    "name": "Tea Tree Antiseptic Essential Oil",
+    "brand": "Sunfara Organics",
+    "category": "essential-oils",
+    "subcategory": "essential-oils",
+    "price": 399,
+    "mrp": 649,
+    "discount": 39,
+    "rating": 4.7,
+    "reviewCount": 389,
+    "stock": 90,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "tea-tree",
+      "antibacterial",
+      "acne",
+      "antiseptic",
+      "pure"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "oily",
+      "acne-prone"
+    ],
+    "concerns": [
+      "acne",
+      "bacteria",
+      "wound-care"
+    ],
+    "keyIngredients": [
+      "Melaleuca Alternifolia Steam-distilled"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Tea%20Tree%20Antiseptic%20Essent%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Tea%20Tree%20Antiseptic%20Essent%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "10ml",
+        "price": 399
+      }
+    ],
+    "description": "Pure Australian tea tree oil with powerful antibacterial and antifungal properties. Spot-treats acne and cleanses wounds.",
+    "ingredients": "100% Melaleuca Alternifolia (Tea Tree) Essential Oil",
+    "howToUse": "Acne spot: dilute 1 drop in 9 drops carrier oil. Diffuser: 3-4 drops.",
+    "highlights": [
+      "Australian Tea Tree",
+      "45% Terpinen-4-ol",
+      "GC/MS tested",
+      "Multi-use"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL003","name": "Cold-Pressed Rosehip Seed Oil","brand": "Sunfara Organics","category": "essential-oils","subcategory": "carrier-oils","price": 649,"mrp": 999,"discount": 35,"rating": 4.6,"reviewCount": 221,"stock": 50,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["rosehip","brightening","anti-aging","scars","vitamin-c"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["dry","normal","mature"],"concerns": ["brightening","scars","anti-aging"],"keyIngredients": ["Cold-Pressed Rosa Canina Seed Oil"],
-    "image": "assets/images/products/OIL003.jpg","images": ["assets/images/products/OIL003.jpg"],
-    "variants": [{"id": "v1","name": "30ml","price": 649}],
-    "description": "Cold-pressed from Chilean rosehip seeds. Naturally rich in Vitamin C, essential fatty acids, and retinoids that fade scars and brighten skin.","ingredients": "100% Rosa Canina (Rosehip) Seed Oil, Cold-Pressed","howToUse": "Apply 3-5 drops to face and neck evening. Press gently into skin.","highlights": ["Cold-pressed unrefined","Natural Vitamin C","Fades acne scars","Trans-retinoic acid"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL003",
+    "name": "Cold-Pressed Rosehip Seed Oil",
+    "brand": "Sunfara Organics",
+    "category": "essential-oils",
+    "subcategory": "carrier-oils",
+    "price": 649,
+    "mrp": 999,
+    "discount": 35,
+    "rating": 4.6,
+    "reviewCount": 221,
+    "stock": 50,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "rosehip",
+      "brightening",
+      "anti-aging",
+      "scars",
+      "vitamin-c"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "dry",
+      "normal",
+      "mature"
+    ],
+    "concerns": [
+      "brightening",
+      "scars",
+      "anti-aging"
+    ],
+    "keyIngredients": [
+      "Cold-Pressed Rosa Canina Seed Oil"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Cold-Pressed%20Rosehip%20Seed%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Cold-Pressed%20Rosehip%20Seed%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "30ml",
+        "price": 649
+      }
+    ],
+    "description": "Cold-pressed from Chilean rosehip seeds. Naturally rich in Vitamin C, essential fatty acids, and retinoids that fade scars and brighten skin.",
+    "ingredients": "100% Rosa Canina (Rosehip) Seed Oil, Cold-Pressed",
+    "howToUse": "Apply 3-5 drops to face and neck evening. Press gently into skin.",
+    "highlights": [
+      "Cold-pressed unrefined",
+      "Natural Vitamin C",
+      "Fades acne scars",
+      "Trans-retinoic acid"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL004","name": "Moroccan Argan Oil Pure","brand": "Kama Ayurveda","category": "essential-oils","subcategory": "carrier-oils","price": 899,"mrp": 1399,"discount": 36,"rating": 4.7,"reviewCount": 298,"stock": 40,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["argan","hair","skin","nails","anti-aging","moroccan"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["dryness","frizz","anti-aging"],"keyIngredients": ["Argania Spinosa Kernel Oil"],
-    "image": "assets/images/products/OIL004.jpg","images": ["assets/images/products/OIL004.jpg"],
-    "variants": [{"id": "v1","name": "30ml","price": 899}],
-    "description": "Liquid gold from Morocco — 100% pure cold-pressed argan oil for face, hair, body, and nails. Rich in Vitamin E and oleic acid.","ingredients": "100% Argania Spinosa (Argan) Kernel Oil, Cold-Pressed","howToUse": "Face: 2-3 drops, press into skin. Hair: few drops on ends. Body: mix with lotion.","highlights": ["100% Pure cold-pressed","Fair-trade sourced","No additives","Multi-use"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL004",
+    "name": "Moroccan Argan Oil Pure",
+    "brand": "Kama Ayurveda",
+    "category": "essential-oils",
+    "subcategory": "carrier-oils",
+    "price": 899,
+    "mrp": 1399,
+    "discount": 36,
+    "rating": 4.7,
+    "reviewCount": 298,
+    "stock": 40,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "argan",
+      "hair",
+      "skin",
+      "nails",
+      "anti-aging",
+      "moroccan"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "dryness",
+      "frizz",
+      "anti-aging"
+    ],
+    "keyIngredients": [
+      "Argania Spinosa Kernel Oil"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Moroccan%20Argan%20Oil%20Pure&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Moroccan%20Argan%20Oil%20Pure&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "30ml",
+        "price": 899
+      }
+    ],
+    "description": "Liquid gold from Morocco — 100% pure cold-pressed argan oil for face, hair, body, and nails. Rich in Vitamin E and oleic acid.",
+    "ingredients": "100% Argania Spinosa (Argan) Kernel Oil, Cold-Pressed",
+    "howToUse": "Face: 2-3 drops, press into skin. Hair: few drops on ends. Body: mix with lotion.",
+    "highlights": [
+      "100% Pure cold-pressed",
+      "Fair-trade sourced",
+      "No additives",
+      "Multi-use"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL005","name": "Golden Jojoba Carrier Oil","brand": "Sunfara Organics","category": "essential-oils","subcategory": "carrier-oils","price": 549,"mrp": 799,"discount": 31,"rating": 4.5,"reviewCount": 167,"stock": 65,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["jojoba","moisturising","all-skin","makeup-remover","carrier"],"certifications": ["USDA Organic","Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["moisturising","makeup-removal","sebum-balance"],"keyIngredients": ["Simmondsia Chinensis Seed Oil"],
-    "image": "assets/images/products/OIL005.jpg","images": ["assets/images/products/OIL005.jpg"],
-    "variants": [{"id": "v1","name": "50ml","price": 549}],
-    "description": "Versatile carrier oil that mimics skin's natural sebum. Use as moisturiser, makeup remover, cuticle oil, or carrier for essential oils.","ingredients": "100% Simmondsia Chinensis (Jojoba) Seed Oil, Cold-Pressed","howToUse": "Use directly on skin, hair, or cuticles. Or dilute essential oils 2-3%.","highlights": ["Closest to skin's sebum","Balances oil production","Shelf-stable 5 years","Non-comedogenic"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL005",
+    "name": "Golden Jojoba Carrier Oil",
+    "brand": "Sunfara Organics",
+    "category": "essential-oils",
+    "subcategory": "carrier-oils",
+    "price": 549,
+    "mrp": 799,
+    "discount": 31,
+    "rating": 4.5,
+    "reviewCount": 167,
+    "stock": 65,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "jojoba",
+      "moisturising",
+      "all-skin",
+      "makeup-remover",
+      "carrier"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "moisturising",
+      "makeup-removal",
+      "sebum-balance"
+    ],
+    "keyIngredients": [
+      "Simmondsia Chinensis Seed Oil"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Golden%20Jojoba%20Carrier%20Oil&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Golden%20Jojoba%20Carrier%20Oil&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "50ml",
+        "price": 549
+      }
+    ],
+    "description": "Versatile carrier oil that mimics skin's natural sebum. Use as moisturiser, makeup remover, cuticle oil, or carrier for essential oils.",
+    "ingredients": "100% Simmondsia Chinensis (Jojoba) Seed Oil, Cold-Pressed",
+    "howToUse": "Use directly on skin, hair, or cuticles. Or dilute essential oils 2-3%.",
+    "highlights": [
+      "Closest to skin's sebum",
+      "Balances oil production",
+      "Shelf-stable 5 years",
+      "Non-comedogenic"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL006","name": "Peppermint Essential Oil","brand": "Aroma Magic","category": "essential-oils","subcategory": "essential-oils","price": 349,"mrp": 549,"discount": 36,"rating": 4.4,"reviewCount": 134,"stock": 85,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["peppermint","cooling","headache","focus","energising"],"certifications": ["Cruelty-Free"],"skinTypes": [],"concerns": ["headaches","energy","focus"],"keyIngredients": ["Mentha Piperita Steam-distilled"],
-    "image": "assets/images/products/OIL006.jpg","images": ["assets/images/products/OIL006.jpg"],
-    "variants": [{"id": "v1","name": "10ml","price": 349}],
-    "description": "Invigorating peppermint essential oil. Boosts energy, relieves headaches, clears sinuses, stimulates scalp.","ingredients": "100% Mentha Piperita (Peppermint) Essential Oil","howToUse": "Diffuser: 3-4 drops. Headache: 1 drop diluted on temples. Scalp: 3 drops in shampoo.","highlights": ["High menthol content","Cooling & energising","GC/MS tested","Multi-purpose"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL006",
+    "name": "Peppermint Essential Oil",
+    "brand": "Aroma Magic",
+    "category": "essential-oils",
+    "subcategory": "essential-oils",
+    "price": 349,
+    "mrp": 549,
+    "discount": 36,
+    "rating": 4.4,
+    "reviewCount": 134,
+    "stock": 85,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "peppermint",
+      "cooling",
+      "headache",
+      "focus",
+      "energising"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "headaches",
+      "energy",
+      "focus"
+    ],
+    "keyIngredients": [
+      "Mentha Piperita Steam-distilled"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Peppermint%20Essential%20Oil&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Peppermint%20Essential%20Oil&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "10ml",
+        "price": 349
+      }
+    ],
+    "description": "Invigorating peppermint essential oil. Boosts energy, relieves headaches, clears sinuses, stimulates scalp.",
+    "ingredients": "100% Mentha Piperita (Peppermint) Essential Oil",
+    "howToUse": "Diffuser: 3-4 drops. Headache: 1 drop diluted on temples. Scalp: 3 drops in shampoo.",
+    "highlights": [
+      "High menthol content",
+      "Cooling & energising",
+      "GC/MS tested",
+      "Multi-purpose"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "OIL007","name": "Eucalyptus Essential Oil","brand": "Sunfara Organics","category": "essential-oils","subcategory": "essential-oils","price": 299,"mrp": 449,"discount": 33,"rating": 4.3,"reviewCount": 112,"stock": 100,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["eucalyptus","respiratory","cold","sinus","antibacterial"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": [],"concerns": ["respiratory","immunity","cleaning"],"keyIngredients": ["Eucalyptus Globulus Steam-distilled"],
-    "image": "assets/images/products/OIL007.jpg","images": ["assets/images/products/OIL007.jpg"],
-    "variants": [{"id": "v1","name": "10ml","price": 299}],
-    "description": "Pure eucalyptus oil with high cineole content. Clears sinuses, fights colds, purifies air.","ingredients": "100% Eucalyptus Globulus Essential Oil","howToUse": "Steam inhalation: 3-5 drops in hot water. Diffuser: 4-5 drops.","highlights": ["80%+ cineole","Natural decongestant","Air purifying","USDA Organic"],"deliveryDays": 4,"returnDays": 15
+    "id": "OIL007",
+    "name": "Eucalyptus Essential Oil",
+    "brand": "Sunfara Organics",
+    "category": "essential-oils",
+    "subcategory": "essential-oils",
+    "price": 299,
+    "mrp": 449,
+    "discount": 33,
+    "rating": 4.3,
+    "reviewCount": 112,
+    "stock": 100,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "eucalyptus",
+      "respiratory",
+      "cold",
+      "sinus",
+      "antibacterial"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "respiratory",
+      "immunity",
+      "cleaning"
+    ],
+    "keyIngredients": [
+      "Eucalyptus Globulus Steam-distilled"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Eucalyptus%20Essential%20Oil&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Eucalyptus%20Essential%20Oil&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "10ml",
+        "price": 299
+      }
+    ],
+    "description": "Pure eucalyptus oil with high cineole content. Clears sinuses, fights colds, purifies air.",
+    "ingredients": "100% Eucalyptus Globulus Essential Oil",
+    "howToUse": "Steam inhalation: 3-5 drops in hot water. Diffuser: 4-5 drops.",
+    "highlights": [
+      "80%+ cineole",
+      "Natural decongestant",
+      "Air purifying",
+      "USDA Organic"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS001","name": "Tinted SPF Lip Balm — Rose","brand": "Sunfara Organics","category": "organic-cosmetics","subcategory": "lip-care","price": 199,"mrp": 299,"discount": 33,"rating": 4.5,"reviewCount": 345,"stock": 200,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["lip-balm","tinted","spf","rose","vegan"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["lip-care","hydration","sun-protection"],"keyIngredients": ["Shea Butter","Candelilla Wax","SPF 15"],
-    "image": "assets/images/products/COS001.jpg","images": ["assets/images/products/COS001.jpg"],
-    "variants": [{"id": "v1","name": "Rose","price": 199},{"id": "v2","name": "Nude","price": 199},{"id": "v3","name": "Berry","price": 199}],
-    "description": "Moisturising tinted lip balm with SPF 15. Nourishes lips while adding a natural flush of colour. Made with shea butter and plant wax.","ingredients": "Shea Butter, Candelilla Wax, Castor Oil, SPF 15 (Titanium Dioxide), Iron Oxides, Vitamin E","howToUse": "Apply directly to lips anytime. Reapply throughout day.","highlights": ["SPF 15 protection","3 shades","100% Vegan","Non-sticky"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS001",
+    "name": "Tinted SPF Lip Balm — Rose",
+    "brand": "Sunfara Organics",
+    "category": "organic-cosmetics",
+    "subcategory": "lip-care",
+    "price": 199,
+    "mrp": 299,
+    "discount": 33,
+    "rating": 4.5,
+    "reviewCount": 345,
+    "stock": 200,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "lip-balm",
+      "tinted",
+      "spf",
+      "rose",
+      "vegan"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "lip-care",
+      "hydration",
+      "sun-protection"
+    ],
+    "keyIngredients": [
+      "Shea Butter",
+      "Candelilla Wax",
+      "SPF 15"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Tinted%20SPF%20Lip%20Balm%20%E2%80%94%20Rose&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Tinted%20SPF%20Lip%20Balm%20%E2%80%94%20Rose&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Rose",
+        "price": 199
+      },
+      {
+        "id": "v2",
+        "name": "Nude",
+        "price": 199
+      },
+      {
+        "id": "v3",
+        "name": "Berry",
+        "price": 199
+      }
+    ],
+    "description": "Moisturising tinted lip balm with SPF 15. Nourishes lips while adding a natural flush of colour. Made with shea butter and plant wax.",
+    "ingredients": "Shea Butter, Candelilla Wax, Castor Oil, SPF 15 (Titanium Dioxide), Iron Oxides, Vitamin E",
+    "howToUse": "Apply directly to lips anytime. Reapply throughout day.",
+    "highlights": [
+      "SPF 15 protection",
+      "3 shades",
+      "100% Vegan",
+      "Non-sticky"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS002","name": "Mineral BB Cream SPF 30","brand": "Plum","category": "organic-cosmetics","subcategory": "face","price": 549,"mrp": 799,"discount": 31,"rating": 4.3,"reviewCount": 189,"stock": 60,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["bb-cream","spf","mineral","tinted-moisturiser","clean-beauty"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["coverage","sun-protection","moisture"],"keyIngredients": ["Zinc Oxide","Titanium Dioxide","Hyaluronic Acid"],
-    "image": "assets/images/products/COS002.jpg","images": ["assets/images/products/COS002.jpg"],
-    "variants": [{"id": "v1","name": "Fair","price": 549},{"id": "v2","name": "Medium","price": 549},{"id": "v3","name": "Deep","price": 549}],
-    "description": "Lightweight BB cream with mineral SPF 30. Evens skin tone, blurs pores, hydrates while protecting from sun damage. No white cast.","ingredients": "Zinc Oxide, Titanium Dioxide, Sodium Hyaluronate, Niacinamide, Aloe Vera, Iron Oxides, Aqua","howToUse": "Apply after skincare. Blend with fingers or brush. Reapply every 2-3 hours in sun.","highlights": ["Reef-safe mineral SPF","3 inclusive shades","No white cast","Skin-care infused"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS002",
+    "name": "Mineral BB Cream SPF 30",
+    "brand": "Plum",
+    "category": "organic-cosmetics",
+    "subcategory": "face",
+    "price": 549,
+    "mrp": 799,
+    "discount": 31,
+    "rating": 4.3,
+    "reviewCount": 189,
+    "stock": 60,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "bb-cream",
+      "spf",
+      "mineral",
+      "tinted-moisturiser",
+      "clean-beauty"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "coverage",
+      "sun-protection",
+      "moisture"
+    ],
+    "keyIngredients": [
+      "Zinc Oxide",
+      "Titanium Dioxide",
+      "Hyaluronic Acid"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Mineral%20BB%20Cream%20SPF%2030&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Mineral%20BB%20Cream%20SPF%2030&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Fair",
+        "price": 549
+      },
+      {
+        "id": "v2",
+        "name": "Medium",
+        "price": 549
+      },
+      {
+        "id": "v3",
+        "name": "Deep",
+        "price": 549
+      }
+    ],
+    "description": "Lightweight BB cream with mineral SPF 30. Evens skin tone, blurs pores, hydrates while protecting from sun damage. No white cast.",
+    "ingredients": "Zinc Oxide, Titanium Dioxide, Sodium Hyaluronate, Niacinamide, Aloe Vera, Iron Oxides, Aqua",
+    "howToUse": "Apply after skincare. Blend with fingers or brush. Reapply every 2-3 hours in sun.",
+    "highlights": [
+      "Reef-safe mineral SPF",
+      "3 inclusive shades",
+      "No white cast",
+      "Skin-care infused"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS003","name": "Kohl Kajal — Intense Black","brand": "Sunfara Organics","category": "organic-cosmetics","subcategory": "eyes","price": 249,"mrp": 349,"discount": 29,"rating": 4.6,"reviewCount": 267,"stock": 150,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["kajal","kohl","eyes","natural","long-lasting"],"certifications": ["Cruelty-Free"],"skinTypes": [],"concerns": ["eye-makeup","definition"],"keyIngredients": ["Almond Oil","Natural Carbon Black","Castor Oil"],
-    "image": "assets/images/products/COS003.jpg","images": ["assets/images/products/COS003.jpg"],
-    "variants": [{"id": "v1","name": "0.35g","price": 249}],
-    "description": "Intensely pigmented kajal with almond oil and natural carbon black. Deep, smudge-proof lines. Safe for waterline use.","ingredients": "Castor Oil, Almond Oil, Natural Carbon Black, Vitamin E, Candelilla Wax","howToUse": "Line upper or lower lashline. Blend for smoky look. Safe for waterline.","highlights": ["Waterline safe","Almond-oil enriched","Smudge-proof","No lead"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS003",
+    "name": "Kohl Kajal — Intense Black",
+    "brand": "Sunfara Organics",
+    "category": "organic-cosmetics",
+    "subcategory": "eyes",
+    "price": 249,
+    "mrp": 349,
+    "discount": 29,
+    "rating": 4.6,
+    "reviewCount": 267,
+    "stock": 150,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "kajal",
+      "kohl",
+      "eyes",
+      "natural",
+      "long-lasting"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "eye-makeup",
+      "definition"
+    ],
+    "keyIngredients": [
+      "Almond Oil",
+      "Natural Carbon Black",
+      "Castor Oil"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Kohl%20Kajal%20%E2%80%94%20Intense%20Black&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Kohl%20Kajal%20%E2%80%94%20Intense%20Black&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "0.35g",
+        "price": 249
+      }
+    ],
+    "description": "Intensely pigmented kajal with almond oil and natural carbon black. Deep, smudge-proof lines. Safe for waterline use.",
+    "ingredients": "Castor Oil, Almond Oil, Natural Carbon Black, Vitamin E, Candelilla Wax",
+    "howToUse": "Line upper or lower lashline. Blend for smoky look. Safe for waterline.",
+    "highlights": [
+      "Waterline safe",
+      "Almond-oil enriched",
+      "Smudge-proof",
+      "No lead"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS004","name": "Tinted Brow Gel — Brunette","brand": "Dot & Key","category": "organic-cosmetics","subcategory": "eyes","price": 299,"mrp": 449,"discount": 33,"rating": 4.2,"reviewCount": 98,"stock": 70,"isNew": true,"isBestseller": false,"isFeatured": false,
-    "tags": ["brow","gel","tinted","eyebrow","natural"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["brow-definition","hold"],"keyIngredients": ["Castor Oil","Vitamin E","Iron Oxides"],
-    "image": "assets/images/products/COS004.jpg","images": ["assets/images/products/COS004.jpg"],
-    "variants": [{"id": "v1","name": "Brunette","price": 299},{"id": "v2","name": "Black","price": 299},{"id": "v3","name": "Blonde","price": 299}],
-    "description": "Castor oil-enriched tinted brow gel that grooms, fills, and nourishes brows. Flexible hold, natural finish.","ingredients": "Castor Oil, Vitamin E, Iron Oxides, Candelilla Wax, Aqua","howToUse": "Brush brows in upward strokes. Build for more coverage. Dries in 30 seconds.","highlights": ["Castor oil for brow growth","Flexible natural hold","3 shades","No flaking"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS004",
+    "name": "Tinted Brow Gel — Brunette",
+    "brand": "Dot & Key",
+    "category": "organic-cosmetics",
+    "subcategory": "eyes",
+    "price": 299,
+    "mrp": 449,
+    "discount": 33,
+    "rating": 4.2,
+    "reviewCount": 98,
+    "stock": 70,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "brow",
+      "gel",
+      "tinted",
+      "eyebrow",
+      "natural"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "brow-definition",
+      "hold"
+    ],
+    "keyIngredients": [
+      "Castor Oil",
+      "Vitamin E",
+      "Iron Oxides"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Tinted%20Brow%20Gel%20%E2%80%94%20Brunette&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Tinted%20Brow%20Gel%20%E2%80%94%20Brunette&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Brunette",
+        "price": 299
+      },
+      {
+        "id": "v2",
+        "name": "Black",
+        "price": 299
+      },
+      {
+        "id": "v3",
+        "name": "Blonde",
+        "price": 299
+      }
+    ],
+    "description": "Castor oil-enriched tinted brow gel that grooms, fills, and nourishes brows. Flexible hold, natural finish.",
+    "ingredients": "Castor Oil, Vitamin E, Iron Oxides, Candelilla Wax, Aqua",
+    "howToUse": "Brush brows in upward strokes. Build for more coverage. Dries in 30 seconds.",
+    "highlights": [
+      "Castor oil for brow growth",
+      "Flexible natural hold",
+      "3 shades",
+      "No flaking"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS005","name": "Lip & Cheek Tint — Peach Blush","brand": "Sunfara Organics","category": "organic-cosmetics","subcategory": "lip-care","price": 349,"mrp": 499,"discount": 30,"rating": 4.5,"reviewCount": 213,"stock": 80,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["lip-tint","cheek","multipurpose","natural","vegan"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["lip-color","blush"],"keyIngredients": ["Beet Root Extract","Jojoba Oil","Vitamin E"],
-    "image": "assets/images/products/COS005.jpg","images": ["assets/images/products/COS005.jpg"],
-    "variants": [{"id": "v1","name": "Peach Blush","price": 349},{"id": "v2","name": "Berry Kiss","price": 349},{"id": "v3","name": "Rose Flush","price": 349}],
-    "description": "Sheer buildable tint for lips and cheeks with beetroot extract and jojoba oil. Natural flush that lasts all day.","ingredients": "Jojoba Oil, Castor Oil, Beet Root Extract, Vitamin E, Candelilla Wax, Iron Oxides","howToUse": "Lips: apply with fingertip, blend edges. Cheeks: dot and blend with ring finger.","highlights": ["2-in-1 lip & cheek","Beetroot pigment","Buildable colour","Moisturising"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS005",
+    "name": "Lip & Cheek Tint — Peach Blush",
+    "brand": "Sunfara Organics",
+    "category": "organic-cosmetics",
+    "subcategory": "lip-care",
+    "price": 349,
+    "mrp": 499,
+    "discount": 30,
+    "rating": 4.5,
+    "reviewCount": 213,
+    "stock": 80,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "lip-tint",
+      "cheek",
+      "multipurpose",
+      "natural",
+      "vegan"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "lip-color",
+      "blush"
+    ],
+    "keyIngredients": [
+      "Beet Root Extract",
+      "Jojoba Oil",
+      "Vitamin E"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Lip%20%26%20Cheek%20Tint%20%E2%80%94%20Peach%20B%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Lip%20%26%20Cheek%20Tint%20%E2%80%94%20Peach%20B%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Peach Blush",
+        "price": 349
+      },
+      {
+        "id": "v2",
+        "name": "Berry Kiss",
+        "price": 349
+      },
+      {
+        "id": "v3",
+        "name": "Rose Flush",
+        "price": 349
+      }
+    ],
+    "description": "Sheer buildable tint for lips and cheeks with beetroot extract and jojoba oil. Natural flush that lasts all day.",
+    "ingredients": "Jojoba Oil, Castor Oil, Beet Root Extract, Vitamin E, Candelilla Wax, Iron Oxides",
+    "howToUse": "Lips: apply with fingertip, blend edges. Cheeks: dot and blend with ring finger.",
+    "highlights": [
+      "2-in-1 lip & cheek",
+      "Beetroot pigment",
+      "Buildable colour",
+      "Moisturising"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS006","name": "Rose Water Setting & Refreshing Mist","brand": "Kama Ayurveda","category": "organic-cosmetics","subcategory": "face","price": 449,"mrp": 699,"discount": 36,"rating": 4.7,"reviewCount": 334,"stock": 95,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["face-mist","rose-water","setting-spray","hydrating","glow"],"certifications": ["USDA Organic","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["hydration","glow","setting-makeup"],"keyIngredients": ["Steam-distilled Rose Water","Glycerin","Aloe Vera"],
-    "image": "assets/images/products/COS006.jpg","images": ["assets/images/products/COS006.jpg"],
-    "variants": [{"id": "v1","name": "100ml","price": 449}],
-    "description": "Pure steam-distilled rose water that sets makeup, refreshes skin mid-day, hydrates, and adds dewy glow.","ingredients": "Rosa Damascena Flower Water (steam-distilled), Glycerin, Aloe Vera, Panthenol","howToUse": "Spray 20cm from face, eyes closed. Use after makeup or anytime for glow boost.","highlights": ["100% Steam-distilled","Preservative-free","Sets makeup beautifully","All day use"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS006",
+    "name": "Rose Water Setting & Refreshing Mist",
+    "brand": "Kama Ayurveda",
+    "category": "organic-cosmetics",
+    "subcategory": "face",
+    "price": 449,
+    "mrp": 699,
+    "discount": 36,
+    "rating": 4.7,
+    "reviewCount": 334,
+    "stock": 95,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "face-mist",
+      "rose-water",
+      "setting-spray",
+      "hydrating",
+      "glow"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "hydration",
+      "glow",
+      "setting-makeup"
+    ],
+    "keyIngredients": [
+      "Steam-distilled Rose Water",
+      "Glycerin",
+      "Aloe Vera"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Rose%20Water%20Setting%20%26%20Refre%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Rose%20Water%20Setting%20%26%20Refre%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100ml",
+        "price": 449
+      }
+    ],
+    "description": "Pure steam-distilled rose water that sets makeup, refreshes skin mid-day, hydrates, and adds dewy glow.",
+    "ingredients": "Rosa Damascena Flower Water (steam-distilled), Glycerin, Aloe Vera, Panthenol",
+    "howToUse": "Spray 20cm from face, eyes closed. Use after makeup or anytime for glow boost.",
+    "highlights": [
+      "100% Steam-distilled",
+      "Preservative-free",
+      "Sets makeup beautifully",
+      "All day use"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS007","name": "Natural Mascara — Black","brand": "Aroma Magic","category": "organic-cosmetics","subcategory": "eyes","price": 399,"mrp": 599,"discount": 33,"rating": 4.1,"reviewCount": 89,"stock": 45,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["mascara","natural","lengthening","vegan","clean-beauty"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["lash-definition","lengthening"],"keyIngredients": ["Natural Carbon Black","Castor Oil","Vitamin B5"],
-    "image": "assets/images/products/COS007.jpg","images": ["assets/images/products/COS007.jpg"],
-    "variants": [{"id": "v1","name": "8ml","price": 399}],
-    "description": "Clean buildable mascara with natural carbon black. Lengthens and defines lashes without clumping. Castor oil conditions lashes.","ingredients": "Aqua, Natural Carbon Black, Castor Oil, Panthenol, Carnauba Wax, Candelilla Wax","howToUse": "Wiggle wand at roots and sweep to tips. Build for more volume. Remove with micellar water.","highlights": ["No synthetic fragrances","Conditions lashes","Buildable formula","No parabens"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS007",
+    "name": "Natural Mascara — Black",
+    "brand": "Aroma Magic",
+    "category": "organic-cosmetics",
+    "subcategory": "eyes",
+    "price": 399,
+    "mrp": 599,
+    "discount": 33,
+    "rating": 4.1,
+    "reviewCount": 89,
+    "stock": 45,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "mascara",
+      "natural",
+      "lengthening",
+      "vegan",
+      "clean-beauty"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "lash-definition",
+      "lengthening"
+    ],
+    "keyIngredients": [
+      "Natural Carbon Black",
+      "Castor Oil",
+      "Vitamin B5"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Natural%20Mascara%20%E2%80%94%20Black&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Natural%20Mascara%20%E2%80%94%20Black&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "8ml",
+        "price": 399
+      }
+    ],
+    "description": "Clean buildable mascara with natural carbon black. Lengthens and defines lashes without clumping. Castor oil conditions lashes.",
+    "ingredients": "Aqua, Natural Carbon Black, Castor Oil, Panthenol, Carnauba Wax, Candelilla Wax",
+    "howToUse": "Wiggle wand at roots and sweep to tips. Build for more volume. Remove with micellar water.",
+    "highlights": [
+      "No synthetic fragrances",
+      "Conditions lashes",
+      "Buildable formula",
+      "No parabens"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "COS008","name": "Translucent Setting Powder","brand": "Sunfara Organics","category": "organic-cosmetics","subcategory": "face","price": 499,"mrp": 749,"discount": 33,"rating": 4.3,"reviewCount": 121,"stock": 55,"isNew": true,"isBestseller": false,"isFeatured": false,
-    "tags": ["setting-powder","translucent","matte","natural","vegan"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["oil-control","setting-makeup","matte-finish"],"keyIngredients": ["Rice Powder","Tapioca Starch","Mica"],
-    "image": "assets/images/products/COS008.jpg","images": ["assets/images/products/COS008.jpg"],
-    "variants": [{"id": "v1","name": "10g","price": 499}],
-    "description": "Finely-milled translucent setting powder from rice powder and tapioca starch. Sets makeup, controls shine, blurs pores.","ingredients": "Rice Powder, Tapioca Starch, Mica, Silica, Boron Nitride","howToUse": "Dust lightly over makeup or bare skin with fluffy brush.","highlights": ["Talc-free","All skin tones","Blurs pores","Long-lasting matte"],"deliveryDays": 4,"returnDays": 15
+    "id": "COS008",
+    "name": "Translucent Setting Powder",
+    "brand": "Sunfara Organics",
+    "category": "organic-cosmetics",
+    "subcategory": "face",
+    "price": 499,
+    "mrp": 749,
+    "discount": 33,
+    "rating": 4.3,
+    "reviewCount": 121,
+    "stock": 55,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "setting-powder",
+      "translucent",
+      "matte",
+      "natural",
+      "vegan"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "oil-control",
+      "setting-makeup",
+      "matte-finish"
+    ],
+    "keyIngredients": [
+      "Rice Powder",
+      "Tapioca Starch",
+      "Mica"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Translucent%20Setting%20Powder&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Translucent%20Setting%20Powder&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "10g",
+        "price": 499
+      }
+    ],
+    "description": "Finely-milled translucent setting powder from rice powder and tapioca starch. Sets makeup, controls shine, blurs pores.",
+    "ingredients": "Rice Powder, Tapioca Starch, Mica, Silica, Boron Nitride",
+    "howToUse": "Dust lightly over makeup or bare skin with fluffy brush.",
+    "highlights": [
+      "Talc-free",
+      "All skin tones",
+      "Blurs pores",
+      "Long-lasting matte"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "WEL001","name": "Himalayan Pink Salt Bath Soak","brand": "Sunfara Organics","category": "wellness","subcategory": "bath-salts","price": 399,"mrp": 599,"discount": 33,"rating": 4.6,"reviewCount": 278,"stock": 90,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["bath-soak","himalayan-salt","detox","minerals","relaxing"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["relaxation","detox","muscle-relief"],"keyIngredients": ["Himalayan Pink Salt","Lavender Oil","Dead Sea Salt"],
-    "image": "assets/images/products/WEL001.jpg","images": ["assets/images/products/WEL001.jpg"],
-    "variants": [{"id": "v1","name": "300g","price": 399},{"id": "v2","name": "500g","price": 599}],
-    "description": "Mineral-rich bath soak with Himalayan pink salt, Dead Sea salt, and lavender. Draws out toxins, soothes sore muscles, leaves skin soft.","ingredients": "Himalayan Pink Salt, Dead Sea Salt, Lavender Oil, Epsom Salt, Rose Petals","howToUse": "Add 2-4 tablespoons to warm bath. Soak 20-30 minutes. Pat dry.","highlights": ["84 trace minerals","Muscle recovery","Detoxifying","Aromatherapy boost"],"deliveryDays": 4,"returnDays": 15
+    "id": "WEL001",
+    "name": "Himalayan Pink Salt Bath Soak",
+    "brand": "Sunfara Organics",
+    "category": "wellness",
+    "subcategory": "bath-salts",
+    "price": 399,
+    "mrp": 599,
+    "discount": 33,
+    "rating": 4.6,
+    "reviewCount": 278,
+    "stock": 90,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "bath-soak",
+      "himalayan-salt",
+      "detox",
+      "minerals",
+      "relaxing"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "relaxation",
+      "detox",
+      "muscle-relief"
+    ],
+    "keyIngredients": [
+      "Himalayan Pink Salt",
+      "Lavender Oil",
+      "Dead Sea Salt"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Himalayan%20Pink%20Salt%20Bath%20S%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Himalayan%20Pink%20Salt%20Bath%20S%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "300g",
+        "price": 399
+      },
+      {
+        "id": "v2",
+        "name": "500g",
+        "price": 599
+      }
+    ],
+    "description": "Mineral-rich bath soak with Himalayan pink salt, Dead Sea salt, and lavender. Draws out toxins, soothes sore muscles, leaves skin soft.",
+    "ingredients": "Himalayan Pink Salt, Dead Sea Salt, Lavender Oil, Epsom Salt, Rose Petals",
+    "howToUse": "Add 2-4 tablespoons to warm bath. Soak 20-30 minutes. Pat dry.",
+    "highlights": [
+      "84 trace minerals",
+      "Muscle recovery",
+      "Detoxifying",
+      "Aromatherapy boost"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "WEL002","name": "Coffee & Coconut Body Scrub","brand": "Mamaearth","category": "wellness","subcategory": "body-scrubs","price": 349,"mrp": 499,"discount": 30,"rating": 4.4,"reviewCount": 189,"stock": 75,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["body-scrub","coffee","coconut","exfoliating","glow"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["exfoliation","tan-removal","glow"],"keyIngredients": ["Ground Coffee","Coconut Oil","Brown Sugar"],
-    "image": "assets/images/products/WEL002.jpg","images": ["assets/images/products/WEL002.jpg"],
-    "variants": [{"id": "v1","name": "200g","price": 349}],
-    "description": "Energising body scrub with ground coffee and coconut oil. Removes dead skin, reduces cellulite appearance, leaves skin radiant.","ingredients": "Coffee Grounds, Coconut Oil, Brown Sugar, Coffee Essential Oil, Vitamin E","howToUse": "Apply to damp skin in circular motions. Rinse. Use 2-3 times a week.","highlights": ["Anti-cellulite caffeine","Natural brown sugar","Moisturises while exfoliating","Plastic-free packaging"],"deliveryDays": 4,"returnDays": 15
+    "id": "WEL002",
+    "name": "Coffee & Coconut Body Scrub",
+    "brand": "Mamaearth",
+    "category": "wellness",
+    "subcategory": "body-scrubs",
+    "price": 349,
+    "mrp": 499,
+    "discount": 30,
+    "rating": 4.4,
+    "reviewCount": 189,
+    "stock": 75,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "body-scrub",
+      "coffee",
+      "coconut",
+      "exfoliating",
+      "glow"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "exfoliation",
+      "tan-removal",
+      "glow"
+    ],
+    "keyIngredients": [
+      "Ground Coffee",
+      "Coconut Oil",
+      "Brown Sugar"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Coffee%20%26%20Coconut%20Body%20Scrub&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Coffee%20%26%20Coconut%20Body%20Scrub&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "200g",
+        "price": 349
+      }
+    ],
+    "description": "Energising body scrub with ground coffee and coconut oil. Removes dead skin, reduces cellulite appearance, leaves skin radiant.",
+    "ingredients": "Coffee Grounds, Coconut Oil, Brown Sugar, Coffee Essential Oil, Vitamin E",
+    "howToUse": "Apply to damp skin in circular motions. Rinse. Use 2-3 times a week.",
+    "highlights": [
+      "Anti-cellulite caffeine",
+      "Natural brown sugar",
+      "Moisturises while exfoliating",
+      "Plastic-free packaging"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "WEL003","name": "Rose Quartz Facial Roller","brand": "Sunfara Organics","category": "wellness","subcategory": "tools","price": 799,"mrp": 1299,"discount": 38,"rating": 4.5,"reviewCount": 156,"stock": 35,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["crystal-roller","rose-quartz","de-puff","lymphatic","anti-aging"],"certifications": ["Cruelty-Free"],"skinTypes": ["all"],"concerns": ["puffiness","lymphatic-drainage","relaxation"],"keyIngredients": ["Natural Rose Quartz"],
-    "image": "assets/images/products/WEL003.jpg","images": ["assets/images/products/WEL003.jpg"],
-    "variants": [{"id": "v1","name": "Rose Quartz","price": 799},{"id": "v2","name": "Jade","price": 749}],
-    "description": "Dual-ended rose quartz facial roller. Promotes lymphatic drainage, reduces puffiness, boosts product absorption.","ingredients": "100% Natural Rose Quartz Crystal, Stainless Steel Handle","howToUse": "Use on clean oiled skin. Roll outward and upward. Large end: cheeks/forehead. Small: eyes/nose. 5-10 mins daily.","highlights": ["100% Natural crystal","Dual-end design","Lymphatic drainage","Velvet pouch included"],"deliveryDays": 5,"returnDays": 15
+    "id": "WEL003",
+    "name": "Rose Quartz Facial Roller",
+    "brand": "Sunfara Organics",
+    "category": "wellness",
+    "subcategory": "tools",
+    "price": 799,
+    "mrp": 1299,
+    "discount": 38,
+    "rating": 4.5,
+    "reviewCount": 156,
+    "stock": 35,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "crystal-roller",
+      "rose-quartz",
+      "de-puff",
+      "lymphatic",
+      "anti-aging"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "puffiness",
+      "lymphatic-drainage",
+      "relaxation"
+    ],
+    "keyIngredients": [
+      "Natural Rose Quartz"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Rose%20Quartz%20Facial%20Roller&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Rose%20Quartz%20Facial%20Roller&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Rose Quartz",
+        "price": 799
+      },
+      {
+        "id": "v2",
+        "name": "Jade",
+        "price": 749
+      }
+    ],
+    "description": "Dual-ended rose quartz facial roller. Promotes lymphatic drainage, reduces puffiness, boosts product absorption.",
+    "ingredients": "100% Natural Rose Quartz Crystal, Stainless Steel Handle",
+    "howToUse": "Use on clean oiled skin. Roll outward and upward. Large end: cheeks/forehead. Small: eyes/nose. 5-10 mins daily.",
+    "highlights": [
+      "100% Natural crystal",
+      "Dual-end design",
+      "Lymphatic drainage",
+      "Velvet pouch included"
+    ],
+    "deliveryDays": 5,
+    "returnDays": 15
   },
   {
-    "id": "WEL004","name": "Gua Sha Facial Sculpting Tool","brand": "Sunfara Organics","category": "wellness","subcategory": "tools","price": 599,"mrp": 999,"discount": 40,"rating": 4.6,"reviewCount": 112,"stock": 40,"isNew": true,"isBestseller": false,"isFeatured": false,
-    "tags": ["gua-sha","facial-sculpting","jade","anti-aging","massage"],"certifications": ["Cruelty-Free"],"skinTypes": ["all"],"concerns": ["firming","sculpting","lymphatic-drainage"],"keyIngredients": ["Green Jade Stone"],
-    "image": "assets/images/products/WEL004.jpg","images": ["assets/images/products/WEL004.jpg"],
-    "variants": [{"id": "v1","name": "Green Jade","price": 599}],
-    "description": "Hand-carved jade gua sha that lifts, sculpts, and defines facial contours. Firms jaw, cheekbones, and neck.","ingredients": "100% Natural Nephrite Jade","howToUse": "Apply face oil. Hold at 15°. Scrape outward with medium pressure. 5 minutes daily.","highlights": ["Hand-carved genuine jade","Facial contouring","Stimulates collagen","Traditional technique"],"deliveryDays": 5,"returnDays": 15
+    "id": "WEL004",
+    "name": "Gua Sha Facial Sculpting Tool",
+    "brand": "Sunfara Organics",
+    "category": "wellness",
+    "subcategory": "tools",
+    "price": 599,
+    "mrp": 999,
+    "discount": 40,
+    "rating": 4.6,
+    "reviewCount": 112,
+    "stock": 40,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "gua-sha",
+      "facial-sculpting",
+      "jade",
+      "anti-aging",
+      "massage"
+    ],
+    "certifications": [
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "firming",
+      "sculpting",
+      "lymphatic-drainage"
+    ],
+    "keyIngredients": [
+      "Green Jade Stone"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Gua%20Sha%20Facial%20Sculpting%20T%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Gua%20Sha%20Facial%20Sculpting%20T%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Green Jade",
+        "price": 599
+      }
+    ],
+    "description": "Hand-carved jade gua sha that lifts, sculpts, and defines facial contours. Firms jaw, cheekbones, and neck.",
+    "ingredients": "100% Natural Nephrite Jade",
+    "howToUse": "Apply face oil. Hold at 15°. Scrape outward with medium pressure. 5 minutes daily.",
+    "highlights": [
+      "Hand-carved genuine jade",
+      "Facial contouring",
+      "Stimulates collagen",
+      "Traditional technique"
+    ],
+    "deliveryDays": 5,
+    "returnDays": 15
   },
   {
-    "id": "WEL005","name": "Aromatherapy Diffuser Blend — Calm","brand": "Aroma Magic","category": "wellness","subcategory": "aromatherapy","price": 449,"mrp": 649,"discount": 31,"rating": 4.7,"reviewCount": 234,"stock": 65,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["aromatherapy","calm","stress-relief","sleep","blend"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["stress","anxiety","sleep"],"keyIngredients": ["Lavender","Bergamot","Chamomile","Ylang Ylang"],
-    "image": "assets/images/products/WEL005.jpg","images": ["assets/images/products/WEL005.jpg"],
-    "variants": [{"id": "v1","name": "15ml","price": 449}],
-    "description": "Synergistic blend of lavender, bergamot, and chamomile. Calms the nervous system, reduces anxiety, promotes restful sleep.","ingredients": "Lavender Oil, Bergamot Oil, Chamomile Oil, Ylang Ylang Oil","howToUse": "Diffuser: 4-5 drops. Pillow spray: dilute 10 drops in 100ml water. Bath: 8 drops in carrier.","highlights": ["Expert blended","GC/MS tested","No synthetic fragrance","Pre-diluted option"],"deliveryDays": 4,"returnDays": 15
+    "id": "WEL005",
+    "name": "Aromatherapy Diffuser Blend — Calm",
+    "brand": "Aroma Magic",
+    "category": "wellness",
+    "subcategory": "aromatherapy",
+    "price": 449,
+    "mrp": 649,
+    "discount": 31,
+    "rating": 4.7,
+    "reviewCount": 234,
+    "stock": 65,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "aromatherapy",
+      "calm",
+      "stress-relief",
+      "sleep",
+      "blend"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "stress",
+      "anxiety",
+      "sleep"
+    ],
+    "keyIngredients": [
+      "Lavender",
+      "Bergamot",
+      "Chamomile",
+      "Ylang Ylang"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Aromatherapy%20Diffuser%20Blen%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Aromatherapy%20Diffuser%20Blen%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "15ml",
+        "price": 449
+      }
+    ],
+    "description": "Synergistic blend of lavender, bergamot, and chamomile. Calms the nervous system, reduces anxiety, promotes restful sleep.",
+    "ingredients": "Lavender Oil, Bergamot Oil, Chamomile Oil, Ylang Ylang Oil",
+    "howToUse": "Diffuser: 4-5 drops. Pillow spray: dilute 10 drops in 100ml water. Bath: 8 drops in carrier.",
+    "highlights": [
+      "Expert blended",
+      "GC/MS tested",
+      "No synthetic fragrance",
+      "Pre-diluted option"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "WEL006","name": "Magnesium Epsom Salt Foot Soak","brand": "Sunfara Organics","category": "wellness","subcategory": "bath-salts","price": 299,"mrp": 449,"discount": 33,"rating": 4.3,"reviewCount": 98,"stock": 120,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["foot-soak","epsom-salt","magnesium","foot-care","relaxing"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["foot-care","muscle-relief","relaxation"],"keyIngredients": ["Epsom Salt","Peppermint Oil","Tea Tree Oil"],
-    "image": "assets/images/products/WEL006.jpg","images": ["assets/images/products/WEL006.jpg"],
-    "variants": [{"id": "v1","name": "400g","price": 299}],
-    "description": "Therapeutic foot soak with pharmaceutical-grade Epsom salt, peppermint, and tea tree. Relieves tired feet, softens cracked heels.","ingredients": "Epsom Salt, Peppermint Oil, Tea Tree Oil, Himalayan Salt","howToUse": "Dissolve 2 tablespoons in warm water. Soak feet 20 minutes. Pat dry. Moisturise.","highlights": ["Pharmaceutical grade","Relieves foot pain","Softens cracked heels","Anti-fungal tea tree"],"deliveryDays": 4,"returnDays": 15
+    "id": "WEL006",
+    "name": "Magnesium Epsom Salt Foot Soak",
+    "brand": "Sunfara Organics",
+    "category": "wellness",
+    "subcategory": "bath-salts",
+    "price": 299,
+    "mrp": 449,
+    "discount": 33,
+    "rating": 4.3,
+    "reviewCount": 98,
+    "stock": 120,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "foot-soak",
+      "epsom-salt",
+      "magnesium",
+      "foot-care",
+      "relaxing"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "foot-care",
+      "muscle-relief",
+      "relaxation"
+    ],
+    "keyIngredients": [
+      "Epsom Salt",
+      "Peppermint Oil",
+      "Tea Tree Oil"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Magnesium%20Epsom%20Salt%20Foot%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Magnesium%20Epsom%20Salt%20Foot%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "400g",
+        "price": 299
+      }
+    ],
+    "description": "Therapeutic foot soak with pharmaceutical-grade Epsom salt, peppermint, and tea tree. Relieves tired feet, softens cracked heels.",
+    "ingredients": "Epsom Salt, Peppermint Oil, Tea Tree Oil, Himalayan Salt",
+    "howToUse": "Dissolve 2 tablespoons in warm water. Soak feet 20 minutes. Pat dry. Moisturise.",
+    "highlights": [
+      "Pharmaceutical grade",
+      "Relieves foot pain",
+      "Softens cracked heels",
+      "Anti-fungal tea tree"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "WEL007","name": "Dry Body Brush","brand": "Sunfara Organics","category": "wellness","subcategory": "tools","price": 349,"mrp": 549,"discount": 36,"rating": 4.4,"reviewCount": 87,"stock": 50,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["dry-brush","body-brush","exfoliating","lymphatic","cellulite"],"certifications": ["Cruelty-Free","Vegan"],"skinTypes": [],"concerns": ["exfoliation","cellulite","lymphatic-drainage"],"keyIngredients": ["Natural Sisal Bristles","Beechwood Handle"],
-    "image": "assets/images/products/WEL007.jpg","images": ["assets/images/products/WEL007.jpg"],
-    "variants": [{"id": "v1","name": "Standard","price": 349}],
-    "description": "Natural sisal dry body brush for pre-shower dry brushing. Exfoliates, stimulates lymphatic system, reduces cellulite.","ingredients": "Natural Sisal Bristles, Sustainable Beechwood Handle","howToUse": "Before shower on dry skin. Brush in long strokes toward heart. Start feet, work upward. Shower after.","highlights": ["Natural sisal bristles","Sustainable beechwood","Stimulates lymph","Reduces cellulite"],"deliveryDays": 5,"returnDays": 15
+    "id": "WEL007",
+    "name": "Dry Body Brush",
+    "brand": "Sunfara Organics",
+    "category": "wellness",
+    "subcategory": "tools",
+    "price": 349,
+    "mrp": 549,
+    "discount": 36,
+    "rating": 4.4,
+    "reviewCount": 87,
+    "stock": 50,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "dry-brush",
+      "body-brush",
+      "exfoliating",
+      "lymphatic",
+      "cellulite"
+    ],
+    "certifications": [
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "exfoliation",
+      "cellulite",
+      "lymphatic-drainage"
+    ],
+    "keyIngredients": [
+      "Natural Sisal Bristles",
+      "Beechwood Handle"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Dry%20Body%20Brush&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Dry%20Body%20Brush&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Standard",
+        "price": 349
+      }
+    ],
+    "description": "Natural sisal dry body brush for pre-shower dry brushing. Exfoliates, stimulates lymphatic system, reduces cellulite.",
+    "ingredients": "Natural Sisal Bristles, Sustainable Beechwood Handle",
+    "howToUse": "Before shower on dry skin. Brush in long strokes toward heart. Start feet, work upward. Shower after.",
+    "highlights": [
+      "Natural sisal bristles",
+      "Sustainable beechwood",
+      "Stimulates lymph",
+      "Reduces cellulite"
+    ],
+    "deliveryDays": 5,
+    "returnDays": 15
   },
   {
-    "id": "AYU001","name": "Kumkumadi Tailam Face Oil","brand": "Kama Ayurveda","category": "ayurvedic","subcategory": "face-oils","price": 1499,"mrp": 2199,"discount": 32,"rating": 4.8,"reviewCount": 567,"stock": 30,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["kumkumadi","brightening","ayurvedic","luxury","anti-aging"],"certifications": ["USDA Organic","Ayurvedic"],"skinTypes": ["all"],"concerns": ["brightening","anti-aging","hyperpigmentation"],"keyIngredients": ["Saffron","Sandalwood","Vetiver","Manjistha"],
-    "image": "assets/images/products/AYU001.jpg","images": ["assets/images/products/AYU001.jpg"],
-    "variants": [{"id": "v1","name": "12ml","price": 1499}],
-    "description": "The legendary Kumkumadi Tailam with saffron, sandalwood, and 25 rare botanicals. Brightens complexion, fades blemishes, restores youthful radiance.","ingredients": "Sesame Oil, Saffron, Sandalwood, Vetiver, Manjistha, + 21 rare Ayurvedic herbs","howToUse": "Take 4-5 drops. Warm between palms. Press gently into cleansed face. Use nightly.","highlights": ["25 rare Ayurvedic herbs","Real saffron threads","Authentic classical formula","Award-winning"],"deliveryDays": 4,"returnDays": 15
+    "id": "AYU001",
+    "name": "Kumkumadi Tailam Face Oil",
+    "brand": "Kama Ayurveda",
+    "category": "ayurvedic",
+    "subcategory": "face-oils",
+    "price": 1499,
+    "mrp": 2199,
+    "discount": 32,
+    "rating": 4.8,
+    "reviewCount": 567,
+    "stock": 30,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "kumkumadi",
+      "brightening",
+      "ayurvedic",
+      "luxury",
+      "anti-aging"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Ayurvedic"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "brightening",
+      "anti-aging",
+      "hyperpigmentation"
+    ],
+    "keyIngredients": [
+      "Saffron",
+      "Sandalwood",
+      "Vetiver",
+      "Manjistha"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Kumkumadi%20Tailam%20Face%20Oil&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Kumkumadi%20Tailam%20Face%20Oil&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "12ml",
+        "price": 1499
+      }
+    ],
+    "description": "The legendary Kumkumadi Tailam with saffron, sandalwood, and 25 rare botanicals. Brightens complexion, fades blemishes, restores youthful radiance.",
+    "ingredients": "Sesame Oil, Saffron, Sandalwood, Vetiver, Manjistha, + 21 rare Ayurvedic herbs",
+    "howToUse": "Take 4-5 drops. Warm between palms. Press gently into cleansed face. Use nightly.",
+    "highlights": [
+      "25 rare Ayurvedic herbs",
+      "Real saffron threads",
+      "Authentic classical formula",
+      "Award-winning"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "AYU002","name": "Multani & Haldi Ubtan Face Pack","brand": "Sunfara Organics","category": "ayurvedic","subcategory": "ubtan","price": 299,"mrp": 449,"discount": 33,"rating": 4.5,"reviewCount": 312,"stock": 85,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["ubtan","turmeric","brightening","traditional","wedding"],"certifications": ["USDA Organic","Ayurvedic"],"skinTypes": ["all"],"concerns": ["brightening","tan-removal","glow"],"keyIngredients": ["Multani Mitti","Turmeric","Sandalwood","Rose"],
-    "image": "assets/images/products/AYU002.jpg","images": ["assets/images/products/AYU002.jpg"],
-    "variants": [{"id": "v1","name": "100g","price": 299}],
-    "description": "Traditional Indian ubtan with Multani Mitti, turmeric, sandalwood, and rose petals. Brightens and gives the legendary pre-bridal glow.","ingredients": "Fuller's Earth, Turmeric, Sandalwood Powder, Rose Petals, Chickpea Flour, Milk Powder","howToUse": "Mix 2 tbsp with milk or rose water. Apply face and body. Leave 20 min. Scrub and rinse.","highlights": ["Traditional bridal formula","All-natural powder","Brightens in 1 use","No chemicals"],"deliveryDays": 4,"returnDays": 15
+    "id": "AYU002",
+    "name": "Multani & Haldi Ubtan Face Pack",
+    "brand": "Sunfara Organics",
+    "category": "ayurvedic",
+    "subcategory": "ubtan",
+    "price": 299,
+    "mrp": 449,
+    "discount": 33,
+    "rating": 4.5,
+    "reviewCount": 312,
+    "stock": 85,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "ubtan",
+      "turmeric",
+      "brightening",
+      "traditional",
+      "wedding"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Ayurvedic"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "brightening",
+      "tan-removal",
+      "glow"
+    ],
+    "keyIngredients": [
+      "Multani Mitti",
+      "Turmeric",
+      "Sandalwood",
+      "Rose"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Multani%20%26%20Haldi%20Ubtan%20Face%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Multani%20%26%20Haldi%20Ubtan%20Face%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100g",
+        "price": 299
+      }
+    ],
+    "description": "Traditional Indian ubtan with Multani Mitti, turmeric, sandalwood, and rose petals. Brightens and gives the legendary pre-bridal glow.",
+    "ingredients": "Fuller's Earth, Turmeric, Sandalwood Powder, Rose Petals, Chickpea Flour, Milk Powder",
+    "howToUse": "Mix 2 tbsp with milk or rose water. Apply face and body. Leave 20 min. Scrub and rinse.",
+    "highlights": [
+      "Traditional bridal formula",
+      "All-natural powder",
+      "Brightens in 1 use",
+      "No chemicals"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "AYU003","name": "Neem Purifying Face Wash","brand": "Biotique","category": "ayurvedic","subcategory": "cleansers","price": 199,"mrp": 299,"discount": 33,"rating": 4.3,"reviewCount": 278,"stock": 130,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["neem","acne","ayurvedic","purifying","antibacterial"],"certifications": ["Ayurvedic"],"skinTypes": ["oily","combination","acne-prone"],"concerns": ["acne","oil-control","bacteria"],"keyIngredients": ["Neem","Tulsi","Margosa"],
-    "image": "assets/images/products/AYU003.jpg","images": ["assets/images/products/AYU003.jpg"],
-    "variants": [{"id": "v1","name": "150ml","price": 199}],
-    "description": "Gentle Ayurvedic face wash with triple neem complex and tulsi. Clears acne, controls oil, prevents future breakouts.","ingredients": "Neem Leaf Extract, Neem Bark, Neem Seed Oil, Tulsi, Glycerin, Aqua","howToUse": "Wet face. Apply small amount. Lather gently. Rinse. Use twice daily.","highlights": ["Triple neem extract","Tulsi antibacterial","No SLS","Ayurvedic GMP certified"],"deliveryDays": 3,"returnDays": 15
+    "id": "AYU003",
+    "name": "Neem Purifying Face Wash",
+    "brand": "Biotique",
+    "category": "ayurvedic",
+    "subcategory": "cleansers",
+    "price": 199,
+    "mrp": 299,
+    "discount": 33,
+    "rating": 4.3,
+    "reviewCount": 278,
+    "stock": 130,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "neem",
+      "acne",
+      "ayurvedic",
+      "purifying",
+      "antibacterial"
+    ],
+    "certifications": [
+      "Ayurvedic"
+    ],
+    "skinTypes": [
+      "oily",
+      "combination",
+      "acne-prone"
+    ],
+    "concerns": [
+      "acne",
+      "oil-control",
+      "bacteria"
+    ],
+    "keyIngredients": [
+      "Neem",
+      "Tulsi",
+      "Margosa"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Neem%20Purifying%20Face%20Wash&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Neem%20Purifying%20Face%20Wash&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "150ml",
+        "price": 199
+      }
+    ],
+    "description": "Gentle Ayurvedic face wash with triple neem complex and tulsi. Clears acne, controls oil, prevents future breakouts.",
+    "ingredients": "Neem Leaf Extract, Neem Bark, Neem Seed Oil, Tulsi, Glycerin, Aqua",
+    "howToUse": "Wet face. Apply small amount. Lather gently. Rinse. Use twice daily.",
+    "highlights": [
+      "Triple neem extract",
+      "Tulsi antibacterial",
+      "No SLS",
+      "Ayurvedic GMP certified"
+    ],
+    "deliveryDays": 3,
+    "returnDays": 15
   },
   {
-    "id": "AYU004","name": "Ashwagandha Stress Relief Body Oil","brand": "Sunfara Organics","category": "ayurvedic","subcategory": "body-oils","price": 649,"mrp": 999,"discount": 35,"rating": 4.6,"reviewCount": 134,"stock": 45,"isNew": true,"isBestseller": false,"isFeatured": true,
-    "tags": ["ashwagandha","stress-relief","body-oil","adaptogen","relaxing"],"certifications": ["USDA Organic","Ayurvedic"],"skinTypes": [],"concerns": ["stress","relaxation","muscle-relief"],"keyIngredients": ["Ashwagandha Extract","Sesame Oil","Brahmi"],
-    "image": "assets/images/products/AYU004.jpg","images": ["assets/images/products/AYU004.jpg"],
-    "variants": [{"id": "v1","name": "100ml","price": 649}],
-    "description": "Ayurvedic body oil with ashwagandha and brahmi adaptogen extracts in sesame oil. Reduces cortisol, eases tension, deeply nourishes.","ingredients": "Sesame Oil, Ashwagandha Extract, Brahmi, Bala, Lavender Oil","howToUse": "Warm oil in palms. Massage into body. Leave on or rinse after 30 minutes.","highlights": ["Adaptogen-infused","Traditional Abhyanga","Reduces cortisol","Deeply nourishing"],"deliveryDays": 4,"returnDays": 15
+    "id": "AYU004",
+    "name": "Ashwagandha Stress Relief Body Oil",
+    "brand": "Sunfara Organics",
+    "category": "ayurvedic",
+    "subcategory": "body-oils",
+    "price": 649,
+    "mrp": 999,
+    "discount": 35,
+    "rating": 4.6,
+    "reviewCount": 134,
+    "stock": 45,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "ashwagandha",
+      "stress-relief",
+      "body-oil",
+      "adaptogen",
+      "relaxing"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Ayurvedic"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "stress",
+      "relaxation",
+      "muscle-relief"
+    ],
+    "keyIngredients": [
+      "Ashwagandha Extract",
+      "Sesame Oil",
+      "Brahmi"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Ashwagandha%20Stress%20Relief%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Ashwagandha%20Stress%20Relief%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "100ml",
+        "price": 649
+      }
+    ],
+    "description": "Ayurvedic body oil with ashwagandha and brahmi adaptogen extracts in sesame oil. Reduces cortisol, eases tension, deeply nourishes.",
+    "ingredients": "Sesame Oil, Ashwagandha Extract, Brahmi, Bala, Lavender Oil",
+    "howToUse": "Warm oil in palms. Massage into body. Leave on or rinse after 30 minutes.",
+    "highlights": [
+      "Adaptogen-infused",
+      "Traditional Abhyanga",
+      "Reduces cortisol",
+      "Deeply nourishing"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "AYU005","name": "Triphala Skin Detox Capsules","brand": "Sunfara Organics","category": "ayurvedic","subcategory": "supplements","price": 499,"mrp": 799,"discount": 38,"rating": 4.4,"reviewCount": 89,"stock": 60,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["triphala","detox","gut-health","skin-glow","supplement"],"certifications": ["USDA Organic","Ayurvedic"],"skinTypes": [],"concerns": ["detox","gut-health","clear-skin"],"keyIngredients": ["Amalaki","Bibhitaki","Haritaki"],
-    "image": "assets/images/products/AYU005.jpg","images": ["assets/images/products/AYU005.jpg"],
-    "variants": [{"id": "v1","name": "60 capsules","price": 499}],
-    "description": "Organic Triphala capsules — the Ayurvedic superfood trinity for gut detox, improved digestion, and clearer, glowing skin from within.","ingredients": "Amalaki, Bibhitaki, Haritaki — all USDA Organic","howToUse": "Take 1-2 capsules before bedtime with warm water. Use 8-12 weeks.","highlights": ["Ancient 3-fruit formula","Gut-skin axis support","USDA Organic","No fillers"],"deliveryDays": 4,"returnDays": 15
+    "id": "AYU005",
+    "name": "Triphala Skin Detox Capsules",
+    "brand": "Sunfara Organics",
+    "category": "ayurvedic",
+    "subcategory": "supplements",
+    "price": 499,
+    "mrp": 799,
+    "discount": 38,
+    "rating": 4.4,
+    "reviewCount": 89,
+    "stock": 60,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "triphala",
+      "detox",
+      "gut-health",
+      "skin-glow",
+      "supplement"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Ayurvedic"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "detox",
+      "gut-health",
+      "clear-skin"
+    ],
+    "keyIngredients": [
+      "Amalaki",
+      "Bibhitaki",
+      "Haritaki"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Triphala%20Skin%20Detox%20Capsules&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Triphala%20Skin%20Detox%20Capsules&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "60 capsules",
+        "price": 499
+      }
+    ],
+    "description": "Organic Triphala capsules — the Ayurvedic superfood trinity for gut detox, improved digestion, and clearer, glowing skin from within.",
+    "ingredients": "Amalaki, Bibhitaki, Haritaki — all USDA Organic",
+    "howToUse": "Take 1-2 capsules before bedtime with warm water. Use 8-12 weeks.",
+    "highlights": [
+      "Ancient 3-fruit formula",
+      "Gut-skin axis support",
+      "USDA Organic",
+      "No fillers"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "AYU006","name": "Chandan & Rose Face Cream","brand": "Forest Essentials","category": "ayurvedic","subcategory": "moisturizers","price": 899,"mrp": 1399,"discount": 36,"rating": 4.7,"reviewCount": 178,"stock": 25,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["sandalwood","rose","ayurvedic","luxury","brightening"],"certifications": ["Ayurvedic","Cruelty-Free"],"skinTypes": ["normal","dry","combination"],"concerns": ["brightening","hydration","anti-aging"],"keyIngredients": ["Sandalwood","Rose","Saffron","Milk"],
-    "image": "assets/images/products/AYU006.jpg","images": ["assets/images/products/AYU006.jpg"],
-    "variants": [{"id": "v1","name": "50g","price": 899}],
-    "description": "Luxurious Ayurvedic face cream with pure sandalwood and Kashmiri rose. Brightens, hydrates, gives radiant even-toned glow.","ingredients": "Sandalwood Extract, Rose Water, Saffron, Milk Protein, Shea Butter, Aqua","howToUse": "Apply after serum morning and night. Massage in upward circular motions.","highlights": ["Real sandalwood extract","Kashmiri rose water","Luxury Ayurvedic","Brightens 2 weeks"],"deliveryDays": 4,"returnDays": 15
+    "id": "AYU006",
+    "name": "Chandan & Rose Face Cream",
+    "brand": "Forest Essentials",
+    "category": "ayurvedic",
+    "subcategory": "moisturizers",
+    "price": 899,
+    "mrp": 1399,
+    "discount": 36,
+    "rating": 4.7,
+    "reviewCount": 178,
+    "stock": 25,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "sandalwood",
+      "rose",
+      "ayurvedic",
+      "luxury",
+      "brightening"
+    ],
+    "certifications": [
+      "Ayurvedic",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "normal",
+      "dry",
+      "combination"
+    ],
+    "concerns": [
+      "brightening",
+      "hydration",
+      "anti-aging"
+    ],
+    "keyIngredients": [
+      "Sandalwood",
+      "Rose",
+      "Saffron",
+      "Milk"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Chandan%20%26%20Rose%20Face%20Cream&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Chandan%20%26%20Rose%20Face%20Cream&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "50g",
+        "price": 899
+      }
+    ],
+    "description": "Luxurious Ayurvedic face cream with pure sandalwood and Kashmiri rose. Brightens, hydrates, gives radiant even-toned glow.",
+    "ingredients": "Sandalwood Extract, Rose Water, Saffron, Milk Protein, Shea Butter, Aqua",
+    "howToUse": "Apply after serum morning and night. Massage in upward circular motions.",
+    "highlights": [
+      "Real sandalwood extract",
+      "Kashmiri rose water",
+      "Luxury Ayurvedic",
+      "Brightens 2 weeks"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "ECO001","name": "Bamboo Toothbrush Set of 4","brand": "Sunfara Organics","category": "eco-personal-care","subcategory": "oral-care","price": 299,"mrp": 499,"discount": 40,"rating": 4.5,"reviewCount": 423,"stock": 200,"isNew": false,"isBestseller": true,"isFeatured": true,
-    "tags": ["bamboo","toothbrush","plastic-free","eco","vegan"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["eco-friendly","plastic-free"],"keyIngredients": ["Moso Bamboo Handle","BPA-free Nylon Bristles"],
-    "image": "assets/images/products/ECO001.jpg","images": ["assets/images/products/ECO001.jpg"],
-    "variants": [{"id": "v1","name": "Set of 4 — Soft","price": 299},{"id": "v2","name": "Set of 4 — Medium","price": 299}],
-    "description": "Set of 4 biodegradable bamboo toothbrushes with BPA-free nylon bristles. Save 4 plastic handles from landfills every year.","ingredients": "Moso Bamboo Handle, BPA-free Nylon Bristles","howToUse": "Use twice daily. When bristles fray (2-3 months), remove bristles and compost handle.","highlights": ["Biodegradable bamboo","Saves 4 plastic handles/yr","Charcoal-infused bristles","FSC certified"],"deliveryDays": 4,"returnDays": 15
+    "id": "ECO001",
+    "name": "Bamboo Toothbrush Set of 4",
+    "brand": "Sunfara Organics",
+    "category": "eco-personal-care",
+    "subcategory": "oral-care",
+    "price": 299,
+    "mrp": 499,
+    "discount": 40,
+    "rating": 4.5,
+    "reviewCount": 423,
+    "stock": 200,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": true,
+    "tags": [
+      "bamboo",
+      "toothbrush",
+      "plastic-free",
+      "eco",
+      "vegan"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "eco-friendly",
+      "plastic-free"
+    ],
+    "keyIngredients": [
+      "Moso Bamboo Handle",
+      "BPA-free Nylon Bristles"
+    ],
+    "image": "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Bamboo%20Toothbrush%20Set%20of%204&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/8b5e3c/ffffff.png?text=Bamboo%20Toothbrush%20Set%20of%204&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Set of 4 — Soft",
+        "price": 299
+      },
+      {
+        "id": "v2",
+        "name": "Set of 4 — Medium",
+        "price": 299
+      }
+    ],
+    "description": "Set of 4 biodegradable bamboo toothbrushes with BPA-free nylon bristles. Save 4 plastic handles from landfills every year.",
+    "ingredients": "Moso Bamboo Handle, BPA-free Nylon Bristles",
+    "howToUse": "Use twice daily. When bristles fray (2-3 months), remove bristles and compost handle.",
+    "highlights": [
+      "Biodegradable bamboo",
+      "Saves 4 plastic handles/yr",
+      "Charcoal-infused bristles",
+      "FSC certified"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "ECO002","name": "Natural Crystal Deodorant Stick","brand": "Sunfara Organics","category": "eco-personal-care","subcategory": "deodorant","price": 349,"mrp": 549,"discount": 36,"rating": 4.3,"reviewCount": 178,"stock": 90,"isNew": false,"isBestseller": false,"isFeatured": true,
-    "tags": ["deodorant","natural","aluminum-free","crystal","baking-soda-free"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["odour-control","eco-friendly","sensitive-skin"],"keyIngredients": ["Potassium Alum Crystal","Coconut Oil","Shea Butter"],
-    "image": "assets/images/products/ECO002.jpg","images": ["assets/images/products/ECO002.jpg"],
-    "variants": [{"id": "v1","name": "75g","price": 349}],
-    "description": "Natural deodorant stick with potassium alum crystal, coconut oil, and shea butter. Controls odour 24 hours without blocking sweat glands.","ingredients": "Potassium Alum (natural mineral), Coconut Oil, Shea Butter, Candelilla Wax, Lavender Oil","howToUse": "Apply to clean dry underarms. One swipe per side. Allow to dry.","highlights": ["No aluminium chlorohydrate","Allows natural sweating","Lasts 12+ months","No baking soda"],"deliveryDays": 4,"returnDays": 15
+    "id": "ECO002",
+    "name": "Natural Crystal Deodorant Stick",
+    "brand": "Sunfara Organics",
+    "category": "eco-personal-care",
+    "subcategory": "deodorant",
+    "price": 349,
+    "mrp": 549,
+    "discount": 36,
+    "rating": 4.3,
+    "reviewCount": 178,
+    "stock": 90,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "deodorant",
+      "natural",
+      "aluminum-free",
+      "crystal",
+      "baking-soda-free"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "odour-control",
+      "eco-friendly",
+      "sensitive-skin"
+    ],
+    "keyIngredients": [
+      "Potassium Alum Crystal",
+      "Coconut Oil",
+      "Shea Butter"
+    ],
+    "image": "https://placehold.co/500x500/e8c99a/2c2416.png?text=Natural%20Crystal%20Deodorant%20%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/e8c99a/2c2416.png?text=Natural%20Crystal%20Deodorant%20%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "75g",
+        "price": 349
+      }
+    ],
+    "description": "Natural deodorant stick with potassium alum crystal, coconut oil, and shea butter. Controls odour 24 hours without blocking sweat glands.",
+    "ingredients": "Potassium Alum (natural mineral), Coconut Oil, Shea Butter, Candelilla Wax, Lavender Oil",
+    "howToUse": "Apply to clean dry underarms. One swipe per side. Allow to dry.",
+    "highlights": [
+      "No aluminium chlorohydrate",
+      "Allows natural sweating",
+      "Lasts 12+ months",
+      "No baking soda"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "ECO003","name": "Reusable Organic Cotton Rounds — 20 Pack","brand": "Sunfara Organics","category": "eco-personal-care","subcategory": "reusables","price": 399,"mrp": 599,"discount": 33,"rating": 4.7,"reviewCount": 234,"stock": 120,"isNew": false,"isBestseller": true,"isFeatured": false,
-    "tags": ["reusable","cotton-rounds","eco","makeup-remover","plastic-free"],"certifications": ["USDA Organic","Cruelty-Free","Vegan"],"skinTypes": ["all"],"concerns": ["eco-friendly","makeup-removal"],"keyIngredients": ["USDA Organic Cotton"],
-    "image": "assets/images/products/ECO003.jpg","images": ["assets/images/products/ECO003.jpg"],
-    "variants": [{"id": "v1","name": "20 Pack + Laundry Bag","price": 399}],
-    "description": "20 washable reusable organic cotton rounds. Replace 1500+ single-use cotton balls per year. Soft double-layer for gentle makeup removal.","ingredients": "100% USDA Organic Cotton (double-layer)","howToUse": "Use like cotton pads. Wash in mesh bag after use. Machine wash up to 300 times.","highlights": ["Replaces 1500+ cotton balls/yr","Machine washable 300×","Laundry bag included","GOTS certified"],"deliveryDays": 4,"returnDays": 15
+    "id": "ECO003",
+    "name": "Reusable Organic Cotton Rounds — 20 Pack",
+    "brand": "Sunfara Organics",
+    "category": "eco-personal-care",
+    "subcategory": "reusables",
+    "price": 399,
+    "mrp": 599,
+    "discount": 33,
+    "rating": 4.7,
+    "reviewCount": 234,
+    "stock": 120,
+    "isNew": false,
+    "isBestseller": true,
+    "isFeatured": false,
+    "tags": [
+      "reusable",
+      "cotton-rounds",
+      "eco",
+      "makeup-remover",
+      "plastic-free"
+    ],
+    "certifications": [
+      "USDA Organic",
+      "Cruelty-Free",
+      "Vegan"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "eco-friendly",
+      "makeup-removal"
+    ],
+    "keyIngredients": [
+      "USDA Organic Cotton"
+    ],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Reusable%20Organic%20Cotton%20Ro%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/4a7c59/ffffff.png?text=Reusable%20Organic%20Cotton%20Ro%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "20 Pack + Laundry Bag",
+        "price": 399
+      }
+    ],
+    "description": "20 washable reusable organic cotton rounds. Replace 1500+ single-use cotton balls per year. Soft double-layer for gentle makeup removal.",
+    "ingredients": "100% USDA Organic Cotton (double-layer)",
+    "howToUse": "Use like cotton pads. Wash in mesh bag after use. Machine wash up to 300 times.",
+    "highlights": [
+      "Replaces 1500+ cotton balls/yr",
+      "Machine washable 300×",
+      "Laundry bag included",
+      "GOTS certified"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "ECO004","name": "Compostable Dental Floss","brand": "Sunfara Organics","category": "eco-personal-care","subcategory": "oral-care","price": 199,"mrp": 299,"discount": 33,"rating": 4.2,"reviewCount": 89,"stock": 150,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["dental-floss","compostable","eco","plastic-free","vegan"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["eco-friendly","oral-care"],"keyIngredients": ["Corn PLA Floss","Candelilla Wax","Peppermint Oil"],
-    "image": "assets/images/products/ECO004.jpg","images": ["assets/images/products/ECO004.jpg"],
-    "variants": [{"id": "v1","name": "30m + Glass Jar","price": 199}],
-    "description": "100% compostable dental floss from corn-based PLA. Candelilla wax and peppermint oil. Refillable glass jar. Zero plastic waste.","ingredients": "Corn-Based PLA Fibre, Candelilla Wax, Peppermint Oil","howToUse": "Break off 45cm. Wind around fingers. Slide between teeth. Compost used floss.","highlights": ["100% compostable","Refillable glass jar","Plastic-free packaging","Vegan wax"],"deliveryDays": 4,"returnDays": 15
+    "id": "ECO004",
+    "name": "Compostable Dental Floss",
+    "brand": "Sunfara Organics",
+    "category": "eco-personal-care",
+    "subcategory": "oral-care",
+    "price": 199,
+    "mrp": 299,
+    "discount": 33,
+    "rating": 4.2,
+    "reviewCount": 89,
+    "stock": 150,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "dental-floss",
+      "compostable",
+      "eco",
+      "plastic-free",
+      "vegan"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "eco-friendly",
+      "oral-care"
+    ],
+    "keyIngredients": [
+      "Corn PLA Floss",
+      "Candelilla Wax",
+      "Peppermint Oil"
+    ],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Compostable%20Dental%20Floss&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Compostable%20Dental%20Floss&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "30m + Glass Jar",
+        "price": 199
+      }
+    ],
+    "description": "100% compostable dental floss from corn-based PLA. Candelilla wax and peppermint oil. Refillable glass jar. Zero plastic waste.",
+    "ingredients": "Corn-Based PLA Fibre, Candelilla Wax, Peppermint Oil",
+    "howToUse": "Break off 45cm. Wind around fingers. Slide between teeth. Compost used floss.",
+    "highlights": [
+      "100% compostable",
+      "Refillable glass jar",
+      "Plastic-free packaging",
+      "Vegan wax"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "ECO005","name": "Zero-Waste Shampoo + Conditioner Bar Set","brand": "Sunfara Organics","category": "eco-personal-care","subcategory": "haircare","price": 449,"mrp": 699,"discount": 36,"rating": 4.4,"reviewCount": 156,"stock": 70,"isNew": true,"isBestseller": false,"isFeatured": true,
-    "tags": ["shampoo-bar","conditioner-bar","zero-waste","eco","plastic-free"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": [],"concerns": ["eco-friendly","plastic-free","hair-care"],"keyIngredients": ["Rosemary Oil","Argan Oil","Shea Butter"],
-    "image": "assets/images/products/ECO005.jpg","images": ["assets/images/products/ECO005.jpg"],
-    "variants": [{"id": "v1","name": "Shampoo + Conditioner Set","price": 449}],
-    "description": "Complete zero-waste hair care set — rosemary shampoo bar and argan conditioner bar. Together replace 4+ plastic bottles.","ingredients": "Shampoo Bar: Saponified Oils, Rosemary Oil, Peppermint. Conditioner Bar: Shea Butter, Argan Oil.","howToUse": "Shampoo Bar: lather on scalp, rinse. Conditioner Bar: rub on lengths, leave 2 min, rinse.","highlights": ["Replaces 4+ plastic bottles","80-100 washes per bar","Compostable wrapping","Travel-friendly"],"deliveryDays": 4,"returnDays": 15
+    "id": "ECO005",
+    "name": "Zero-Waste Shampoo + Conditioner Bar Set",
+    "brand": "Sunfara Organics",
+    "category": "eco-personal-care",
+    "subcategory": "haircare",
+    "price": 449,
+    "mrp": 699,
+    "discount": 36,
+    "rating": 4.4,
+    "reviewCount": 156,
+    "stock": 70,
+    "isNew": true,
+    "isBestseller": false,
+    "isFeatured": true,
+    "tags": [
+      "shampoo-bar",
+      "conditioner-bar",
+      "zero-waste",
+      "eco",
+      "plastic-free"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [],
+    "concerns": [
+      "eco-friendly",
+      "plastic-free",
+      "hair-care"
+    ],
+    "keyIngredients": [
+      "Rosemary Oil",
+      "Argan Oil",
+      "Shea Butter"
+    ],
+    "image": "https://placehold.co/500x500/6a9e78/ffffff.png?text=Zero-Waste%20Shampoo%20%2B%20Condi%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/6a9e78/ffffff.png?text=Zero-Waste%20Shampoo%20%2B%20Condi%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Shampoo + Conditioner Set",
+        "price": 449
+      }
+    ],
+    "description": "Complete zero-waste hair care set — rosemary shampoo bar and argan conditioner bar. Together replace 4+ plastic bottles.",
+    "ingredients": "Shampoo Bar: Saponified Oils, Rosemary Oil, Peppermint. Conditioner Bar: Shea Butter, Argan Oil.",
+    "howToUse": "Shampoo Bar: lather on scalp, rinse. Conditioner Bar: rub on lengths, leave 2 min, rinse.",
+    "highlights": [
+      "Replaces 4+ plastic bottles",
+      "80-100 washes per bar",
+      "Compostable wrapping",
+      "Travel-friendly"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   },
   {
-    "id": "ECO006","name": "Natural Loofah Sponge — Pack of 3","brand": "Sunfara Organics","category": "eco-personal-care","subcategory": "tools","price": 249,"mrp": 399,"discount": 38,"rating": 4.3,"reviewCount": 112,"stock": 180,"isNew": false,"isBestseller": false,"isFeatured": false,
-    "tags": ["loofah","natural","exfoliating","plastic-free","eco"],"certifications": ["Vegan","Cruelty-Free"],"skinTypes": ["all"],"concerns": ["exfoliation","eco-friendly"],"keyIngredients": ["Natural Luffa Aegyptiaca Plant"],
-    "image": "assets/images/products/ECO006.jpg","images": ["assets/images/products/ECO006.jpg"],
-    "variants": [{"id": "v1","name": "Pack of 3","price": 249}],
-    "description": "Three 100% natural loofahs grown from the luffa plant. Exfoliates gently, improves circulation, fully compostable.","ingredients": "100% Natural Luffa Aegyptiaca (Loofah) Plant","howToUse": "Soak in warm water to soften. Use with soap. Hang to dry. Replace after 4-6 weeks. Compost when done.","highlights": ["100% plant-based","Fully compostable","Lasts 4-6 weeks each","Natural exfoliant"],"deliveryDays": 4,"returnDays": 15
+    "id": "ECO006",
+    "name": "Natural Loofah Sponge — Pack of 3",
+    "brand": "Sunfara Organics",
+    "category": "eco-personal-care",
+    "subcategory": "tools",
+    "price": 249,
+    "mrp": 399,
+    "discount": 38,
+    "rating": 4.3,
+    "reviewCount": 112,
+    "stock": 180,
+    "isNew": false,
+    "isBestseller": false,
+    "isFeatured": false,
+    "tags": [
+      "loofah",
+      "natural",
+      "exfoliating",
+      "plastic-free",
+      "eco"
+    ],
+    "certifications": [
+      "Vegan",
+      "Cruelty-Free"
+    ],
+    "skinTypes": [
+      "all"
+    ],
+    "concerns": [
+      "exfoliation",
+      "eco-friendly"
+    ],
+    "keyIngredients": [
+      "Natural Luffa Aegyptiaca Plant"
+    ],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Natural%20Loofah%20Sponge%20%E2%80%94%20Pa%E2%80%A6&font=montserrat",
+    "images": [
+      "https://placehold.co/500x500/c17f3b/ffffff.png?text=Natural%20Loofah%20Sponge%20%E2%80%94%20Pa%E2%80%A6&font=montserrat"
+    ],
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Pack of 3",
+        "price": 249
+      }
+    ],
+    "description": "Three 100% natural loofahs grown from the luffa plant. Exfoliates gently, improves circulation, fully compostable.",
+    "ingredients": "100% Natural Luffa Aegyptiaca (Loofah) Plant",
+    "howToUse": "Soak in warm water to soften. Use with soap. Hang to dry. Replace after 4-6 weeks. Compost when done.",
+    "highlights": [
+      "100% plant-based",
+      "Fully compostable",
+      "Lasts 4-6 weeks each",
+      "Natural exfoliant"
+    ],
+    "deliveryDays": 4,
+    "returnDays": 15
   }
 ]

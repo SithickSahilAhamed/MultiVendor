@@ -43,7 +43,7 @@ const CertificationsPage = {
 
         <section class="section-sm">
           <h2 style="text-align:center;margin-bottom:var(--space-8)">How We Source</h2>
-          <div class="grid-3">
+          <div class="grid grid-3">
             ${[
               { icon: '🌾', title: 'Direct Farm Partnerships', desc: 'We partner directly with certified organic farms across India, paying above-market rates for the finest quality raw materials.' },
               { icon: '🔬', title: 'Third-Party Lab Testing', desc: 'Every batch is tested for purity, potency and contamination by independent ISO-certified laboratories before bottling.' },

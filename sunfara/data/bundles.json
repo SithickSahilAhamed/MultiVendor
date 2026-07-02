@@ -4,16 +4,28 @@
     "name": "Complete Skincare Glow Bundle",
     "description": "3-step skincare routine for glowing complexion",
     "bundleType": "combo",
-    "productIds": ["IQRAL001", "IQRAL005", "IQRAL007"],
+    "productIds": [
+      "IQRAL001",
+      "IQRAL005",
+      "IQRAL007"
+    ],
     "regularPrice": 348,
     "bundlePrice": 249,
     "discount": 28,
     "rating": 4.7,
     "reviewCount": 189,
     "stock": 95,
-    "image": "assets/images/bundles/skincare-glow.jpg",
-    "benefits": ["Glowing Skin", "Clear Complexion", "Deep Hydration", "Anti-Acne"],
-    "suitableFor": ["all skin types", "oily skin"],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Complete%20Skincare%20Glow%20Bun%E2%80%A6&font=montserrat",
+    "benefits": [
+      "Glowing Skin",
+      "Clear Complexion",
+      "Deep Hydration",
+      "Anti-Acne"
+    ],
+    "suitableFor": [
+      "all skin types",
+      "oily skin"
+    ],
     "deliversIn": 4,
     "isFeatured": true,
     "isBestseller": true,
@@ -24,16 +36,26 @@
     "name": "Hair Care Professional Bundle",
     "description": "Complete hair wellness with oil treatment and natural care",
     "bundleType": "combo",
-    "productIds": ["IQRAL003"],
+    "productIds": [
+      "IQRAL003"
+    ],
     "regularPrice": 499,
     "bundlePrice": 349,
     "discount": 30,
     "rating": 4.6,
     "reviewCount": 145,
     "stock": 75,
-    "image": "assets/images/bundles/hair-care-pro.jpg",
-    "benefits": ["Dandruff-Free", "Healthy Scalp", "Shiny Locks", "Strong Roots"],
-    "suitableFor": ["all hair types", "dandruff issues"],
+    "image": "https://placehold.co/500x500/c17f3b/ffffff.png?text=Hair%20Care%20Professional%20Bun%E2%80%A6&font=montserrat",
+    "benefits": [
+      "Dandruff-Free",
+      "Healthy Scalp",
+      "Shiny Locks",
+      "Strong Roots"
+    ],
+    "suitableFor": [
+      "all hair types",
+      "dandruff issues"
+    ],
     "deliversIn": 4,
     "isFeatured": true,
     "isBestseller": false,
@@ -44,16 +66,27 @@
     "name": "Wellness Starter Pack",
     "description": "Begin your wellness journey with essential natural products",
     "bundleType": "combo",
-    "productIds": ["IQRAL002", "IQRAL004", "IQRAL001"],
+    "productIds": [
+      "IQRAL002",
+      "IQRAL004",
+      "IQRAL001"
+    ],
     "regularPrice": 298,
     "bundlePrice": 199,
     "discount": 33,
     "rating": 4.5,
     "reviewCount": 234,
     "stock": 150,
-    "image": "assets/images/bundles/wellness-start.jpg",
-    "benefits": ["Complete Body Care", "Natural Ingredients", "Gentle on Skin"],
-    "suitableFor": ["all skin types", "beginners"],
+    "image": "https://placehold.co/500x500/2e5c3a/ffffff.png?text=Wellness%20Starter%20Pack&font=montserrat",
+    "benefits": [
+      "Complete Body Care",
+      "Natural Ingredients",
+      "Gentle on Skin"
+    ],
+    "suitableFor": [
+      "all skin types",
+      "beginners"
+    ],
     "deliversIn": 3,
     "isFeatured": true,
     "isBestseller": true,
@@ -64,16 +97,25 @@
     "name": "Baby Nutrition Essentials",
     "description": "Organic nutrition bundle for babies 7+ months",
     "bundleType": "combo",
-    "productIds": ["IQRAL006"],
+    "productIds": [
+      "IQRAL006"
+    ],
     "regularPrice": 599,
     "bundlePrice": 399,
     "discount": 33,
     "rating": 4.8,
     "reviewCount": 112,
     "stock": 60,
-    "image": "assets/images/bundles/baby-nutrition.jpg",
-    "benefits": ["Organic Certified", "Iron Rich", "Easy to Digest"],
-    "suitableFor": ["babies 7+ months", "growing infants"],
+    "image": "https://placehold.co/500x500/4a7c59/ffffff.png?text=Baby%20Nutrition%20Essentials&font=montserrat",
+    "benefits": [
+      "Organic Certified",
+      "Iron Rich",
+      "Easy to Digest"
+    ],
+    "suitableFor": [
+      "babies 7+ months",
+      "growing infants"
+    ],
     "deliversIn": 5,
     "isFeatured": true,
     "isBestseller": false,

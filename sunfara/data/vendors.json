@@ -4,79 +4,122 @@
     "name": "Haaniya",
     "tagline": "Premium organic skincare & wellness",
     "description": "Haaniya specializes in 100% natural, handcrafted beauty and wellness products.",
-    "logo": "assets/images/vendors/haaniya-logo.jpg",
+    "logo": "https://placehold.co/300x300/2e5c3a/ffffff.png?text=H&font=montserrat",
     "rating": 4.4,
     "reviewCount": 547,
     "productsCount": 25,
     "joinedDate": "2023-01-15",
     "verificationStatus": "verified",
-    "certifications": ["ISO 9001", "Organic Certified", "Cruelty-Free"],
-    "contact": {"email": "hello@haaniya.com", "phone": "+91-9876543210"},
+    "certifications": [
+      "ISO 9001",
+      "Organic Certified",
+      "Cruelty-Free"
+    ],
+    "contact": {
+      "email": "hello@haaniya.com",
+      "phone": "+91-9876543210"
+    },
     "address": "Chennai, Tamil Nadu, India",
     "commissionRate": 15,
     "isActive": true,
     "isFeatured": true,
     "about": "Haaniya brings traditional Ayurvedic wisdom to modern skincare.",
-    "highlights": ["100% Natural", "Handcrafted", "Ayurvedic", "Cruelty-Free"]
+    "highlights": [
+      "100% Natural",
+      "Handcrafted",
+      "Ayurvedic",
+      "Cruelty-Free"
+    ]
   },
   {
     "id": "green-botanics",
     "name": "Green Botanics",
     "tagline": "Herbal solutions for modern wellness",
     "description": "Green Botanics focuses on herbal remedies and wellness teas.",
-    "logo": "assets/images/vendors/green-botanics-logo.jpg",
+    "logo": "https://placehold.co/300x300/e8c99a/2c2416.png?text=GB&font=montserrat",
     "rating": 4.3,
     "reviewCount": 412,
     "productsCount": 18,
     "joinedDate": "2023-02-20",
     "verificationStatus": "verified",
-    "certifications": ["Ayurvedic Board Approved", "Organic Certified"],
-    "contact": {"email": "contact@greenbotanics.in", "phone": "+91-8765432109"},
+    "certifications": [
+      "Ayurvedic Board Approved",
+      "Organic Certified"
+    ],
+    "contact": {
+      "email": "contact@greenbotanics.in",
+      "phone": "+91-8765432109"
+    },
     "address": "Bangalore, Karnataka, India",
     "commissionRate": 18,
     "isActive": true,
     "isFeatured": true,
     "about": "Green Botanics transforms traditional herbal wisdom into modern wellness solutions.",
-    "highlights": ["Herbal Expertise", "Wellness Focus", "Lab Tested"]
+    "highlights": [
+      "Herbal Expertise",
+      "Wellness Focus",
+      "Lab Tested"
+    ]
   },
   {
     "id": "pure-wellness",
     "name": "Pure Wellness Co",
     "tagline": "Holistic health through nature's goodness",
     "description": "Pure Wellness Co delivers premium organic superfoods and supplements.",
-    "logo": "assets/images/vendors/pure-wellness-logo.jpg",
+    "logo": "https://placehold.co/300x300/6a9e78/ffffff.png?text=PWC&font=montserrat",
     "rating": 4.5,
     "reviewCount": 638,
     "productsCount": 32,
     "joinedDate": "2023-03-10",
     "verificationStatus": "verified",
-    "certifications": ["FSSAI Approved", "Organic Certified", "Vegan Certified"],
-    "contact": {"email": "info@purewellness.co.in", "phone": "+91-7654321098"},
+    "certifications": [
+      "FSSAI Approved",
+      "Organic Certified",
+      "Vegan Certified"
+    ],
+    "contact": {
+      "email": "info@purewellness.co.in",
+      "phone": "+91-7654321098"
+    },
     "address": "Mumbai, Maharashtra, India",
     "commissionRate": 16,
     "isActive": true,
     "isFeatured": true,
     "about": "Premium organic wellness solutions for Indian families.",
-    "highlights": ["FSSAI Approved", "Sustainable", "Lab Verified"]
+    "highlights": [
+      "FSSAI Approved",
+      "Sustainable",
+      "Lab Verified"
+    ]
   },
   {
     "id": "organic-essentials",
     "name": "Organic Essentials",
     "tagline": "Essential oils & aromatherapy",
     "description": "Organic Essentials provides 100% pure, cold-pressed essential oils.",
-    "logo": "assets/images/vendors/organic-essentials-logo.jpg",
+    "logo": "https://placehold.co/300x300/2e5c3a/ffffff.png?text=OE&font=montserrat",
     "rating": 4.6,
     "reviewCount": 523,
     "productsCount": 22,
     "joinedDate": "2023-04-05",
     "verificationStatus": "verified",
-    "certifications": ["Cold-Pressed Certified", "Organic Certified"],
-    "contact": {"email": "support@organicessentials.com", "phone": "+91-6543210987"},
+    "certifications": [
+      "Cold-Pressed Certified",
+      "Organic Certified"
+    ],
+    "contact": {
+      "email": "support@organicessentials.com",
+      "phone": "+91-6543210987"
+    },
     "address": "Goa, India",
     "commissionRate": 15,
     "isActive": true,
     "isFeatured": true,
     "about": "Therapeutic power of pure essential oils and aromatherapy.",
-    "highlights": ["Cold-Pressed", "100% Pure", "Therapeutic Grade"]
+    "highlights": [
+      "Cold-Pressed",
+      "100% Pure",
+      "Therapeutic Grade"
+    ]
   }
 ]

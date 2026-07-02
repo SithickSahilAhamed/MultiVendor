@@ -5,7 +5,7 @@
     "subtitle": "Discover our certified organic skincare range",
     "cta": "Shop Skincare",
     "ctaLink": "#/category/organic-skincare",
-    "image": "assets/images/banners/banner1.jpg",
+    "image": "https://placehold.co/800x600/e8c99a/2c2416.png?text=Pure.%20Natural.%20Conscious.&font=montserrat",
     "bgColor": "#e8f0e9"
   },
   {
@@ -14,7 +14,7 @@
     "subtitle": "Explore our Ayurvedic collection",
     "cta": "Shop Ayurvedic",
     "ctaLink": "#/category/ayurvedic",
-    "image": "assets/images/banners/banner2.jpg",
+    "image": "https://placehold.co/800x600/4a7c59/ffffff.png?text=Ancient%20Wisdom%2C%20Modern%20Care&font=montserrat",
     "bgColor": "#f0ebe0"
   },
   {
@@ -23,7 +23,7 @@
     "subtitle": "Sustainable eco-friendly personal care",
     "cta": "Shop Eco Care",
     "ctaLink": "#/category/eco-personal-care",
-    "image": "assets/images/banners/banner3.jpg",
+    "image": "https://placehold.co/800x600/2e5c3a/ffffff.png?text=Good%20for%20You.%20Good%20for%20Ear%E2%80%A6&font=montserrat",
     "bgColor": "#e9f0e8"
   }
 ]

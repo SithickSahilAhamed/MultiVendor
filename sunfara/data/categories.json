@@ -4,7 +4,7 @@
     "name": "Beauty And Essentials",
     "slug": "beauty-essentials",
     "icon": "💄",
-    "image": "assets/images/categories/beauty.jpg",
+    "image": "https://placehold.co/600x400/4a7c59/ffffff.png?text=Beauty%20And%20Essentials&font=montserrat",
     "description": "Premium beauty and personal care products",
     "productCount": 12
   },
@@ -13,7 +13,7 @@
     "name": "Herbal Powders",
     "slug": "herbal-powders",
     "icon": "🌿",
-    "image": "assets/images/categories/herbal.jpg",
+    "image": "https://placehold.co/600x400/e8c99a/2c2416.png?text=Herbal%20Powders&font=montserrat",
     "description": "100% natural herbal powders and remedies",
     "productCount": 8
   },
@@ -22,7 +22,7 @@
     "name": "Baby Foods",
     "slug": "baby-foods",
     "icon": "👶",
-    "image": "assets/images/categories/baby.jpg",
+    "image": "https://placehold.co/600x400/4a7c59/ffffff.png?text=Baby%20Foods&font=montserrat",
     "description": "Organic nutrition for your little ones",
     "productCount": 6
   },
@@ -31,7 +31,7 @@
     "name": "Organic Skincare",
     "slug": "organic-skincare",
     "icon": "🌱",
-    "image": "assets/images/categories/skincare.jpg",
+    "image": "https://placehold.co/600x400/8b5e3c/ffffff.png?text=Organic%20Skincare&font=montserrat",
     "description": "Pure botanical formulas for radiant skin",
     "productCount": 10
   },
@@ -40,7 +40,7 @@
     "name": "Herbal Haircare",
     "slug": "herbal-haircare",
     "icon": "💇",
-    "image": "assets/images/categories/haircare.jpg",
+    "image": "https://placehold.co/600x400/6a9e78/ffffff.png?text=Herbal%20Haircare&font=montserrat",
     "description": "Nature-powered care for lustrous locks",
     "productCount": 8
   },
@@ -49,7 +49,7 @@
     "name": "Natural Soaps",
     "slug": "natural-soaps",
     "icon": "🧼",
-    "image": "assets/images/categories/soaps.jpg",
+    "image": "https://placehold.co/600x400/8b5e3c/ffffff.png?text=Natural%20Soaps&font=montserrat",
     "description": "Handcrafted bars of pure goodness",
     "productCount": 8
   },
@@ -58,7 +58,7 @@
     "name": "Essential Oils",
     "slug": "essential-oils",
     "icon": "💧",
-    "image": "assets/images/categories/oils.jpg",
+    "image": "https://placehold.co/600x400/6a9e78/ffffff.png?text=Essential%20Oils&font=montserrat",
     "description": "100% pure cold-pressed essential oils",
     "productCount": 7
   },
@@ -67,7 +67,7 @@
     "name": "Organic Cosmetics",
     "slug": "organic-cosmetics",
     "icon": "✨",
-    "image": "assets/images/categories/cosmetics.jpg",
+    "image": "https://placehold.co/600x400/4a7c59/ffffff.png?text=Organic%20Cosmetics&font=montserrat",
     "description": "Clean beauty that performs",
     "productCount": 8
   },
@@ -76,7 +76,7 @@
     "name": "Wellness",
     "slug": "wellness",
     "icon": "🧘",
-    "image": "assets/images/categories/wellness.jpg",
+    "image": "https://placehold.co/600x400/2e5c3a/ffffff.png?text=Wellness&font=montserrat",
     "description": "Rituals for mind, body and soul",
     "productCount": 7
   },
@@ -85,7 +85,7 @@
     "name": "Ayurvedic",
     "slug": "ayurvedic",
     "icon": "🌾",
-    "image": "assets/images/categories/ayurvedic.jpg",
+    "image": "https://placehold.co/600x400/6a9e78/ffffff.png?text=Ayurvedic&font=montserrat",
     "description": "Ancient wisdom for modern wellness",
     "productCount": 6
   },
@@ -94,7 +94,7 @@
     "name": "Eco Personal Care",
     "slug": "eco-personal-care",
     "icon": "♻️",
-    "image": "assets/images/categories/eco.jpg",
+    "image": "https://placehold.co/600x400/4a7c59/ffffff.png?text=Eco%20Personal%20Care&font=montserrat",
     "description": "Sustainable care for you and the planet",
     "productCount": 6
   }

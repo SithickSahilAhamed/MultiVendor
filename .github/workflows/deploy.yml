@@ -18,12 +18,11 @@ jobs:
 
       - name: Authenticate to Firebase via service account
         run: |
-          echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
-          node -e "const d=JSON.parse(require('fs').readFileSync(process.env.RUNNER_TEMP+'/firebase-sa.json','utf8')); console.log('JSON_OK type=' + d.type + ' project_id=' + d.project_id + ' client_email=' + d.client_email + ' key_lines=' + (d.private_key.match(/\n/g)||[]).length)"
+          node -e "const fs=require('fs'); let s=process.env.FIREBASE_SERVICE_ACCOUNT; if(s.charCodeAt(0)===0xFEFF) s=s.slice(1); fs.writeFileSync(process.env.RUNNER_TEMP+'/firebase-sa.json', s); JSON.parse(s);"
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Deploy to Firebase Hosting
-        run: npx firebase-tools deploy --only hosting --project sunfara-500b0 --non-interactive --debug 2>&1 | grep -v "private_key\|BEGIN PRIVATE\|END PRIVATE"
+        run: npx firebase-tools deploy --only hosting --project sunfara-500b0 --non-interactive
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-sa.json

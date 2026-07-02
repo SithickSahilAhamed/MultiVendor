@@ -160,7 +160,7 @@ const Store = {
 
   /* ── ORDERS ── */
   placeOrder(orderData) {
-    const orderId = generateOrderId();
+    const orderId = orderData.orderId || generateOrderId();
     const totals = this.getCartTotal();
     const order = {
       id: orderId, items: [...this.cart], ...totals,

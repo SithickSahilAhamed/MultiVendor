@@ -33,6 +33,7 @@ if (credential != null && FirebaseApp.DefaultInstance == null)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton(_ =>
 {
     var firestoreBuilder = new FirestoreDbBuilder { ProjectId = projectId };

@@ -9,6 +9,7 @@
   <meta property="og:type" content="website" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
   <title>Sunfara — Hub of Beauty and Natural Products</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <!-- CSS: load order matters — variables first, then structure, then components -->
   <link rel="stylesheet" href="css/variables.css" />
@@ -79,6 +80,13 @@
     // Firebase is now initialized and available globally
     window.firebase = { app, analytics, auth, database, storage, db };
     window.FirebaseAuth = authService;
+  </script>
+
+  <!-- API base URL: local .NET backend during dev, live Railway backend in production -->
+  <script>
+    window.SUNFARA_API_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'http://localhost:5187/api'
+      : 'https://web-production-97b5f.up.railway.app/api';
   </script>
 
   <!-- JS load order: utils → data → store → components → pages → router (last) -->

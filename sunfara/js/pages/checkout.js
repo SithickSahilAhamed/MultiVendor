@@ -178,13 +178,61 @@ const CheckoutPage = {
     document.querySelectorAll('input[name="payment"]').forEach(r => r.checked = r.closest('.payment-card')?.id === `pm-${method}`);
   },
 
-  placeOrder() {
+  async placeOrder() {
     const methodLabels = { upi: 'UPI', card: 'Card', netbanking: 'Net Banking', cod: 'Cash on Delivery' };
-    const orderId = Store.placeOrder({ address: this.selectedAddress, payment: methodLabels[this.paymentMethod] || 'UPI' });
-    this.step = 3;
-    this.orderId = orderId;
-    this.renderStep();
-    Navbar.updateBadges();
+    const paymentLabel = methodLabels[this.paymentMethod] || 'UPI';
+    const btn = document.querySelector('#step-content .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = 'Placing order…'; }
+
+    try {
+      const items = Store.cart.map(i => ({ productId: i.productId, quantity: i.quantity }));
+      const order = await SunfaraAPI.post('/checkout', { items, shippingAddress: this.selectedAddress, paymentMethod: paymentLabel });
+      const orderId = order.id;
+
+      if (this.paymentMethod !== 'cod') {
+        await this.payWithRazorpay(orderId);
+      }
+
+      Store.placeOrder({ orderId, address: this.selectedAddress, payment: paymentLabel });
+      this.step = 3;
+      this.orderId = orderId;
+      this.renderStep();
+      Navbar.updateBadges();
+    } catch (err) {
+      Toast.show(err.message || 'Could not place order. Please try again.', 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Place Order 🌿'; }
+    }
+  },
+
+  /* Opens Razorpay Checkout for an already-created backend order and resolves
+     once the payment is verified server-side. Rejects on cancel/failure. */
+  payWithRazorpay(orderId) {
+    return new Promise((resolve, reject) => {
+      SunfaraAPI.post('/payments/create-order', { orderId }).then(razorpayOrder => {
+        const rzp = new Razorpay({
+          key: razorpayOrder.keyId,
+          amount: razorpayOrder.amount,
+          currency: razorpayOrder.currency,
+          order_id: razorpayOrder.razorpayOrderId,
+          name: 'Sunfara',
+          description: 'Order payment',
+          prefill: { name: Store.user.name, email: Store.user.email, contact: Store.user.phone },
+          theme: { color: '#4a7c59' },
+          handler: (response) => {
+            SunfaraAPI.post('/payments/verify', {
+              orderId,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            }).then(resolve).catch(() => reject(new Error(`Payment verification failed. If money was deducted, contact support with order ${orderId}.`)));
+          },
+          modal: { ondismiss: () => reject(new Error('Payment was cancelled.')) }
+        });
+        rzp.on('payment.failed', (resp) => reject(new Error(resp.error?.description || 'Payment failed. Please try again.')));
+        rzp.open();
+      }).catch(err => reject(new Error(err.message || 'Could not start payment.')));
+    });
   },
 
   renderSuccessStep(el) {

@@ -73,6 +73,9 @@ const AdminAPI = {
   async getTransactions()          { return this.list("transactions", 500); },
   async getVendorOrders()          { return this.list("vendor_orders", 500); },
   async updateOrderStatus(id, status, trackingNumber, carrier) { return this.put(`/admin/vendor-orders/${id}/status`, { status, trackingNumber, carrier }); },
+  async getReturns()               { return this.list("returns", 500); },
+  async getRefunds()               { return this.list("refunds", 500); },
+  async reviewReturn(id, approve)  { return this.put(`/admin/returns/${id}/review`, { approve }); },
 
   // ==================== REVIEW ENDPOINTS ====================
 

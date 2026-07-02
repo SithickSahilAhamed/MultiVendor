@@ -23,6 +23,7 @@ const AdminConfig = {
     '/admin/customers': 'customers',
     '/admin/commissions': 'commissions',
     '/admin/withdrawals': 'withdrawals',
+    '/admin/returns': 'returns',
     '/admin/reports': 'reports',
     '/admin/settings': 'settings',
   },
@@ -82,6 +83,13 @@ const AdminConfig = {
           icon: '💳',
           route: '#/admin/withdrawals',
           badge: null
+        },
+        {
+          id: 'returns',
+          label: 'Returns & Refunds',
+          icon: '↩️',
+          route: '#/admin/returns',
+          badge: null
         }
       ]
     },
@@ -116,6 +124,7 @@ const AdminConfig = {
     cancelled: 'admin-status-rejected',
     return_requested: 'admin-status-pending',
     returned: 'admin-status-rejected',
+    return_rejected: 'admin-status-rejected',
     refunded: 'admin-status-rejected'
   },
 
@@ -133,6 +142,7 @@ const AdminConfig = {
     cancelled: '⚫ Cancelled',
     return_requested: '🟡 Return Requested',
     returned: '↩️ Returned',
+    return_rejected: '🔴 Return Rejected',
     refunded: '💸 Refunded'
   }
 };

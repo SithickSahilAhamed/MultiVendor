@@ -1,10 +1,17 @@
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using Google.Cloud.Firestore;
+using Microsoft.Extensions.Configuration;
 using Sunfara.Domain;
 
 namespace Sunfara.Infrastructure;
 
-public sealed class MarketplaceService(FirestoreCatalogStore store)
+public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientFactory httpClientFactory, IConfiguration config)
 {
+    private string KeyId => config["RAZORPAY_KEY_ID"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_ID") ?? throw new InvalidOperationException("Razorpay key is not configured.");
+    private string KeySecret => config["RAZORPAY_KEY_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_SECRET") ?? throw new InvalidOperationException("Razorpay secret is not configured.");
+
     /* Checkout creates one master order (customer-facing: what they paid,
        where it ships) plus one vendor_orders document per distinct vendor
        in the cart - each vendor only ever sees and manages their own
@@ -266,6 +273,174 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
         await RecordTransactionAsync("payout", withdrawalId, vendorId, amount, $"Withdrawal payout of ₹{(double)amount:N2} approved");
         await UpdatePlatformRevenueAsync(grossDelta: 0, commissionDelta: 0, payoutDelta: amount);
         return true;
+    }
+
+    /* Customer-initiated: only valid once a vendor's sub-order is
+       "delivered" (matches OrderStateMachine - delivered is the only state
+       that can move to return_requested). Status transition is applied
+       inline (like ConfirmAllVendorOrdersForPaymentAsync) rather than via
+       UpdateOrderStatusAsync because that method assumes the caller is the
+       vendor or an admin, not the customer. */
+    public async Task<string> RequestReturnAsync(string vendorOrderId, string customerId, string reason)
+    {
+        var vendorOrderRef = store.Database.Collection("vendor_orders").Document(vendorOrderId);
+        var snapshot = await vendorOrderRef.GetSnapshotAsync();
+        if (!snapshot.Exists) throw new InvalidOperationException("Order not found.");
+        if (snapshot.GetValue<string>("customerId") != customerId) throw new UnauthorizedAccessException("This order does not belong to you.");
+
+        var currentStatus = snapshot.ContainsField("status") ? snapshot.GetValue<string>("status") : "pending";
+        if (!OrderStateMachine.CanTransition(currentStatus, "return_requested"))
+            throw new InvalidOperationException($"An order in '{currentStatus}' status cannot be returned.");
+
+        var vendorId = snapshot.GetValue<string>("vendorId");
+        var returnId = await store.AddAsync("returns", new Dictionary<string, object>
+        {
+            ["vendorOrderId"] = vendorOrderId, ["masterOrderId"] = snapshot.GetValue<string>("masterOrderId"),
+            ["customerId"] = customerId, ["vendorId"] = vendorId,
+            ["vendorName"] = snapshot.ContainsField("vendorName") ? snapshot.GetValue<string>("vendorName") : "",
+            ["reason"] = string.IsNullOrWhiteSpace(reason) ? "Not specified" : reason,
+            ["amount"] = snapshot.GetValue<double>("subtotal"),
+            ["status"] = "requested", ["requestedAt"] = FieldValue.ServerTimestamp
+        });
+
+        await AppendStatusAsync(vendorOrderRef, snapshot, "return_requested", by: customerId);
+        return returnId;
+    }
+
+    /* Vendor (or admin) decides the outcome. Rejecting just closes the loop.
+       Approving moves the order to "returned" and immediately kicks off the
+       refund - a real Razorpay refund call for online payments (only this
+       vendor's share of a multi-vendor payment, since Razorpay supports
+       partial refunds of a single payment), or a straight bookkeeping
+       reversal for COD, where cash was collected offline and there's
+       nothing for a payment gateway to refund. */
+    public async Task ReviewReturnAsync(string returnId, string vendorId, bool approve, bool isAdmin)
+    {
+        var returnRef = store.Database.Collection("returns").Document(returnId);
+        var returnSnap = await returnRef.GetSnapshotAsync();
+        if (!returnSnap.Exists) throw new InvalidOperationException("Return request not found.");
+        if (returnSnap.GetValue<string>("status") != "requested") throw new InvalidOperationException("This return has already been reviewed.");
+        if (!isAdmin && returnSnap.GetValue<string>("vendorId") != vendorId) throw new UnauthorizedAccessException("This return does not belong to you.");
+
+        var vendorOrderId = returnSnap.GetValue<string>("vendorOrderId");
+        var vendorOrderRef = store.Database.Collection("vendor_orders").Document(vendorOrderId);
+        var vendorOrderSnap = await vendorOrderRef.GetSnapshotAsync();
+        if (!vendorOrderSnap.Exists) throw new InvalidOperationException("Order not found.");
+
+        var reviewer = isAdmin ? "admin" : vendorId;
+        if (!approve)
+        {
+            await AppendStatusAsync(vendorOrderRef, vendorOrderSnap, "return_rejected", by: reviewer);
+            await returnRef.UpdateAsync(new Dictionary<string, object> { ["status"] = "rejected", ["reviewedAt"] = FieldValue.ServerTimestamp });
+            return;
+        }
+
+        await AppendStatusAsync(vendorOrderRef, vendorOrderSnap, "returned", by: reviewer);
+        await returnRef.UpdateAsync(new Dictionary<string, object> { ["status"] = "approved", ["reviewedAt"] = FieldValue.ServerTimestamp });
+        await ProcessRefundAsync(returnId);
+    }
+
+    /* Reverses everything CalculateAndRecordCommissionsAsync did for this
+       vendor order - debits the wallet credit, restores product stock,
+       negates the platform revenue totals - and, for online payments,
+       actually calls Razorpay first. Bookkeeping only runs if the real
+       refund call (when there is one) succeeds, so the system never shows
+       "refunded" while the customer's money hasn't actually moved. */
+    private async Task ProcessRefundAsync(string returnId)
+    {
+        var returnRef = store.Database.Collection("returns").Document(returnId);
+        var returnSnap = await returnRef.GetSnapshotAsync();
+        var vendorOrderId = returnSnap.GetValue<string>("vendorOrderId");
+        var masterOrderId = returnSnap.GetValue<string>("masterOrderId");
+        var vendorId = returnSnap.GetValue<string>("vendorId");
+        var customerId = returnSnap.GetValue<string>("customerId");
+
+        var vendorOrderRef = store.Database.Collection("vendor_orders").Document(vendorOrderId);
+        var vendorOrderSnap = await vendorOrderRef.GetSnapshotAsync();
+        var subtotal = Convert.ToDecimal(vendorOrderSnap.GetValue<double>("subtotal"));
+        var paymentMethod = vendorOrderSnap.ContainsField("paymentMethod") ? vendorOrderSnap.GetValue<string>("paymentMethod") : "";
+        var items = vendorOrderSnap.ContainsField("items") ? vendorOrderSnap.GetValue<List<Dictionary<string, object>>>("items") : [];
+
+        string method; string? razorpayRefundId = null;
+        if (paymentMethod == "Cash on Delivery")
+        {
+            method = "manual";
+        }
+        else
+        {
+            method = "razorpay";
+            var masterOrder = await store.GetAsync("orders", masterOrderId);
+            var razorpayPaymentId = masterOrder?.GetValueOrDefault("razorpayPaymentId")?.ToString();
+            if (string.IsNullOrWhiteSpace(razorpayPaymentId))
+                throw new InvalidOperationException("No captured payment was found for this order, so it cannot be refunded automatically.");
+
+            var amountPaise = (long)Math.Round(subtotal * 100, MidpointRounding.AwayFromZero);
+            var client = httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+                "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{KeyId}:{KeySecret}")));
+            var payload = JsonSerializer.Serialize(new { amount = amountPaise, speed = "normal", notes = new { vendorOrderId, returnId } });
+            var response = await client.PostAsync($"https://api.razorpay.com/v1/payments/{razorpayPaymentId}/refund", new StringContent(payload, Encoding.UTF8, "application/json"));
+            var body = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode) throw new InvalidOperationException("Razorpay refund failed: " + body);
+            using var doc = JsonDocument.Parse(body);
+            razorpayRefundId = doc.RootElement.GetProperty("id").GetString();
+        }
+
+        var commissionMatches = await store.WhereAsync("commissions", "orderId", vendorOrderId, 1);
+        var commission = commissionMatches.FirstOrDefault();
+        var commissionAmount = commission is not null ? Convert.ToDecimal(commission["commissionAmount"]) : 0m;
+        var netToVendor = commission is not null ? Convert.ToDecimal(commission["netToVendor"]) : subtotal;
+
+        var walletRef = store.Database.Collection("vendor_wallets").Document(vendorId);
+        await store.Database.RunTransactionAsync(async transaction =>
+        {
+            var walletSnap = await transaction.GetSnapshotAsync(walletRef);
+            var balance = walletSnap.Exists && walletSnap.ContainsField("balance") ? Convert.ToDecimal(walletSnap.GetValue<double>("balance")) : 0m;
+            var totalEarned = walletSnap.Exists && walletSnap.ContainsField("totalEarned") ? Convert.ToDecimal(walletSnap.GetValue<double>("totalEarned")) : 0m;
+            transaction.Set(walletRef, new Dictionary<string, object>
+            {
+                ["balance"] = (double)(balance - netToVendor), ["totalEarned"] = (double)(totalEarned - netToVendor),
+                ["updatedAt"] = FieldValue.ServerTimestamp
+            }, SetOptions.MergeAll);
+        });
+
+        var productQuantities = items.Select(i => (ProductId: i["productId"].ToString()!, Quantity: Convert.ToInt32(i["quantity"]))).ToList();
+        await store.Database.RunTransactionAsync(async transaction =>
+        {
+            var productRefs = productQuantities.Select(pq => store.Database.Collection("products").Document(pq.ProductId)).ToList();
+            var products = new List<DocumentSnapshot>();
+            foreach (var productRef in productRefs) products.Add(await transaction.GetSnapshotAsync(productRef));
+            for (var i = 0; i < products.Count; i++)
+            {
+                if (!products[i].Exists) continue;
+                var stock = products[i].ContainsField("stock") ? products[i].GetValue<long>("stock") : 0;
+                transaction.Update(productRefs[i], new Dictionary<string, object> { ["stock"] = stock + productQuantities[i].Quantity, ["updatedAt"] = FieldValue.ServerTimestamp });
+            }
+        });
+
+        if (commission is not null) await store.UpdateAsync("commissions", commission["id"].ToString()!, new Dictionary<string, object> { ["status"] = "refunded" });
+
+        await store.AddAsync("refunds", new Dictionary<string, object>
+        {
+            ["vendorOrderId"] = vendorOrderId, ["returnId"] = returnId, ["masterOrderId"] = masterOrderId,
+            ["vendorId"] = vendorId, ["customerId"] = customerId, ["amount"] = (double)subtotal,
+            ["method"] = method, ["razorpayRefundId"] = razorpayRefundId ?? "", ["status"] = "completed"
+        });
+
+        await RecordTransactionAsync("refund", vendorOrderId, vendorId, -subtotal, $"Refund of ₹{(double)subtotal:N2} for returned order {vendorOrderId}");
+        await UpdatePlatformRevenueAsync(grossDelta: -subtotal, commissionDelta: -commissionAmount, payoutDelta: 0);
+
+        var refreshedSnap = await vendorOrderRef.GetSnapshotAsync();
+        await AppendStatusAsync(vendorOrderRef, refreshedSnap, "refunded", by: "system:refund");
+        await vendorOrderRef.UpdateAsync(new Dictionary<string, object> { ["paymentStatus"] = "refunded" });
+        await returnRef.UpdateAsync(new Dictionary<string, object> { ["refundStatus"] = "completed", ["refundedAt"] = FieldValue.ServerTimestamp });
+    }
+
+    private static async Task AppendStatusAsync(DocumentReference vendorOrderRef, DocumentSnapshot snapshot, string newStatus, string by)
+    {
+        var history = snapshot.ContainsField("statusHistory") ? snapshot.GetValue<List<Dictionary<string, object>>>("statusHistory") : [];
+        history.Add(new Dictionary<string, object> { ["status"] = newStatus, ["at"] = DateTime.UtcNow.ToString("o"), ["by"] = by });
+        await vendorOrderRef.UpdateAsync(new Dictionary<string, object> { ["status"] = newStatus, ["statusHistory"] = history, ["updatedAt"] = FieldValue.ServerTimestamp });
     }
 
     private static List<Dictionary<string, object>> ReadItems(Dictionary<string, object> request)

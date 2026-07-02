@@ -29,6 +29,13 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
         catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
     }
 
+    [HttpPut("returns/{id}/review")]
+    public async Task<IActionResult> ReviewReturn(string id, [FromBody] ReturnReviewRequest request)
+    {
+        try { await marketplace.ReviewReturnAsync(id, vendorId: "", request.Approve, isAdmin: true); return Ok(); }
+        catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
+    }
+
     private static bool Allowed(string collection)=>Collections.Contains(collection);
 }
 public sealed record OrderStatusRequest(string Status, string? TrackingNumber = null, string? Carrier = null);

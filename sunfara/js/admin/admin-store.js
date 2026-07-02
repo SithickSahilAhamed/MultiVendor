@@ -104,6 +104,16 @@ const AdminStore = {
     catch { return []; }
   },
 
+  async fetchReturns() {
+    try { return await AdminAPI.getReturns(); }
+    catch { return []; }
+  },
+
+  async fetchRefunds() {
+    try { return await AdminAPI.getRefunds(); }
+    catch { return []; }
+  },
+
   // Sync versions (return demo data — used for layout badges and fallback)
   getVendors()   { return this.demoVendors(); },
   getProducts()  { return this.demoProducts(); },

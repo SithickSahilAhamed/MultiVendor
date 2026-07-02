@@ -83,7 +83,20 @@ const OrdersPage = {
         </div>
         ${(vo.items || []).map(item => this.renderLineItem(item)).join('')}
         ${vo.trackingNumber ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">🚚 ${vo.carrier || ''} · Tracking: <strong>${vo.trackingNumber}</strong></p>` : ''}
+        ${vo.status === 'delivered' ? `<button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="OrdersPage.requestReturn('${vo.id}')">↩️ Return this item</button>` : ''}
+        ${vo.status === 'return_rejected' ? `<p style="font-size:.8rem;color:var(--color-danger,#c0392b);margin-top:4px">Your return request was declined by the seller.</p>` : ''}
+        ${vo.status === 'refunded' ? `<p style="font-size:.8rem;color:var(--color-primary);margin-top:4px">✅ Refund completed for this item.</p>` : ''}
       </div>`;
+  },
+
+  async requestReturn(vendorOrderId) {
+    const reason = prompt('Why are you returning this order? (e.g. damaged, wrong item, not as described)');
+    if (reason === null) return;
+    try {
+      await SunfaraAPI.post(`/orders/${vendorOrderId}/return`, { reason });
+      Toast.show('Return requested. The seller will review it shortly. 🌿', 'success');
+      await this.render();
+    } catch (e) { Toast.show(e.message || 'Could not request a return.', 'error'); }
   },
 
   renderLineItem(item) {
@@ -103,17 +116,22 @@ const OrdersPage = {
       pending: { icon: '🟡', label: 'Pending' }, confirmed: { icon: '🔵', label: 'Confirmed' },
       processing: { icon: '🔵', label: 'Processing' }, packed: { icon: '🟣', label: 'Packed' },
       shipped: { icon: '🚚', label: 'Shipped' }, delivered: { icon: '✅', label: 'Delivered' },
-      completed: { icon: '✅', label: 'Completed' }, cancelled: { icon: '⚫', label: 'Cancelled' }
+      completed: { icon: '✅', label: 'Completed' }, cancelled: { icon: '⚫', label: 'Cancelled' },
+      return_requested: { icon: '↩️', label: 'Return Requested' }, returned: { icon: '📦', label: 'Returned' },
+      return_rejected: { icon: '❌', label: 'Return Rejected' }, refunded: { icon: '💰', label: 'Refunded' }
     };
     return map[status] || { icon: '🟡', label: status || 'Pending' };
   },
 
   /* A master order can have multiple vendor sub-orders at different
      stages - show the least-advanced one so the customer isn't told
-     "Delivered" while one seller hasn't even shipped yet. */
+     "Delivered" while one seller hasn't even shipped yet. Return states
+     sit right after "delivered" so a return-in-progress on any one
+     vendor's items surfaces ahead of another vendor's unrelated
+     "completed" sub-order. */
   overallStatus(vendorOrders) {
     if (!vendorOrders.length) return this.statusLabel('pending');
-    const order = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'delivered', 'completed', 'cancelled'];
+    const order = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'delivered', 'return_requested', 'returned', 'return_rejected', 'refunded', 'completed', 'cancelled'];
     const least = vendorOrders.reduce((min, vo) => order.indexOf(vo.status) < order.indexOf(min) ? vo.status : min, vendorOrders[0].status);
     return this.statusLabel(least);
   },

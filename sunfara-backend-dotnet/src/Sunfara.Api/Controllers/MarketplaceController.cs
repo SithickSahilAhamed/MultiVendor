@@ -40,6 +40,28 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
         catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
     }
 
+    [Authorize, HttpGet("returns")]
+    public async Task<IActionResult> Returns() => Ok(await store.WhereAsync("returns", "customerId", UserId));
+
+    [Authorize, HttpPost("orders/{vendorOrderId}/return")]
+    public async Task<IActionResult> RequestReturn(string vendorOrderId, [FromBody] ReturnRequest request)
+    {
+        try { var id = await marketplace.RequestReturnAsync(vendorOrderId, UserId, request.Reason); return Ok(new { id }); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
+    }
+
+    [Authorize(Policy = "Vendor"), HttpGet("vendor/returns")]
+    public async Task<IActionResult> VendorReturns() => Ok(await store.WhereAsync("returns", "vendorId", UserId));
+
+    [Authorize(Policy = "Vendor"), HttpPut("vendor/returns/{id}/review")]
+    public async Task<IActionResult> ReviewReturn(string id, [FromBody] ReturnReviewRequest request)
+    {
+        try { await marketplace.ReviewReturnAsync(id, UserId, request.Approve, isAdmin: false); return Ok(); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
+    }
+
     [Authorize(Policy = "Vendor"), HttpGet("vendor/wallet")]
     public async Task<IActionResult> VendorWallet() => Ok(await store.GetAsync("vendor_wallets", UserId) ?? new Dictionary<string, object> { ["balance"] = 0.0, ["totalEarned"] = 0.0, ["totalWithdrawn"] = 0.0 });
 
@@ -64,3 +86,5 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     { try { var id = await marketplace.RequestWithdrawalAsync(UserId, request.Amount); return Ok(new { id }); } catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); } }
 }
 public sealed record AmountRequest(decimal Amount);
+public sealed record ReturnRequest(string Reason);
+public sealed record ReturnReviewRequest(bool Approve);

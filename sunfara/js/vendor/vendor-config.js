@@ -5,6 +5,7 @@ const VendorConfig = {
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', route: '#/vendor/dashboard' },
     { id: 'products', label: 'Products', icon: '📦', route: '#/vendor/products' },
     { id: 'orders', label: 'Orders', icon: '📋', route: '#/vendor/orders' },
+    { id: 'returns', label: 'Returns', icon: '↩️', route: '#/vendor/returns' },
     { id: 'earnings', label: 'Earnings & Payouts', icon: '💰', route: '#/vendor/earnings' }
   ],
 
@@ -12,7 +13,8 @@ const VendorConfig = {
   statusLabels: {
     active: '🟢 Active', pending: '🟡 Pending', rejected: '🔴 Rejected',
     confirmed: '🔵 Confirmed', processing: '🔵 Processing', packed: '🟣 Packed',
-    shipped: '🚚 Shipped', delivered: '✅ Delivered', completed: '✅ Completed', cancelled: '⚫ Cancelled'
+    shipped: '🚚 Shipped', delivered: '✅ Delivered', completed: '✅ Completed', cancelled: '⚫ Cancelled',
+    return_requested: '↩️ Return Requested', returned: '📦 Returned', return_rejected: '❌ Return Rejected', refunded: '💰 Refunded'
   },
 
   /* Only the transitions a vendor is allowed to trigger themselves -

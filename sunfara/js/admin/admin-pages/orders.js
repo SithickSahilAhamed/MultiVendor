@@ -5,7 +5,7 @@
 const AdminOrders = {
   _orders: [],
   _vendorOrdersByMaster: {},
-  ALL_STATUSES: ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'delivered', 'completed', 'cancelled', 'return_requested', 'returned', 'refunded'],
+  ALL_STATUSES: ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'delivered', 'completed', 'cancelled', 'return_requested', 'returned', 'return_rejected', 'refunded'],
 
   render: async function() {
     AdminLayout.renderBreadcrumb([

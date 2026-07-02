@@ -8,6 +8,7 @@ const VendorRouter = {
     '/vendor/dashboard': 'dashboard',
     '/vendor/products': 'products',
     '/vendor/orders': 'orders',
+    '/vendor/returns': 'returns',
     '/vendor/earnings': 'earnings'
   },
 
@@ -30,6 +31,7 @@ const VendorRouter = {
 
     if (page === 'products') VendorProducts.render();
     else if (page === 'orders') VendorOrders.render();
+    else if (page === 'returns') VendorReturns.render();
     else if (page === 'earnings') VendorEarnings.render();
     else VendorDashboard.render();
 

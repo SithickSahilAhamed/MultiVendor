@@ -37,6 +37,9 @@ const VendorAPI = {
   getMyOrders() { return this.get('/vendor/orders'); },
   updateOrderStatus(id, status, trackingNumber, carrier) { return this.put(`/vendor/orders/${id}/status`, { status, trackingNumber, carrier }); },
 
+  getMyReturns() { return this.get('/vendor/returns'); },
+  reviewReturn(id, approve) { return this.put(`/vendor/returns/${id}/review`, { approve }); },
+
   getMyCommissions() { return this.get('/vendor/commissions'); },
   getMyWallet() { return this.get('/vendor/wallet'); },
   requestWithdrawal(amount) { return this.post('/vendor/withdrawal', { amount }); },

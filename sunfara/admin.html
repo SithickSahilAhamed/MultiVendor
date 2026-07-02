@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sunfara Admin Panel — Multi-Vendor Marketplace Management" />
+  <title>Sunfara Admin Panel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/typography.css" />
+  <link rel="stylesheet" href="css/admin/admin-variables.css" />
+  <link rel="stylesheet" href="css/admin/admin-layout.css" />
+  <link rel="stylesheet" href="css/admin/admin-sidebar.css" />
+  <link rel="stylesheet" href="css/admin/admin-topnav.css" />
+  <link rel="stylesheet" href="css/admin/admin-components.css" />
+  <link rel="stylesheet" href="css/admin/admin-tables.css" />
+  <link rel="stylesheet" href="css/admin/admin-modals.css" />
+  <link rel="stylesheet" href="css/admin/admin-cards.css" />
+  <link rel="stylesheet" href="css/admin/admin-responsive.css" />
+</head>
+<body class="admin-body">
+  <div id="admin-app">
+    <nav id="admin-topnav"></nav>
+    <div class="admin-layout">
+      <aside id="admin-sidebar"></aside>
+      <main id="admin-content">
+        <nav id="admin-breadcrumb" class="breadcrumb"></nav>
+        <div id="admin-page-content"></div>
+      </main>
+    </div>
+    <div id="admin-modal-overlay" class="admin-modal-overlay"></div>
+    <div id="admin-modal-container" class="admin-modal-container"></div>
+    <div id="admin-toast-container" class="admin-toast-container"></div>
+    <div id="admin-sidebar-overlay" class="admin-sidebar-overlay"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script src="js/admin/admin-config.js"></script>
+  <script src="js/admin/admin-utils.js"></script>
+  <script src="js/admin/admin-api.js"></script>
+  <script src="js/admin/admin-store.js"></script>
+  <script src="js/admin/admin-components/toast.js"></script>
+  <script src="js/admin/admin-components/modal.js"></script>
+  <script src="js/admin/admin-layout.js"></script>
+  <script src="js/admin/admin-pages/dashboard.js"></script>
+  <script src="js/admin/admin-pages/vendors.js"></script>
+  <script src="js/admin/admin-pages/products.js"></script>
+  <script src="js/admin/admin-pages/orders.js"></script>
+  <script src="js/admin/admin-pages/customers.js"></script>
+  <script src="js/admin/admin-pages/commissions.js"></script>
+  <script src="js/admin/admin-pages/withdrawals.js"></script>
+  <script src="js/admin/admin-pages/reports.js"></script>
+  <script src="js/admin/admin-pages/settings.js"></script>
+  <script src="js/admin/admin-router.js"></script>
+  <script src="js/admin/admin-init.js"></script>
+</body>
+</html>

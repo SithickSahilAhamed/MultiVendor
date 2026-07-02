@@ -1,0 +1,27 @@
+name: Deploy Frontend to Firebase Hosting
+
+# Backend deploys are handled natively by Railway's GitHub integration
+# (auto-builds sunfara-backend-dotnet via the root Dockerfile on push to master).
+# This workflow only needs to cover the static frontend.
+
+on:
+  push:
+    branches: [master, publish-clean2]
+  workflow_dispatch:
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend (Firebase Hosting)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Firebase via service account
+        run: echo "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-sa.json"
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Firebase Hosting
+        run: npx firebase-tools deploy --only hosting --project sunfara-500b0 --non-interactive
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-sa.json

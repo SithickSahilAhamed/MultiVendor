@@ -56,7 +56,16 @@ public sealed class FirestoreCatalogStore(FirestoreDb db)
     public FirestoreDb Database => db;
 
     private static Dictionary<string, object> Normalize(Dictionary<string, object> source) => source.ToDictionary(x => x.Key, x => NormalizeValue(x.Value));
-    private static object NormalizeValue(object? value) => value switch
+
+    /* Converts a raw System.Text.Json.JsonElement (what ASP.NET Core model
+       binding produces for any non-primitive value in a Dictionary<string,
+       object> request body) into plain CLR types Firestore's serializer
+       actually understands. Public because callers outside AddAsync/
+       UpdateAsync - e.g. CheckoutAsync copying shippingAddress/couponCode
+       straight from the request body into an order - need the same
+       conversion or Firestore throws ArgumentException: "Unable to create
+       converter for type System.Text.Json.JsonElement". */
+    public static object NormalizeValue(object? value) => value switch
     {
         null => "",
         JsonElement e when e.ValueKind == JsonValueKind.Object => e.EnumerateObject().ToDictionary(x => x.Name, x => NormalizeValue(x.Value)),

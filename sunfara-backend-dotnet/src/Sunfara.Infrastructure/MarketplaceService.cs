@@ -33,7 +33,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
             var vendorIds = orderItems.Select(i => i["vendorId"].ToString()!).Distinct().ToList();
             var statusHistory = new List<Dictionary<string, object>> { new() { ["status"] = "pending", ["at"] = DateTime.UtcNow.ToString("o") } };
             var order = new Dictionary<string, object> { ["customerId"] = customerId, ["orderNumber"] = $"SUN-{DateTime.UtcNow:yyyyMMdd}-{orderRef.Id[..8].ToUpperInvariant()}", ["items"] = orderItems, ["vendorIds"] = vendorIds, ["statusHistory"] = statusHistory, ["subtotal"] = (double)subtotal, ["totalAmount"] = (double)subtotal, ["status"] = "pending", ["paymentStatus"] = "pending", ["commissionsCalculated"] = false, ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp };
-            foreach (var pair in request.Where(x => x.Key is "shippingAddress" or "paymentMethod" or "couponCode")) order[pair.Key] = pair.Value;
+            foreach (var pair in request.Where(x => x.Key is "shippingAddress" or "paymentMethod" or "couponCode")) order[pair.Key] = FirestoreCatalogStore.NormalizeValue(pair.Value);
             transaction.Create(orderRef, order);
         });
         return orderRef.Id;

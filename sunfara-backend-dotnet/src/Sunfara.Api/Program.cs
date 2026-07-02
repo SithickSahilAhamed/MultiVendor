@@ -8,23 +8,37 @@ using Sunfara.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 var projectId = builder.Configuration["Firebase:ProjectId"] ?? Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ?? "sunfara-500b0";
 
-// Load service account key
-var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
-var credFullPath = Path.GetFullPath(credPath);
-if (!File.Exists(credFullPath))
-    credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
-
-if (File.Exists(credFullPath))
+// Load service account credentials: prefer an inline JSON env var (works in
+// containers, where the key file is intentionally not part of the image),
+// falling back to a local file for dev.
+GoogleCredential? credential = null;
+var credJson = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON");
+if (!string.IsNullOrEmpty(credJson))
 {
-    Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credFullPath);
-    if (FirebaseApp.DefaultInstance == null)
-        FirebaseApp.Create(new AppOptions { Credential = GoogleCredential.FromFile(credFullPath) });
+    credential = GoogleCredential.FromJson(credJson);
 }
+else
+{
+    var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
+    var credFullPath = Path.GetFullPath(credPath);
+    if (!File.Exists(credFullPath))
+        credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
+    if (File.Exists(credFullPath))
+        credential = GoogleCredential.FromFile(credFullPath);
+}
+
+if (credential != null && FirebaseApp.DefaultInstance == null)
+    FirebaseApp.Create(new AppOptions { Credential = credential });
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton(_ => FirestoreDb.Create(projectId));
+builder.Services.AddSingleton(_ =>
+{
+    var firestoreBuilder = new FirestoreDbBuilder { ProjectId = projectId };
+    if (credential != null) firestoreBuilder.Credential = credential;
+    return firestoreBuilder.Build();
+});
 builder.Services.AddScoped<FirestoreCatalogStore>();
 builder.Services.AddScoped<MarketplaceService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

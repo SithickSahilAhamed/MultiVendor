@@ -117,7 +117,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
             });
 
             await RecordTransactionAsync("commission_split", orderId, vendorId, result.Commission,
-                $"Commission split for order {orderId}: {result.Rate}% of {(double)result.Gross:C} gross");
+                $"Commission split for order {orderId}: {result.Rate}% of ₹{(double)result.Gross:N2} gross");
             await UpdatePlatformRevenueAsync(grossDelta: result.Gross, commissionDelta: result.Commission, payoutDelta: 0);
         }
 
@@ -197,7 +197,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
             transaction.Update(withdrawalRef, new Dictionary<string, object> { ["status"] = "approved", ["approvedAt"] = FieldValue.ServerTimestamp });
         });
 
-        await RecordTransactionAsync("payout", withdrawalId, vendorId, amount, $"Withdrawal payout of {(double)amount:C} approved");
+        await RecordTransactionAsync("payout", withdrawalId, vendorId, amount, $"Withdrawal payout of ₹{(double)amount:N2} approved");
         await UpdatePlatformRevenueAsync(grossDelta: 0, commissionDelta: 0, payoutDelta: amount);
         return true;
     }

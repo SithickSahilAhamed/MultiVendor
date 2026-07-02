@@ -5,11 +5,17 @@ namespace Sunfara.Infrastructure;
 
 public sealed class MarketplaceService(FirestoreCatalogStore store)
 {
+    /* Checkout creates one master order (customer-facing: what they paid,
+       where it ships) plus one vendor_orders document per distinct vendor
+       in the cart - each vendor only ever sees and manages their own
+       sub-order, with its own independent status/tracking/history, instead
+       of one shared order document mixing every vendor's items together. */
     public async Task<string> CheckoutAsync(string customerId, Dictionary<string, object> request)
     {
         var items = ReadItems(request);
         if (items.Count == 0) throw new InvalidOperationException("Cart is empty.");
         var orderRef = store.Database.Collection("orders").Document();
+
         await store.Database.RunTransactionAsync(async transaction =>
         {
             decimal subtotal = 0;
@@ -17,6 +23,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
             var productRefs = items.Select(item => store.Database.Collection("products").Document(item["productId"].ToString()!)).ToList();
             var products = new List<DocumentSnapshot>();
             foreach (var productRef in productRefs) products.Add(await transaction.GetSnapshotAsync(productRef));
+
             for (var index = 0; index < items.Count; index++)
             {
                 var item = items[index];
@@ -28,100 +35,159 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
                 if (stock < quantity) throw new InvalidOperationException($"Insufficient stock for {productId}.");
                 var price = Convert.ToDecimal(product.GetValue<double>("price")); var lineTotal = price * quantity; subtotal += lineTotal;
                 transaction.Update(productRef, new Dictionary<string, object> { ["stock"] = stock - quantity, ["updatedAt"] = FieldValue.ServerTimestamp });
-                orderItems.Add(new() { ["productId"] = productId, ["vendorId"] = product.GetValue<string>("vendorId"), ["name"] = product.GetValue<string>("name"), ["quantity"] = quantity, ["price"] = (double)price, ["total"] = (double)lineTotal });
+                orderItems.Add(new()
+                {
+                    ["productId"] = productId, ["vendorId"] = product.GetValue<string>("vendorId"),
+                    ["vendorName"] = product.ContainsField("vendorName") ? product.GetValue<string>("vendorName") : "",
+                    ["name"] = product.GetValue<string>("name"), ["quantity"] = quantity,
+                    ["price"] = (double)price, ["total"] = (double)lineTotal
+                });
             }
-            var vendorIds = orderItems.Select(i => i["vendorId"].ToString()!).Distinct().ToList();
-            var statusHistory = new List<Dictionary<string, object>> { new() { ["status"] = "pending", ["at"] = DateTime.UtcNow.ToString("o") } };
-            var order = new Dictionary<string, object> { ["customerId"] = customerId, ["orderNumber"] = $"SUN-{DateTime.UtcNow:yyyyMMdd}-{orderRef.Id[..8].ToUpperInvariant()}", ["items"] = orderItems, ["vendorIds"] = vendorIds, ["statusHistory"] = statusHistory, ["subtotal"] = (double)subtotal, ["totalAmount"] = (double)subtotal, ["status"] = "pending", ["paymentStatus"] = "pending", ["commissionsCalculated"] = false, ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp };
-            foreach (var pair in request.Where(x => x.Key is "shippingAddress" or "paymentMethod" or "couponCode")) order[pair.Key] = FirestoreCatalogStore.NormalizeValue(pair.Value);
+
+            var paymentMethodValue = request.TryGetValue("paymentMethod", out var pm) ? FirestoreCatalogStore.NormalizeValue(pm) : "";
+            var shippingAddressValue = request.TryGetValue("shippingAddress", out var sa) ? FirestoreCatalogStore.NormalizeValue(sa) : new Dictionary<string, object>();
+            var orderNumber = $"SUN-{DateTime.UtcNow:yyyyMMdd}-{orderRef.Id[..8].ToUpperInvariant()}";
+
+            var byVendor = orderItems.GroupBy(i => i["vendorId"].ToString()!).ToList();
+            var vendorOrderRefs = new List<(DocumentReference Ref, string VendorId, List<Dictionary<string, object>> Items, decimal VendorSubtotal)>();
+            foreach (var group in byVendor)
+            {
+                var vendorOrderRef = store.Database.Collection("vendor_orders").Document();
+                var vendorSubtotal = group.Sum(i => Convert.ToDecimal(i["total"]));
+                vendorOrderRefs.Add((vendorOrderRef, group.Key, group.ToList(), vendorSubtotal));
+            }
+
+            var order = new Dictionary<string, object>
+            {
+                ["customerId"] = customerId, ["orderNumber"] = orderNumber, ["items"] = orderItems,
+                ["vendorOrderIds"] = vendorOrderRefs.Select(v => v.Ref.Id).ToList(),
+                ["subtotal"] = (double)subtotal, ["totalAmount"] = (double)subtotal,
+                ["paymentStatus"] = "pending", ["paymentMethod"] = paymentMethodValue, ["shippingAddress"] = shippingAddressValue,
+                ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
+            };
+            foreach (var pair in request.Where(x => x.Key is "couponCode")) order[pair.Key] = FirestoreCatalogStore.NormalizeValue(pair.Value);
             transaction.Create(orderRef, order);
+
+            foreach (var (vendorOrderRef, vendorId, vendorItems, vendorSubtotal) in vendorOrderRefs)
+            {
+                var statusHistory = new List<Dictionary<string, object>> { new() { ["status"] = "pending", ["at"] = DateTime.UtcNow.ToString("o") } };
+                transaction.Create(vendorOrderRef, new Dictionary<string, object>
+                {
+                    ["masterOrderId"] = orderRef.Id, ["orderNumber"] = orderNumber, ["customerId"] = customerId,
+                    ["vendorId"] = vendorId, ["vendorName"] = vendorItems.FirstOrDefault()?.GetValueOrDefault("vendorName") ?? "",
+                    ["items"] = vendorItems, ["subtotal"] = (double)vendorSubtotal,
+                    ["status"] = "pending", ["statusHistory"] = statusHistory,
+                    ["trackingNumber"] = "", ["carrier"] = "", ["estimatedDelivery"] = DateTime.UtcNow.AddDays(4).ToString("o"),
+                    ["paymentStatus"] = "pending", ["paymentMethod"] = paymentMethodValue,
+                    ["commissionsCalculated"] = false,
+                    ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
+                });
+            }
         });
         return orderRef.Id;
     }
 
-    /* Advances an order's status for the given vendor, validating the
-       transition against OrderStateMachine, appending to statusHistory, and
-       triggering commission calculation once the sale is actually final
-       (on delivery for COD, since that's when cash is actually collected;
-       online payments trigger commissions separately at payment verification). */
-    public async Task UpdateOrderStatusAsync(string orderId, string vendorId, string newStatus, bool isAdmin)
+    /* Called once a master order's payment is confirmed (Razorpay verify) -
+       moves every vendor sub-order from pending to confirmed and, since
+       online payment means money has genuinely already changed hands,
+       triggers commission calculation immediately (COD instead triggers it
+       on delivery in UpdateOrderStatusAsync, since that's when cash is
+       actually collected). */
+    public async Task ConfirmAllVendorOrdersForPaymentAsync(string masterOrderId)
     {
-        var orderRef = store.Database.Collection("orders").Document(orderId);
-        var snapshot = await orderRef.GetSnapshotAsync();
+        var vendorOrdersSnap = await store.Database.Collection("vendor_orders").WhereEqualTo("masterOrderId", masterOrderId).GetSnapshotAsync();
+        foreach (var doc in vendorOrdersSnap.Documents)
+        {
+            var history = doc.ContainsField("statusHistory") ? doc.GetValue<List<Dictionary<string, object>>>("statusHistory") : [];
+            history.Add(new Dictionary<string, object> { ["status"] = "confirmed", ["at"] = DateTime.UtcNow.ToString("o"), ["by"] = "system:payment" });
+            await doc.Reference.UpdateAsync(new Dictionary<string, object>
+            {
+                ["status"] = "confirmed", ["statusHistory"] = history, ["paymentStatus"] = "paid", ["updatedAt"] = FieldValue.ServerTimestamp
+            });
+            await CalculateAndRecordCommissionsAsync(doc.Id);
+        }
+    }
+
+    /* Advances a single vendor's sub-order status, validating the transition
+       against OrderStateMachine, appending to statusHistory, optionally
+       recording tracking info, and triggering commission calculation once
+       the sale is final for COD (online payments are confirmed - and
+       commissioned - as a batch in ConfirmAllVendorOrdersForPaymentAsync). */
+    public async Task UpdateOrderStatusAsync(string vendorOrderId, string vendorId, string newStatus, bool isAdmin, string? trackingNumber = null, string? carrier = null)
+    {
+        var vendorOrderRef = store.Database.Collection("vendor_orders").Document(vendorOrderId);
+        var snapshot = await vendorOrderRef.GetSnapshotAsync();
         if (!snapshot.Exists) throw new InvalidOperationException("Order not found.");
 
-        var vendorIds = snapshot.ContainsField("vendorIds") ? snapshot.GetValue<List<string>>("vendorIds") : [];
-        if (!isAdmin && !vendorIds.Contains(vendorId)) throw new UnauthorizedAccessException("You do not have items in this order.");
+        var orderVendorId = snapshot.GetValue<string>("vendorId");
+        if (!isAdmin && orderVendorId != vendorId) throw new UnauthorizedAccessException("This order does not belong to you.");
 
         var currentStatus = snapshot.ContainsField("status") ? snapshot.GetValue<string>("status") : "pending";
         if (!isAdmin && !OrderStateMachine.CanTransition(currentStatus, newStatus))
             throw new InvalidOperationException($"Cannot move an order from '{currentStatus}' to '{newStatus}'.");
 
         var history = snapshot.ContainsField("statusHistory") ? snapshot.GetValue<List<Dictionary<string, object>>>("statusHistory") : [];
-        history.Add(new Dictionary<string, object> { ["status"] = newStatus, ["at"] = DateTime.UtcNow.ToString("o"), ["by"] = vendorId });
+        history.Add(new Dictionary<string, object> { ["status"] = newStatus, ["at"] = DateTime.UtcNow.ToString("o"), ["by"] = isAdmin ? "admin" : vendorId });
 
-        await orderRef.UpdateAsync(new Dictionary<string, object> { ["status"] = newStatus, ["statusHistory"] = history, ["updatedAt"] = FieldValue.ServerTimestamp });
+        var updates = new Dictionary<string, object> { ["status"] = newStatus, ["statusHistory"] = history, ["updatedAt"] = FieldValue.ServerTimestamp };
+        if (!string.IsNullOrWhiteSpace(trackingNumber)) updates["trackingNumber"] = trackingNumber;
+        if (!string.IsNullOrWhiteSpace(carrier)) updates["carrier"] = carrier;
+        await vendorOrderRef.UpdateAsync(updates);
 
         var paymentMethod = snapshot.ContainsField("paymentMethod") ? snapshot.GetValue<string>("paymentMethod") : "";
         var commissionsCalculated = snapshot.ContainsField("commissionsCalculated") && snapshot.GetValue<bool>("commissionsCalculated");
         if (newStatus == "delivered" && paymentMethod == "Cash on Delivery" && !commissionsCalculated)
-            await CalculateAndRecordCommissionsAsync(orderId);
+            await CalculateAndRecordCommissionsAsync(vendorOrderId);
     }
 
-    /* Splits an order's total across its vendors, calculates each vendor's
-       commission via CommissionCalculator, writes a commission record per
-       vendor, and credits each vendor's wallet balance. Guarded so it can
-       only ever run once per order (Firestore has no unique-constraint, so
-       this is an explicit idempotency flag rather than relying on retries
-       never happening). */
-    public async Task CalculateAndRecordCommissionsAsync(string orderId)
+    /* Calculates one vendor's commission for their sub-order, writes a
+       commission record, credits their wallet, logs a transaction, and
+       updates platform revenue. Guarded so it can only ever run once per
+       vendor order (Firestore has no unique-constraint, so this is an
+       explicit idempotency flag rather than relying on retries never
+       happening). */
+    public async Task CalculateAndRecordCommissionsAsync(string vendorOrderId)
     {
-        var orderRef = store.Database.Collection("orders").Document(orderId);
-        var snapshot = await orderRef.GetSnapshotAsync();
+        var vendorOrderRef = store.Database.Collection("vendor_orders").Document(vendorOrderId);
+        var snapshot = await vendorOrderRef.GetSnapshotAsync();
         if (!snapshot.Exists) return;
         if (snapshot.ContainsField("commissionsCalculated") && snapshot.GetValue<bool>("commissionsCalculated")) return;
 
-        var items = snapshot.GetValue<List<Dictionary<string, object>>>("items");
-        var byVendor = items.GroupBy(i => i["vendorId"].ToString()!);
+        var vendorId = snapshot.GetValue<string>("vendorId");
+        var gross = Convert.ToDecimal(snapshot.GetValue<double>("subtotal"));
+        var vendorSnap = await store.Database.Collection("vendors").Document(vendorId).GetSnapshotAsync();
+        var rate = vendorSnap.Exists && vendorSnap.ContainsField("commission") ? Convert.ToDecimal(vendorSnap.GetValue<double>("commission")) : 10m;
+        var result = CommissionCalculator.Calculate(gross, rate);
 
-        foreach (var group in byVendor)
+        await store.AddAsync("commissions", new Dictionary<string, object>
         {
-            var vendorId = group.Key;
-            var gross = group.Sum(i => Convert.ToDecimal(i["total"]));
-            var vendorSnap = await store.Database.Collection("vendors").Document(vendorId).GetSnapshotAsync();
-            var rate = vendorSnap.Exists && vendorSnap.ContainsField("commission") ? Convert.ToDecimal(vendorSnap.GetValue<double>("commission")) : 10m;
-            var result = CommissionCalculator.Calculate(gross, rate);
+            ["vendorId"] = vendorId, ["orderId"] = vendorOrderId,
+            ["grossAmount"] = (double)result.Gross, ["rate"] = (double)result.Rate,
+            ["commissionAmount"] = (double)result.Commission, ["netToVendor"] = (double)result.NetToVendor,
+            ["status"] = "approved"
+        });
 
-            await store.AddAsync("commissions", new Dictionary<string, object>
+        var walletRef = store.Database.Collection("vendor_wallets").Document(vendorId);
+        await store.Database.RunTransactionAsync(async transaction =>
+        {
+            var walletSnap = await transaction.GetSnapshotAsync(walletRef);
+            var balance = walletSnap.Exists && walletSnap.ContainsField("balance") ? Convert.ToDecimal(walletSnap.GetValue<double>("balance")) : 0m;
+            var totalEarned = walletSnap.Exists && walletSnap.ContainsField("totalEarned") ? Convert.ToDecimal(walletSnap.GetValue<double>("totalEarned")) : 0m;
+            transaction.Set(walletRef, new Dictionary<string, object>
             {
-                ["vendorId"] = vendorId, ["orderId"] = orderId,
-                ["grossAmount"] = (double)result.Gross, ["rate"] = (double)result.Rate,
-                ["commissionAmount"] = (double)result.Commission, ["netToVendor"] = (double)result.NetToVendor,
-                ["status"] = "approved"
-            });
+                ["vendorId"] = vendorId,
+                ["balance"] = (double)(balance + result.NetToVendor),
+                ["totalEarned"] = (double)(totalEarned + result.NetToVendor),
+                ["totalWithdrawn"] = walletSnap.Exists && walletSnap.ContainsField("totalWithdrawn") ? walletSnap.GetValue<double>("totalWithdrawn") : 0.0,
+                ["updatedAt"] = FieldValue.ServerTimestamp
+            }, SetOptions.MergeAll);
+        });
 
-            var walletRef = store.Database.Collection("vendor_wallets").Document(vendorId);
-            await store.Database.RunTransactionAsync(async transaction =>
-            {
-                var walletSnap = await transaction.GetSnapshotAsync(walletRef);
-                var balance = walletSnap.Exists && walletSnap.ContainsField("balance") ? Convert.ToDecimal(walletSnap.GetValue<double>("balance")) : 0m;
-                var totalEarned = walletSnap.Exists && walletSnap.ContainsField("totalEarned") ? Convert.ToDecimal(walletSnap.GetValue<double>("totalEarned")) : 0m;
-                transaction.Set(walletRef, new Dictionary<string, object>
-                {
-                    ["vendorId"] = vendorId,
-                    ["balance"] = (double)(balance + result.NetToVendor),
-                    ["totalEarned"] = (double)(totalEarned + result.NetToVendor),
-                    ["totalWithdrawn"] = walletSnap.Exists && walletSnap.ContainsField("totalWithdrawn") ? walletSnap.GetValue<double>("totalWithdrawn") : 0.0,
-                    ["updatedAt"] = FieldValue.ServerTimestamp
-                }, SetOptions.MergeAll);
-            });
+        await RecordTransactionAsync("commission_split", vendorOrderId, vendorId, result.Commission,
+            $"Commission split for order {vendorOrderId}: {result.Rate}% of ₹{(double)result.Gross:N2} gross");
+        await UpdatePlatformRevenueAsync(grossDelta: result.Gross, commissionDelta: result.Commission, payoutDelta: 0);
 
-            await RecordTransactionAsync("commission_split", orderId, vendorId, result.Commission,
-                $"Commission split for order {orderId}: {result.Rate}% of ₹{(double)result.Gross:N2} gross");
-            await UpdatePlatformRevenueAsync(grossDelta: result.Gross, commissionDelta: result.Commission, payoutDelta: 0);
-        }
-
-        await orderRef.UpdateAsync(new Dictionary<string, object> { ["commissionsCalculated"] = true });
+        await vendorOrderRef.UpdateAsync(new Dictionary<string, object> { ["commissionsCalculated"] = true });
     }
 
     /* Append-only accounting record for every money movement - this is what

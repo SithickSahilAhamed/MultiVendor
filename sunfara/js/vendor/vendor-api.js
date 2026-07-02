@@ -35,7 +35,7 @@ const VendorAPI = {
   deleteProduct(id) { return this.delete(`/products/${id}`); },
 
   getMyOrders() { return this.get('/vendor/orders'); },
-  updateOrderStatus(id, status) { return this.put(`/vendor/orders/${id}/status`, { status }); },
+  updateOrderStatus(id, status, trackingNumber, carrier) { return this.put(`/vendor/orders/${id}/status`, { status, trackingNumber, carrier }); },
 
   getMyCommissions() { return this.get('/vendor/commissions'); },
   getMyWallet() { return this.get('/vendor/wallet'); },

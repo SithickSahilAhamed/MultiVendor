@@ -16,9 +16,8 @@ const VendorDashboard = {
       return;
     }
 
-    const myUid = VendorStore.user.uid;
-    const myOrderItems = orders.flatMap(o => (o.items || []).filter(i => i.vendorId === myUid).map(i => ({ ...i, orderStatus: o.status })));
-    const totalSales = myOrderItems.reduce((s, i) => s + (i.total || 0), 0);
+    const itemCount = orders.reduce((s, o) => s + (o.items || []).length, 0);
+    const totalSales = orders.reduce((s, o) => s + (o.subtotal || 0), 0);
     const pendingOrders = orders.filter(o => ['pending', 'confirmed', 'processing', 'packed'].includes(o.status)).length;
     const lowStock = products.filter(p => (p.stock ?? 0) > 0 && (p.stock ?? 0) <= 5).length;
     const outOfStock = products.filter(p => (p.stock ?? 0) === 0).length;
@@ -31,7 +30,7 @@ const VendorDashboard = {
       <div class="admin-page-header"><div><h1 class="admin-page-title">Welcome, ${VendorStore.user.name}</h1><p class="admin-page-subtitle">Here's how your store is doing</p></div></div>
 
       <div class="admin-grid">
-        <div class="admin-kpi-card"><div class="admin-kpi-header"><span class="admin-kpi-label">Total Sales</span><span class="admin-kpi-icon">💰</span></div><div class="admin-kpi-value">${VendorUtils.formatPrice(totalSales)}</div><div class="admin-kpi-trend">${myOrderItems.length} items sold</div></div>
+        <div class="admin-kpi-card"><div class="admin-kpi-header"><span class="admin-kpi-label">Total Sales</span><span class="admin-kpi-icon">💰</span></div><div class="admin-kpi-value">${VendorUtils.formatPrice(totalSales)}</div><div class="admin-kpi-trend">${itemCount} items sold</div></div>
         <div class="admin-kpi-card"><div class="admin-kpi-header"><span class="admin-kpi-label">Wallet Balance</span><span class="admin-kpi-icon">👛</span></div><div class="admin-kpi-value">${VendorUtils.formatPrice(wallet.balance)}</div><div class="admin-kpi-trend">Available to withdraw</div></div>
         <div class="admin-kpi-card"><div class="admin-kpi-header"><span class="admin-kpi-label">Total Earned</span><span class="admin-kpi-icon">📈</span></div><div class="admin-kpi-value">${VendorUtils.formatPrice(wallet.totalEarned)}</div><div class="admin-kpi-trend">After commission, lifetime</div></div>
         <div class="admin-kpi-card"><div class="admin-kpi-header"><span class="admin-kpi-label">Orders Needing Action</span><span class="admin-kpi-icon">📋</span></div><div class="admin-kpi-value">${pendingOrders}</div><div class="admin-kpi-trend">${orders.length} total orders</div></div>
@@ -51,13 +50,9 @@ const VendorDashboard = {
           <thead><tr><th>Order</th><th>Your Items</th><th>Your Total</th><th>Status</th><th>Date</th></tr></thead>
           <tbody>
             ${orders.length === 0 ? '<tr><td colspan="5" style="text-align:center;padding:32px;color:#6b7280">No orders yet</td></tr>' :
-              orders.slice(0, 5).map(o => {
-                const mine = (o.items || []).filter(i => i.vendorId === myUid);
-                const mineTotal = mine.reduce((s, i) => s + (i.total || 0), 0);
-                return `<tr><td><strong>${o.orderNumber || o.id}</strong></td><td>${mine.length}</td><td>${VendorUtils.formatPrice(mineTotal)}</td>
+              orders.slice(0, 5).map(o => `<tr><td><strong>${o.orderNumber || o.id}</strong></td><td>${(o.items || []).length}</td><td>${VendorUtils.formatPrice(o.subtotal)}</td>
                   <td><span class="admin-status-badge ${VendorConfig.statusColors[o.status] || 'admin-status-pending'}">${VendorConfig.statusLabels[o.status] || o.status}</span></td>
-                  <td>${VendorUtils.formatDate(o.createdAt)}</td></tr>`;
-              }).join('')}
+                  <td>${VendorUtils.formatDate(o.createdAt)}</td></tr>`).join('')}
           </tbody>
         </table>
       </div>`;

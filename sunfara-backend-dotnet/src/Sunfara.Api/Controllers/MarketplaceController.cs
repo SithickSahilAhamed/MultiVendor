@@ -12,16 +12,30 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     public async Task<IActionResult> Checkout([FromBody] Dictionary<string, object> request)
     { try { var id = await marketplace.CheckoutAsync(UserId, request); return Ok(new { id, message = "Order placed" }); } catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); } }
 
+    /* Master orders enriched with each vendor's own sub-order (status,
+       tracking, delivery estimate) so a customer sees one order with a
+       per-seller breakdown, instead of one flat status that can't
+       represent "vendor A shipped, vendor B hasn't packed yet". */
     [Authorize, HttpGet("orders")]
-    public async Task<IActionResult> Orders() => Ok(await store.WhereAsync("orders", "customerId", UserId));
+    public async Task<IActionResult> Orders()
+    {
+        var orders = await store.WhereAsync("orders", "customerId", UserId);
+        var vendorOrders = await store.WhereAsync("vendor_orders", "customerId", UserId, 500);
+        foreach (var order in orders)
+        {
+            var masterId = order["id"].ToString();
+            order["vendorOrders"] = vendorOrders.Where(vo => vo.GetValueOrDefault("masterOrderId")?.ToString() == masterId).ToList();
+        }
+        return Ok(orders);
+    }
 
     [Authorize(Policy = "Vendor"), HttpGet("vendor/orders")]
-    public async Task<IActionResult> VendorOrders() => Ok(await store.WhereArrayContainsAsync("orders", "vendorIds", UserId));
+    public async Task<IActionResult> VendorOrders() => Ok(await store.WhereAsync("vendor_orders", "vendorId", UserId, 500));
 
     [Authorize(Policy = "Vendor"), HttpPut("vendor/orders/{id}/status")]
     public async Task<IActionResult> UpdateVendorOrderStatus(string id, [FromBody] OrderStatusRequest request)
     {
-        try { await marketplace.UpdateOrderStatusAsync(id, UserId, request.Status, isAdmin: false); return Ok(); }
+        try { await marketplace.UpdateOrderStatusAsync(id, UserId, request.Status, isAdmin: false, request.TrackingNumber, request.Carrier); return Ok(); }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
     }

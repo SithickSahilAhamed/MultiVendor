@@ -65,10 +65,9 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
         await store.UpdateAsync("orders", request.OrderId, new Dictionary<string, object>
         {
             ["paymentStatus"] = "paid",
-            ["status"] = "confirmed",
             ["razorpayPaymentId"] = request.RazorpayPaymentId
         });
-        await marketplace.CalculateAndRecordCommissionsAsync(request.OrderId);
+        await marketplace.ConfirmAllVendorOrdersForPaymentAsync(request.OrderId);
 
         return Ok(new { success = true });
     }

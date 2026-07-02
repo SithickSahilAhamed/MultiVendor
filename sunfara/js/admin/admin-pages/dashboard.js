@@ -104,7 +104,7 @@ const AdminDashboard = {
                   <tr>
                     <td style="font-weight: 600;">${o.orderNumber || o.id}</td>
                     <td>${AdminUtils.formatPrice(o.totalAmount)}</td>
-                    <td><span class="admin-status-badge ${AdminConfig.statusColors[o.status] || 'admin-status-pending'}">${AdminConfig.statusLabels[o.status] || o.status}</span></td>
+                    <td><span class="admin-status-badge ${o.paymentStatus === 'paid' ? 'admin-status-active' : 'admin-status-pending'}">${o.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Pending'}</span></td>
                   </tr>
                 `).join('')}
               </tbody>

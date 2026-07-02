@@ -71,7 +71,8 @@ const AdminAPI = {
   async approveWithdrawal(id)      { return this.post(`/admin/withdrawals/${id}/approve`, {}); },
   async getRevenue()               { return this.get('/admin/revenue'); },
   async getTransactions()          { return this.list("transactions", 500); },
-  async updateOrderStatus(id, status) { return this.put(`/admin/orders/${id}/status`, { status }); },
+  async getVendorOrders()          { return this.list("vendor_orders", 500); },
+  async updateOrderStatus(id, status, trackingNumber, carrier) { return this.put(`/admin/vendor-orders/${id}/status`, { status, trackingNumber, carrier }); },
 
   // ==================== REVIEW ENDPOINTS ====================
 

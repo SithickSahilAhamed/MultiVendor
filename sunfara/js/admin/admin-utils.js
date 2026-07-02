@@ -6,6 +6,8 @@ const AdminUtils = {
     return '₹' + (price || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 });
   },
 
+  escapeHtml: (str) => String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
+
   formatDate: (date) => {
     return new Date(date).toLocaleDateString('en-IN', { 
       year: 'numeric', 

@@ -3,6 +3,8 @@
 const VendorUtils = {
   formatPrice: (price) => '₹' + (price || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 }),
 
+  escapeHtml: (str) => String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
+
   formatDate: (date) => {
     if (!date) return '—';
     const d = date?.toDate ? date.toDate() : new Date(date);

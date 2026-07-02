@@ -22,7 +22,7 @@ const AdminReturns = {
     ]);
 
     const returns = [...this._returns].sort((a, b) => new Date(b.requestedAt?.toDate ? b.requestedAt.toDate() : b.requestedAt || 0) - new Date(a.requestedAt?.toDate ? a.requestedAt.toDate() : a.requestedAt || 0));
-    const pending = returns.filter(r => r.status === 'requested').length;
+    const pending = returns.filter(r => r.status === 'requested' || r.status === 'refund_failed').length;
     const totalRefunded = this._refunds.reduce((sum, r) => sum + (r.amount || 0), 0);
 
     const html = `
@@ -55,15 +55,15 @@ const AdminReturns = {
             ${returns.length === 0 ? '<tr><td colspan="7" style="text-align:center;padding:32px;color:#6b7280;">No return requests</td></tr>' :
               returns.map(r => `
               <tr>
-                <td><strong>${r.vendorOrderId}</strong></td>
-                <td>${r.vendorName || r.vendorId}</td>
+                <td><strong>${AdminUtils.escapeHtml(r.vendorOrderId)}</strong></td>
+                <td>${AdminUtils.escapeHtml(r.vendorName || r.vendorId)}</td>
                 <td>${AdminUtils.formatPrice(r.amount || 0)}</td>
-                <td>${r.reason || '—'}</td>
-                <td><span class="admin-status-badge ${AdminConfig.statusColors[r.status === 'requested' ? 'return_requested' : r.status === 'approved' ? (r.refundStatus === 'completed' ? 'refunded' : 'return_requested') : 'return_rejected']}">${r.status === 'requested' ? '🟡 Awaiting Vendor' : r.status === 'approved' ? (r.refundStatus === 'completed' ? '💸 Refunded' : '↩️ Approved') : '🔴 Rejected'}</span></td>
+                <td>${AdminUtils.escapeHtml(r.reason) || '—'}</td>
+                <td><span class="admin-status-badge ${AdminConfig.statusColors[r.status === 'requested' ? 'return_requested' : r.status === 'refund_failed' ? 'return_rejected' : r.status === 'approved' ? (r.refundStatus === 'completed' ? 'refunded' : 'return_requested') : 'return_rejected']}">${r.status === 'requested' ? '🟡 Awaiting Vendor' : r.status === 'refund_failed' ? '⚠️ Refund Failed' : r.status === 'approved' ? (r.refundStatus === 'completed' ? '💸 Refunded' : '↩️ Approved') : '🔴 Rejected'}</span></td>
                 <td>${AdminUtils.formatDate(r.requestedAt)}</td>
-                <td>${r.status === 'requested'
-                  ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="AdminReturns.review('${r.id}',true)">Approve</button>
-                     <button class="admin-btn admin-btn-sm" style="background:#fee2e2;color:#ef4444;" onclick="AdminReturns.review('${r.id}',false)">Reject</button>`
+                <td>${r.status === 'requested' || r.status === 'refund_failed'
+                  ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="AdminReturns.review('${r.id}',true)">${r.status === 'refund_failed' ? 'Retry Refund' : 'Approve'}</button>
+                     ${r.status === 'refund_failed' ? '' : `<button class="admin-btn admin-btn-sm" style="background:#fee2e2;color:#ef4444;" onclick="AdminReturns.review('${r.id}',false)">Reject</button>`}`
                   : '—'}</td>
               </tr>
             `).join('')}

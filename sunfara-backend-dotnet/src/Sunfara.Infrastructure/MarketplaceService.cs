@@ -319,7 +319,8 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         var returnRef = store.Database.Collection("returns").Document(returnId);
         var returnSnap = await returnRef.GetSnapshotAsync();
         if (!returnSnap.Exists) throw new InvalidOperationException("Return request not found.");
-        if (returnSnap.GetValue<string>("status") != "requested") throw new InvalidOperationException("This return has already been reviewed.");
+        var currentReturnStatus = returnSnap.GetValue<string>("status");
+        if (currentReturnStatus is not ("requested" or "refund_failed")) throw new InvalidOperationException("This return has already been reviewed.");
         if (!isAdmin && returnSnap.GetValue<string>("vendorId") != vendorId) throw new UnauthorizedAccessException("This return does not belong to you.");
 
         var vendorOrderId = returnSnap.GetValue<string>("vendorOrderId");
@@ -335,9 +336,23 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             return;
         }
 
-        await AppendStatusAsync(vendorOrderRef, vendorOrderSnap, "returned", by: reviewer);
-        await returnRef.UpdateAsync(new Dictionary<string, object> { ["status"] = "approved", ["reviewedAt"] = FieldValue.ServerTimestamp });
-        await ProcessRefundAsync(returnId);
+        /* The vendor's "returned" decision and the refund itself are recorded
+           separately - if the refund call throws (Razorpay outage, account
+           restriction, network blip), the return stays retryable via
+           "refund_failed" instead of being silently stuck forever behind
+           the "already reviewed" guard above. Found by a real refund call
+           failing live in testing; a vendor order that's already "returned"
+           is left as-is on retry rather than re-appending duplicate history. */
+        if (vendorOrderSnap.GetValue<string>("status") != "returned")
+            await AppendStatusAsync(vendorOrderRef, vendorOrderSnap, "returned", by: reviewer);
+        await returnRef.UpdateAsync(new Dictionary<string, object> { ["reviewedAt"] = FieldValue.ServerTimestamp });
+
+        try { await ProcessRefundAsync(returnId); }
+        catch (Exception ex)
+        {
+            await returnRef.UpdateAsync(new Dictionary<string, object> { ["status"] = "refund_failed", ["refundError"] = ex.Message });
+            throw;
+        }
     }
 
     /* Reverses everything CalculateAndRecordCommissionsAsync did for this
@@ -433,7 +448,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         var refreshedSnap = await vendorOrderRef.GetSnapshotAsync();
         await AppendStatusAsync(vendorOrderRef, refreshedSnap, "refunded", by: "system:refund");
         await vendorOrderRef.UpdateAsync(new Dictionary<string, object> { ["paymentStatus"] = "refunded" });
-        await returnRef.UpdateAsync(new Dictionary<string, object> { ["refundStatus"] = "completed", ["refundedAt"] = FieldValue.ServerTimestamp });
+        await returnRef.UpdateAsync(new Dictionary<string, object> { ["status"] = "approved", ["refundStatus"] = "completed", ["refundedAt"] = FieldValue.ServerTimestamp });
     }
 
     private static async Task AppendStatusAsync(DocumentReference vendorOrderRef, DocumentSnapshot snapshot, string newStatus, string by)

@@ -27,14 +27,14 @@ const VendorReturns = {
           <tbody>
             ${returns.length === 0 ? '<tr><td colspan="6" style="text-align:center;padding:32px;color:#6b7280">No return requests</td></tr>' :
               returns.map(r => `<tr>
-                  <td><strong>${r.vendorOrderId}</strong></td>
+                  <td><strong>${VendorUtils.escapeHtml(r.vendorOrderId)}</strong></td>
                   <td>${VendorUtils.formatPrice(r.amount)}</td>
-                  <td>${r.reason || '—'}</td>
-                  <td><span class="admin-status-badge ${VendorConfig.statusColors[r.status === 'requested' ? 'pending' : r.status === 'approved' ? 'processing' : r.status === 'rejected' ? 'rejected' : 'active']}">${r.status === 'requested' ? '🟡 Awaiting Review' : r.status === 'approved' ? '↩️ Approved · Refund ' + (r.refundStatus === 'completed' ? 'Completed' : 'Processing') : '❌ Rejected'}</span></td>
+                  <td>${VendorUtils.escapeHtml(r.reason) || '—'}</td>
+                  <td><span class="admin-status-badge ${VendorConfig.statusColors[r.status === 'requested' ? 'pending' : r.status === 'refund_failed' ? 'rejected' : r.status === 'approved' ? 'processing' : r.status === 'rejected' ? 'rejected' : 'active']}">${r.status === 'requested' ? '🟡 Awaiting Review' : r.status === 'refund_failed' ? '⚠️ Refund Failed - Retry' : r.status === 'approved' ? '↩️ Approved · Refund ' + (r.refundStatus === 'completed' ? 'Completed' : 'Processing') : '❌ Rejected'}</span></td>
                   <td>${VendorUtils.formatDate(r.requestedAt)}</td>
-                  <td>${r.status === 'requested'
-                    ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="VendorReturns.review('${r.id}',true)">Approve</button>
-                       <button class="admin-btn admin-btn-sm" onclick="VendorReturns.review('${r.id}',false)">Reject</button>`
+                  <td>${r.status === 'requested' || r.status === 'refund_failed'
+                    ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="VendorReturns.review('${r.id}',true)">${r.status === 'refund_failed' ? 'Retry Refund' : 'Approve'}</button>
+                       ${r.status === 'refund_failed' ? '' : `<button class="admin-btn admin-btn-sm" onclick="VendorReturns.review('${r.id}',false)">Reject</button>`}`
                     : '—'}</td>
                 </tr>`).join('')}
           </tbody>

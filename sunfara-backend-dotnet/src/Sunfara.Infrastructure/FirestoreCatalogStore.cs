@@ -78,10 +78,30 @@ public sealed class FirestoreCatalogStore(FirestoreDb db)
         _ => value
     };
 
+    /* Google.Cloud.Firestore.Timestamp has no public properties System.Text.Json's
+       default reflection-based serializer can see, so every createdAt/updatedAt
+       (and anything else stored via FieldValue.ServerTimestamp) was silently
+       serializing as an empty object "{}" to every API response - no created/
+       updated date ever actually reached the frontend, on any entity, all
+       session. Recursively convert Timestamps (including ones nested inside
+       arrays/maps, e.g. statusHistory entries) into DateTime, which serializes
+       as a normal ISO date string. */
     private static Dictionary<string, object> ToDocument(DocumentSnapshot snapshot)
     {
         var result = snapshot.ToDictionary();
         result["id"] = snapshot.Id;
-        return result;
+        return ConvertTimestamps(result);
     }
+
+    private static Dictionary<string, object> ConvertTimestamps(Dictionary<string, object> source) =>
+        source.ToDictionary(x => x.Key, x => ConvertTimestampValue(x.Value));
+
+    private static object ConvertTimestampValue(object? value) => value switch
+    {
+        null => "",
+        Timestamp ts => ts.ToDateTime(),
+        Dictionary<string, object> dict => ConvertTimestamps(dict),
+        List<object> list => list.Select(ConvertTimestampValue).ToList(),
+        _ => value
+    };
 }

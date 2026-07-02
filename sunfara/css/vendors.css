@@ -1,0 +1,157 @@
+/* Vendors Marketplace Styles */
+
+.vendors-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.vendors-hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+}
+
+.vendors-hero-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 20px;
+}
+
+.vendor-search {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.vendor-search input {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  outline: none;
+  background: white;
+  color: #333;
+}
+
+.vendor-search input::placeholder {
+  color: #999;
+}
+
+/* Vendors Grid */
+.vendors-grid,
+.vendors-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.vendor-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.vendor-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+}
+
+.vendor-card-image {
+  width: 100%;
+  height: 160px;
+  background-color: #f0f0f0;
+}
+
+.vendor-card-content {
+  padding: 20px;
+}
+
+.vendor-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 5px;
+  color: var(--color-primary);
+}
+
+.vendor-tagline {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+}
+
+.vendor-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.vendor-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vendor-certifications {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.cert-badge {
+  background: #f0f0f0;
+  color: #666;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.btn-vendor {
+  width: 100%;
+  padding: 10px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-vendor:hover {
+  background: var(--color-primary-dark);
+}
+
+.vendor-filters {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.filter-input,
+.filter-select {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .vendors-grid,
+  .vendors-list {
+    grid-template-columns: 1fr;
+  }
+
+  .vendors-hero-content h1 {
+    font-size: 1.8rem;
+  }
+}

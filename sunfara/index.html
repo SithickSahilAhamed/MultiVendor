@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sunfara — Hub of Beauty and Natural Products. Organic skincare, herbal haircare, baby foods, and wellness products from 2100+ brands." />
+  <meta property="og:title" content="Sunfara — Hub of Beauty and Natural Products" />
+  <meta property="og:description" content="Discover premium organic and natural products. Free shipping on orders above ₹499. 15-day easy returns. 100% authentic products." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+  <title>Sunfara — Hub of Beauty and Natural Products</title>
+
+  <!-- CSS: load order matters — variables first, then structure, then components -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/typography.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/footer.css" />
+  <link rel="stylesheet" href="css/home.css" />
+  <link rel="stylesheet" href="css/product-list.css" />
+  <link rel="stylesheet" href="css/product-detail.css" />
+  <link rel="stylesheet" href="css/cart.css" />
+  <link rel="stylesheet" href="css/checkout.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/orders.css" />
+  <link rel="stylesheet" href="css/profile.css" />
+  <link rel="stylesheet" href="css/wishlist.css" />
+  <link rel="stylesheet" href="css/vendors.css" />
+  <link rel="stylesheet" href="css/bundles.css" />
+  <link rel="stylesheet" href="css/health.css" />
+  <link rel="stylesheet" href="css/marketplace-trust.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Dismissable offer bar -->
+    <div id="offer-bar">
+      🌿 Free shipping on orders above ₹499 | Easy 15-day returns | 100% Authentic Products
+      <span class="close-offer" onclick="document.getElementById('offer-bar').style.display='none'" aria-label="Close offer bar">✕</span>
+    </div>
+
+    <!-- Navbar injected by navbar.js -->
+    <nav id="navbar"></nav>
+
+    <!-- SPA page content — router swaps this out on every navigation -->
+    <main id="page-content"></main>
+
+    <!-- Footer injected by footer.js -->
+    <footer id="footer"></footer>
+  </div>
+
+  <!-- Toast notification container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Modal overlay -->
+  <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true"></div>
+
+  <!-- Search dropdown (positioned inside navbar via JS) -->
+  <div id="search-dropdown"></div>
+
+  <!-- Cart slide-in drawer -->
+  <div id="cart-drawer" class="drawer" role="complementary" aria-label="Shopping cart"></div>
+  <div id="cart-drawer-overlay" class="drawer-overlay"></div>
+
+  <!-- Wishlist slide-in drawer -->
+  <div id="wishlist-drawer" class="drawer" role="complementary" aria-label="Wishlist"></div>
+  <div id="wishlist-drawer-overlay" class="drawer-overlay"></div>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+
+  <!-- Firebase Configuration -->
+  <script type="module">
+    import { app, analytics, auth, database, storage, db, authService } from "./js/firebase-config.js";
+    // Firebase is now initialized and available globally
+    window.firebase = { app, analytics, auth, database, storage, db };
+    window.FirebaseAuth = authService;
+  </script>
+
+  <!-- JS load order: utils → data → store → components → pages → router (last) -->
+  <script src="js/utils.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/components/toast.js"></script>
+  <script src="js/components/modal.js"></script>
+  <script src="js/components/skeleton.js"></script>
+  <script src="js/components/search.js"></script>
+  <script src="js/components/navbar.js"></script>
+  <script src="js/components/footer.js"></script>
+  <script src="js/pages/home.js"></script>
+  <script src="js/pages/product-list.js"></script>
+  <script src="js/pages/product-detail.js"></script>
+  <script src="js/pages/cart.js"></script>
+  <script src="js/pages/checkout.js"></script>
+  <script src="js/pages/auth.js"></script>
+  <script src="js/pages/orders.js"></script>
+  <script src="js/pages/profile.js"></script>
+  <script src="js/pages/wishlist.js"></script>
+  <script src="js/pages/about.js"></script>
+  <script src="js/pages/certifications.js"></script>
+  <script src="js/pages/blog.js"></script>
+  <script src="js/pages/faq.js"></script>
+  <script src="js/pages/contact.js"></script>
+  <script src="js/pages/vendors.js"></script>
+  <script src="js/pages/bundles.js"></script>
+  <script src="js/pages/health.js"></script>
+  <script src="js/router.js"></script>
+</body>
+</html>

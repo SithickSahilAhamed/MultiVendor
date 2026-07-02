@@ -1,0 +1,29 @@
+/* ================================================
+   orders.css — Orders Page Styles
+   ================================================ */
+.orders-page { max-width: 800px; margin: 0 auto; }
+.order-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm); margin-bottom: var(--space-4); border: 1px solid var(--color-border); }
+.order-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-4); }
+.order-id { font-size: var(--text-sm); font-weight: 700; color: var(--color-text-primary); }
+.order-date { font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px; }
+.order-meta { display: flex; align-items: center; gap: var(--space-3); font-size: var(--text-sm); color: var(--color-text-muted); }
+.order-status { display: inline-flex; align-items: center; gap: 4px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); font-size: var(--text-xs); font-weight: 600; }
+.status-processing { background: #fff3e0; color: #e67e22; }
+.status-shipped { background: #e3f2fd; color: #1565c0; }
+.status-delivered { background: #f0f7f2; color: var(--color-primary); }
+.status-cancelled { background: #fce4ec; color: #c0392b; }
+.order-thumbs { display: flex; gap: var(--space-2); margin-bottom: var(--space-4); }
+.order-thumb { width: 56px; height: 56px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-cream); border: 1px solid var(--color-border); }
+.order-more-count { width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--color-bg); border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 600; }
+.order-card-footer { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.order-details-accordion { border-top: 1px solid var(--color-border); margin-top: var(--space-4); padding-top: var(--space-4); display: none; }
+.order-details-accordion.open { display: block; }
+.order-detail-item { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--color-border); }
+.order-detail-item:last-child { border-bottom: none; }
+.order-detail-img { width: 48px; height: 48px; border-radius: var(--radius-md); object-fit: cover; background: var(--color-cream); }
+.order-detail-info { flex: 1; }
+.order-detail-name { font-size: var(--text-sm); font-weight: 500; }
+.order-detail-meta { font-size: var(--text-xs); color: var(--color-text-muted); }
+.order-detail-price { font-weight: 600; font-size: var(--text-sm); }
+.order-address-section { background: var(--color-bg); border-radius: var(--radius-md); padding: var(--space-4); margin-top: var(--space-4); }
+.order-address-section h5 { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); margin-bottom: var(--space-2); }

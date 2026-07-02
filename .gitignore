@@ -64,3 +64,4 @@ bagisto-2.4/.env
 # Deployments
 .deploy/
 .deployment/
+.firebase/

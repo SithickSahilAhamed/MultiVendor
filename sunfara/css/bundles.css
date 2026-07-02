@@ -1,0 +1,201 @@
+/* Bundles & Combos Styles */
+
+.bundles-hero {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.bundles-hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+}
+
+.bundles-hero-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Bundles Grid */
+.bundles-grid,
+.bundles-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.bundle-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bundle-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+}
+
+.bundle-image {
+  width: 100%;
+  height: 200px;
+  background-color: #f0f0f0;
+}
+
+.bundle-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #e74c3c;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.bundle-badge.discount {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bundle-content {
+  padding: 20px;
+}
+
+.bundle-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+}
+
+.bundle-desc {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+}
+
+.bundle-products {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.products-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.products-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.products-list li {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.bundle-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 15px;
+}
+
+.benefit {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.bundle-pricing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bundle-pricing .regular {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.95rem;
+}
+
+.bundle-pricing .bundle-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.bundle-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.bundle-rating .stars {
+  font-weight: 600;
+  color: #f39c12;
+}
+
+.btn-bundle {
+  width: 100%;
+  padding: 12px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.btn-bundle:hover {
+  background: var(--color-primary-dark);
+}
+
+.bundle-filters {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.bundle-filters .filter-input {
+  flex: 1;
+  min-width: 250px;
+}
+
+@media (max-width: 768px) {
+  .bundles-grid,
+  .bundles-list {
+    grid-template-columns: 1fr;
+  }
+
+  .bundles-hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .bundle-filters {
+    flex-direction: column;
+  }
+
+  .bundle-filters .filter-input {
+    min-width: auto;
+  }
+}

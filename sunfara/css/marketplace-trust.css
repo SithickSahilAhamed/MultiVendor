@@ -1,0 +1,239 @@
+/* Marketplace Trust & Free Delivery Features */
+
+/* Free Delivery Banner */
+.free-delivery-banner {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  border-radius: 8px;
+}
+
+.free-delivery-banner .free-icon {
+  margin-right: 8px;
+}
+
+/* Trust Badges Section */
+.trust-badges {
+  background: white;
+  padding: 40px 20px;
+  margin: 40px 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.trust-badges-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+}
+
+.trust-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  text-align: center;
+}
+
+.trust-badge {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.trust-badge:hover {
+  background: #f0f0f0;
+  transform: translateY(-5px);
+}
+
+.badge-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.badge-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 5px;
+}
+
+.badge-label {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Featured Vendors Section */
+.featured-vendors-section {
+  margin: 50px 0;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-family: var(--font-display);
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1rem;
+}
+
+.vendors-carousel {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.vendor-showcase-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.vendor-showcase-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+}
+
+.vendor-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+}
+
+.vendor-showcase-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.vendor-showcase-tagline {
+  color: #999;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.vendor-showcase-meta {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.vendor-showcase-btn {
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.vendor-showcase-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Featured Bundles Section */
+.featured-bundles-section {
+  margin: 50px 0;
+}
+
+.bundles-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Payment Methods Display */
+.payment-methods {
+  padding: 30px 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin: 40px 0;
+  text-align: center;
+}
+
+.payment-methods h3 {
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+
+.payment-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.payment-icon {
+  font-size: 2rem;
+}
+
+.payment-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trust-badges-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .free-delivery-banner {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+
+  .badge-icon {
+    font-size: 2rem;
+  }
+
+  .badge-number {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .trust-badges-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-icons {
+    gap: 12px;
+  }
+
+  .payment-icon {
+    font-size: 1.5rem;
+  }
+}

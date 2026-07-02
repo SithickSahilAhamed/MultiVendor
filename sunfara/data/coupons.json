@@ -1,0 +1,7 @@
+[
+  { "code": "WELCOME10", "discount": 10, "type": "percent", "minOrder": 499, "description": "10% off your first order" },
+  { "code": "ORGANIC15", "discount": 15, "type": "percent", "minOrder": 799, "description": "15% off on any order" },
+  { "code": "SUMMERCARE", "discount": 100, "type": "flat", "minOrder": 999, "description": "Flat ₹100 off on ₹999+" },
+  { "code": "FREESHIP", "discount": 0, "type": "freeshipping", "minOrder": 0, "description": "Free shipping on any order" },
+  { "code": "SUNFARA20", "discount": 20, "type": "percent", "minOrder": 1499, "description": "20% off on orders above ₹1499" }
+]

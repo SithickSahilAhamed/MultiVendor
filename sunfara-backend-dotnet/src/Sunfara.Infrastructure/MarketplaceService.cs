@@ -115,9 +115,48 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
                     ["updatedAt"] = FieldValue.ServerTimestamp
                 }, SetOptions.MergeAll);
             });
+
+            await RecordTransactionAsync("commission_split", orderId, vendorId, result.Commission,
+                $"Commission split for order {orderId}: {result.Rate}% of {(double)result.Gross:C} gross");
+            await UpdatePlatformRevenueAsync(grossDelta: result.Gross, commissionDelta: result.Commission, payoutDelta: 0);
         }
 
         await orderRef.UpdateAsync(new Dictionary<string, object> { ["commissionsCalculated"] = true });
+    }
+
+    /* Append-only accounting record for every money movement - this is what
+       "no ledger, no accounting export" in the audit meant: individual
+       wallet/commission documents show current state, but nothing recorded
+       the history of how money moved until now. */
+    private async Task RecordTransactionAsync(string type, string referenceId, string vendorId, decimal amount, string description)
+    {
+        await store.AddAsync("transactions", new Dictionary<string, object>
+        {
+            ["type"] = type, ["referenceId"] = referenceId, ["vendorId"] = vendorId,
+            ["amount"] = (double)amount, ["description"] = description
+        });
+    }
+
+    /* Single aggregate document - not per-vendor, this is the platform's own
+       revenue: total sales that passed through it, total commission it
+       earned, total it has paid out to vendors. */
+    private async Task UpdatePlatformRevenueAsync(decimal grossDelta, decimal commissionDelta, decimal payoutDelta)
+    {
+        var revenueRef = store.Database.Collection("settings").Document("platformRevenue");
+        await store.Database.RunTransactionAsync(async transaction =>
+        {
+            var snap = await transaction.GetSnapshotAsync(revenueRef);
+            var totalGrossSales = snap.Exists && snap.ContainsField("totalGrossSales") ? Convert.ToDecimal(snap.GetValue<double>("totalGrossSales")) : 0m;
+            var totalCommissionEarned = snap.Exists && snap.ContainsField("totalCommissionEarned") ? Convert.ToDecimal(snap.GetValue<double>("totalCommissionEarned")) : 0m;
+            var totalVendorPayouts = snap.Exists && snap.ContainsField("totalVendorPayouts") ? Convert.ToDecimal(snap.GetValue<double>("totalVendorPayouts")) : 0m;
+            transaction.Set(revenueRef, new Dictionary<string, object>
+            {
+                ["totalGrossSales"] = (double)(totalGrossSales + grossDelta),
+                ["totalCommissionEarned"] = (double)(totalCommissionEarned + commissionDelta),
+                ["totalVendorPayouts"] = (double)(totalVendorPayouts + payoutDelta),
+                ["updatedAt"] = FieldValue.ServerTimestamp
+            }, SetOptions.MergeAll);
+        });
     }
 
     public async Task<string> RequestWithdrawalAsync(string vendorId, decimal amount)
@@ -157,6 +196,9 @@ public sealed class MarketplaceService(FirestoreCatalogStore store)
             }, SetOptions.MergeAll);
             transaction.Update(withdrawalRef, new Dictionary<string, object> { ["status"] = "approved", ["approvedAt"] = FieldValue.ServerTimestamp });
         });
+
+        await RecordTransactionAsync("payout", withdrawalId, vendorId, amount, $"Withdrawal payout of {(double)amount:C} approved");
+        await UpdatePlatformRevenueAsync(grossDelta: 0, commissionDelta: 0, payoutDelta: amount);
         return true;
     }
 

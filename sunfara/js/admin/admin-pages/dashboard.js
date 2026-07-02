@@ -5,14 +5,15 @@ const AdminDashboard = {
     AdminLayout.renderBreadcrumb([{ label: 'Dashboard', route: '#/admin/dashboard' }]);
     document.getElementById('admin-page-content').innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280;">Loading dashboard...</div>';
 
-    const [vendors, products, orders, customers] = await Promise.all([
+    const [vendors, products, orders, customers, revenue, transactions] = await Promise.all([
       AdminStore.fetchVendors(),
       AdminStore.fetchProducts(),
       AdminStore.fetchOrders(),
-      AdminStore.fetchCustomers()
+      AdminStore.fetchCustomers(),
+      AdminAPI.getRevenue().catch(() => ({ totalGrossSales: 0, totalCommissionEarned: 0, totalVendorPayouts: 0 })),
+      AdminAPI.getTransactions().catch(() => [])
     ]);
 
-    const totalRevenue = vendors.reduce((sum, v) => sum + (v.revenue || 0), 0);
     const activeVendors = vendors.filter(v => v.status === 'active').length;
     const totalOrders = orders.length;
     const totalCustomers = customers.length;
@@ -34,16 +35,21 @@ const AdminDashboard = {
       <div class="admin-grid">
         <div class="admin-kpi-card">
           <div class="admin-kpi-header">
-            <span class="admin-kpi-label">Total Revenue</span>
+            <span class="admin-kpi-label">Platform Revenue</span>
             <span class="admin-kpi-icon">💰</span>
           </div>
-          <div class="admin-kpi-value">${AdminUtils.formatPrice(totalRevenue)}</div>
-          <div class="admin-kpi-trend positive">
-            <span>📈</span>
-            <span class="admin-kpi-trend-value">+12.5%</span>
-            <span>vs last month</span>
+          <div class="admin-kpi-value">${AdminUtils.formatPrice(revenue.totalCommissionEarned)}</div>
+          <div class="admin-kpi-trend"><span>Commission earned, all-time</span></div>
+          <a href="#/admin/commissions" class="admin-kpi-action">View Details →</a>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-header">
+            <span class="admin-kpi-label">Gross Sales (GMV)</span>
+            <span class="admin-kpi-icon">🧾</span>
           </div>
-          <a href="#/admin/reports" class="admin-kpi-action">View Details →</a>
+          <div class="admin-kpi-value">${AdminUtils.formatPrice(revenue.totalGrossSales)}</div>
+          <div class="admin-kpi-trend"><span>Total sales volume through the platform</span></div>
         </div>
 
         <div class="admin-kpi-card">
@@ -52,11 +58,7 @@ const AdminDashboard = {
             <span class="admin-kpi-icon">📋</span>
           </div>
           <div class="admin-kpi-value">${totalOrders}</div>
-          <div class="admin-kpi-trend positive">
-            <span>📈</span>
-            <span class="admin-kpi-trend-value">+8.2%</span>
-            <span>vs last month</span>
-          </div>
+          <div class="admin-kpi-trend"><span>${orders.filter(o => o.paymentStatus === 'paid').length} paid</span></div>
           <a href="#/admin/orders" class="admin-kpi-action">View Orders →</a>
         </div>
 
@@ -66,40 +68,22 @@ const AdminDashboard = {
             <span class="admin-kpi-icon">👥</span>
           </div>
           <div class="admin-kpi-value">${activeVendors}</div>
-          <div class="admin-kpi-trend positive">
-            <span>📈</span>
-            <span class="admin-kpi-trend-value">+2 new</span>
-            <span>this month</span>
-          </div>
+          <div class="admin-kpi-trend"><span>${vendors.length} total registered</span></div>
           <a href="#/admin/vendors" class="admin-kpi-action">Manage Vendors →</a>
-        </div>
-
-        <div class="admin-kpi-card">
-          <div class="admin-kpi-header">
-            <span class="admin-kpi-label">Customers</span>
-            <span class="admin-kpi-icon">👤</span>
-          </div>
-          <div class="admin-kpi-value">${totalCustomers}</div>
-          <div class="admin-kpi-trend positive">
-            <span>📈</span>
-            <span class="admin-kpi-trend-value">+450</span>
-            <span>new users</span>
-          </div>
-          <a href="#/admin/customers" class="admin-kpi-action">View Customers →</a>
         </div>
       </div>
 
       <!-- Charts Section -->
       <div class="admin-grid-2" style="margin-top: 32px;">
         <div class="admin-chart-container">
-          <div class="admin-chart-title">Revenue Trend (Last 30 Days)</div>
+          <div class="admin-chart-title">Commission Revenue (Last 14 Days)</div>
           <div class="admin-chart-wrapper">
             <canvas id="revenue-chart"></canvas>
           </div>
         </div>
 
         <div class="admin-chart-container">
-          <div class="admin-chart-title">Order Trend (Last 30 Days)</div>
+          <div class="admin-chart-title">Orders (Last 14 Days)</div>
           <div class="admin-chart-wrapper">
             <canvas id="orders-chart"></canvas>
           </div>
@@ -116,11 +100,11 @@ const AdminDashboard = {
           <div class="admin-card-body">
             <table class="admin-table">
               <tbody>
-                ${orders.slice(0, 3).map(o => `
+                ${orders.length === 0 ? '<tr><td style="text-align:center;padding:16px;color:#6b7280">No orders yet</td></tr>' : orders.slice(0, 3).map(o => `
                   <tr>
-                    <td style="font-weight: 600;">${o.id}</td>
-                    <td>${AdminUtils.formatPrice(o.amount)}</td>
-                    <td><span class="admin-status-badge ${AdminConfig.statusColors[o.status]}">${AdminConfig.statusLabels[o.status]}</span></td>
+                    <td style="font-weight: 600;">${o.orderNumber || o.id}</td>
+                    <td>${AdminUtils.formatPrice(o.totalAmount)}</td>
+                    <td><span class="admin-status-badge ${AdminConfig.statusColors[o.status] || 'admin-status-pending'}">${AdminConfig.statusLabels[o.status] || o.status}</span></td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -135,7 +119,7 @@ const AdminDashboard = {
           </div>
           <div class="admin-card-body">
             <div style="text-align: center; padding: 24px; color: #6b7280;">
-              ${pendingApprovals > 0 
+              ${pendingApprovals > 0
                 ? `<p>${pendingApprovals} items awaiting approval</p>
                    <button class="admin-btn admin-btn-primary admin-btn-sm" onclick="window.location.hash='#/admin/vendors'">Review Vendors</button>`
                 : '<p>All items approved! ✅</p>'
@@ -147,64 +131,53 @@ const AdminDashboard = {
     `;
 
     document.getElementById('admin-page-content').innerHTML = html;
-    this.initCharts();
+    this.initCharts(orders, transactions);
   },
 
-  initCharts: function() {
-    // Revenue Chart
+  /* Real day-bucketed trends from real orders/transactions - not
+     Math.random(). A brand-new marketplace will show a mostly-flat line
+     until real activity accumulates, which is the honest picture. */
+  initCharts: function(orders, transactions) {
+    const days = 14;
+    const labels = [];
+    const dayKeys = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      dayKeys.push(d.toISOString().slice(0, 10));
+      labels.push(d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }));
+    }
+    const toDateKey = (ts) => {
+      const d = ts?.toDate ? ts.toDate() : new Date(ts);
+      return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+    };
+
+    const revenueByDay = Object.fromEntries(dayKeys.map(k => [k, 0]));
+    transactions.filter(t => t.type === 'commission_split').forEach(t => {
+      const key = toDateKey(t.createdAt);
+      if (key && key in revenueByDay) revenueByDay[key] += (t.amount || 0);
+    });
+
+    const ordersByDay = Object.fromEntries(dayKeys.map(k => [k, 0]));
+    orders.forEach(o => {
+      const key = toDateKey(o.createdAt);
+      if (key && key in ordersByDay) ordersByDay[key] += 1;
+    });
+
     const revenueCtx = document.getElementById('revenue-chart');
     if (revenueCtx) {
       new Chart(revenueCtx, {
         type: 'line',
-        data: {
-          labels: Array.from({length: 30}, (_, i) => 'Day ' + (i+1)),
-          datasets: [{
-            label: 'Revenue',
-            data: AdminUtils.generateRandomData(30, 50000, 150000),
-            borderColor: '#22c55e',
-            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-            fill: true,
-            tension: 0.4,
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { callback: v => '₹' + (v/1000).toFixed(0) + 'K' }
-            }
-          }
-        }
+        data: { labels, datasets: [{ label: 'Commission Revenue', data: dayKeys.map(k => revenueByDay[k]), borderColor: '#22c55e', backgroundColor: 'rgba(34, 197, 94, 0.1)', fill: true, tension: 0.4, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₹' + v } } } }
       });
     }
 
-    // Orders Chart
     const ordersCtx = document.getElementById('orders-chart');
     if (ordersCtx) {
       new Chart(ordersCtx, {
         type: 'line',
-        data: {
-          labels: Array.from({length: 30}, (_, i) => 'Day ' + (i+1)),
-          datasets: [{
-            label: 'Orders',
-            data: AdminUtils.generateRandomData(30, 10, 100),
-            borderColor: '#0ea5e9',
-            backgroundColor: 'rgba(14, 165, 233, 0.1)',
-            fill: true,
-            tension: 0.4,
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true } }
-        }
+        data: { labels, datasets: [{ label: 'Orders', data: dayKeys.map(k => ordersByDay[k]), borderColor: '#0ea5e9', backgroundColor: 'rgba(14, 165, 233, 0.1)', fill: true, tension: 0.4, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
       });
     }
   }

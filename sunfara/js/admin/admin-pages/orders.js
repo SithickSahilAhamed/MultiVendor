@@ -2,6 +2,7 @@
 
 const AdminOrders = {
   _orders: [],
+  ALL_STATUSES: ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'delivered', 'completed', 'cancelled', 'return_requested', 'returned', 'refunded'],
 
   render: async function() {
     AdminLayout.renderBreadcrumb([
@@ -43,21 +44,23 @@ const AdminOrders = {
               <th>Customer</th>
               <th>Amount</th>
               <th>Items</th>
+              <th>Payment</th>
               <th>Status</th>
               <th>Date</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            ${orders.length === 0 ? '<tr><td colspan="7" style="text-align:center;padding:32px;color:#6b7280;">No orders found</td></tr>' :
+            ${orders.length === 0 ? '<tr><td colspan="8" style="text-align:center;padding:32px;color:#6b7280;">No orders found</td></tr>' :
               orders.map(o => `
               <tr>
-                <td><strong>${o.id}</strong></td>
-                <td>${o.customer || o.customerId || '—'}</td>
-                <td><strong>${AdminUtils.formatPrice(o.amount || o.total || 0)}</strong></td>
-                <td>${o.items ?? '—'}</td>
+                <td><strong>${o.orderNumber || o.id}</strong></td>
+                <td>${o.customerId || '—'}</td>
+                <td><strong>${AdminUtils.formatPrice(o.totalAmount)}</strong></td>
+                <td>${(o.items || []).length}</td>
+                <td>${o.paymentStatus === 'paid' ? '✅ Paid' : o.paymentMethod === 'Cash on Delivery' ? '💵 COD' : '⏳ Pending'}</td>
                 <td><span class="admin-status-badge ${AdminConfig.statusColors[o.status] || 'admin-status-processing'}">${AdminConfig.statusLabels[o.status] || o.status}</span></td>
-                <td>${AdminUtils.formatDate(o.date || o.createdAt)}</td>
+                <td>${AdminUtils.formatDate(o.createdAt)}</td>
                 <td>
                   <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="AdminOrders.viewOrder('${o.id}')">View</button>
                 </td>
@@ -78,23 +81,45 @@ const AdminOrders = {
   viewOrder: function(id) {
     const order = this._orders.find(o => o.id === id);
     if (!order) return;
-    AdminModal.show(order.id + ' - Order Details', `
+    const items = order.items || [];
+    AdminModal.show((order.orderNumber || order.id) + ' - Order Details', `
       <div style="display: grid; gap: 16px;">
-        <div>
-          <strong>Customer:</strong> ${order.customer || order.customerId || '—'}
-          ${order.email ? `<br><small>${order.email}</small>` : ''}
+        <div><strong>Customer:</strong> ${order.customerId || '—'}</div>
+        <div><strong>Amount:</strong> ${AdminUtils.formatPrice(order.totalAmount)}</div>
+        <div><strong>Items:</strong>
+          <ul style="margin:8px 0 0 20px;padding:0">
+            ${items.map(i => `<li>${i.name} × ${i.quantity} — ${AdminUtils.formatPrice(i.total)} <span style="color:#6b7280;font-size:12px">(vendor: ${i.vendorId})</span></li>`).join('') || '<li>—</li>'}
+          </ul>
         </div>
-        <div><strong>Amount:</strong> ${AdminUtils.formatPrice(order.amount || order.total || 0)}</div>
-        <div><strong>Items:</strong> ${order.items ?? '—'} products</div>
-        ${order.paymentMethod ? `<div><strong>Payment Method:</strong> ${order.paymentMethod}</div>` : ''}
+        ${order.paymentMethod ? `<div><strong>Payment Method:</strong> ${order.paymentMethod} ${order.paymentStatus === 'paid' ? '(Paid ✅)' : ''}</div>` : ''}
         <div>
           <strong>Status:</strong><br>
           <span class="admin-status-badge ${AdminConfig.statusColors[order.status] || 'admin-status-processing'}">${AdminConfig.statusLabels[order.status] || order.status}</span>
         </div>
-        <div><strong>Order Date:</strong> ${AdminUtils.formatDateTime(order.date || order.createdAt)}</div>
+        <div class="admin-form-group">
+          <label class="admin-label">Update Status (admin override)</label>
+          <select class="admin-select" id="order-status-select" style="width:100%">
+            ${this.ALL_STATUSES.map(s => `<option value="${s}" ${s === order.status ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div><strong>Order Date:</strong> ${AdminUtils.formatDateTime(order.createdAt)}</div>
       </div>
     `, [
-      { label: 'Close', class: 'admin-btn-secondary', onclick: 'AdminModal.close()' }
+      { label: 'Close', class: 'admin-btn-secondary', onclick: 'AdminModal.close()' },
+      { label: 'Update Status', class: 'admin-btn-primary', onclick: `AdminOrders.updateStatus('${id}')` }
     ]);
+  },
+
+  updateStatus: async function(id) {
+    const status = document.getElementById('order-status-select')?.value;
+    if (!status) return;
+    try {
+      await AdminAPI.updateOrderStatus(id, status);
+      AdminToast.success('Order status updated!');
+      AdminModal.close();
+      await this.render();
+    } catch (e) {
+      AdminToast.error(e.message || 'Failed to update order status');
+    }
   }
 };

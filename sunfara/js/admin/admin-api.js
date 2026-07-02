@@ -57,9 +57,8 @@ const AdminAPI = {
 
   // ==================== ORDER ENDPOINTS ====================
 
-  async getOrders()                { return this.list("orders"); },
+  async getOrders()                { return this.list("orders", 500); },
   async getOrderById(id)           { return this.getOne("orders", id); },
-  async updateOrderStatus(id, s)   { return this.update("orders", id, { status: s }); },
 
   // ==================== CUSTOMER ENDPOINTS ====================
 
@@ -70,6 +69,9 @@ const AdminAPI = {
   async getCommissions()           { return this.list("commissions"); },
   async getWithdrawals()           { return this.list("withdrawals"); },
   async approveWithdrawal(id)      { return this.post(`/admin/withdrawals/${id}/approve`, {}); },
+  async getRevenue()               { return this.get('/admin/revenue'); },
+  async getTransactions()          { return this.list("transactions", 500); },
+  async updateOrderStatus(id, status) { return this.put(`/admin/orders/${id}/status`, { status }); },
 
   // ==================== REVIEW ENDPOINTS ====================
 

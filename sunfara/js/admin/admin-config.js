@@ -101,12 +101,22 @@ const AdminConfig = {
     }
   ],
 
-  // Status colors
+  // Status colors - reuses the 4 CSS badge classes that actually exist,
+  // mapping the fuller order lifecycle onto them by meaning
   statusColors: {
     active: 'admin-status-active',
     pending: 'admin-status-pending',
     rejected: 'admin-status-rejected',
-    processing: 'admin-status-processing'
+    processing: 'admin-status-processing',
+    confirmed: 'admin-status-processing',
+    packed: 'admin-status-processing',
+    shipped: 'admin-status-processing',
+    delivered: 'admin-status-active',
+    completed: 'admin-status-active',
+    cancelled: 'admin-status-rejected',
+    return_requested: 'admin-status-pending',
+    returned: 'admin-status-rejected',
+    refunded: 'admin-status-rejected'
   },
 
   // Status labels
@@ -114,7 +124,16 @@ const AdminConfig = {
     active: '🟢 Active',
     pending: '🟡 Pending',
     rejected: '🔴 Rejected',
-    processing: '🔵 Processing'
+    processing: '🔵 Processing',
+    confirmed: '🔵 Confirmed',
+    packed: '🟣 Packed',
+    shipped: '🚚 Shipped',
+    delivered: '✅ Delivered',
+    completed: '✅ Completed',
+    cancelled: '⚫ Cancelled',
+    return_requested: '🟡 Return Requested',
+    returned: '↩️ Returned',
+    refunded: '💸 Refunded'
   }
 };
 

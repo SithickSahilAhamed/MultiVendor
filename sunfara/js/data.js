@@ -27,7 +27,7 @@ const Data = {
         fetch('data/health-categories.json').then(r => r.json()).catch(() => []),
         fetch('data/recommendations.json').then(r => r.json()).catch(() => [])
       ]);
-      this.products = products;
+      this.products = products.map(normalizeProduct);
       this.categories = categories;
       this.banners = banners;
       this.coupons = coupons;

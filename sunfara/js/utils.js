@@ -9,6 +9,30 @@ function formatPrice(amount) {
   return '₹' + Number(amount).toLocaleString('en-IN');
 }
 
+/* Fills in every field the catalog UI assumes exists (variants, image, mrp,
+   discount, brand, rating) so a minimally-created product (e.g. from the
+   admin "Add Product" form) can never crash product cards, search results,
+   or the product detail page - it just renders with sensible defaults. */
+function normalizeProduct(p) {
+  const price = Number(p.price) || 0;
+  const mrp = p.mrp != null ? Number(p.mrp) : price;
+  const discount = p.discount != null ? Number(p.discount) : (mrp > price ? Math.round((mrp - price) / mrp * 100) : 0);
+  const image = p.image || `https://placehold.co/500x500/4a7c59/ffffff.png?text=${encodeURIComponent((p.name || 'Product').slice(0, 26))}&font=montserrat`;
+  return {
+    ...p,
+    brand: p.brand || p.vendorName || 'Sunfara',
+    image,
+    images: (p.images && p.images.length) ? p.images : [image],
+    mrp, discount,
+    rating: Number(p.rating) || 0,
+    reviewCount: Number(p.reviewCount) || 0,
+    stock: Number(p.stock) || 0,
+    tags: p.tags || [],
+    isNew: !!p.isNew, isBestseller: !!p.isBestseller, isFeatured: !!p.isFeatured,
+    variants: (p.variants && p.variants.length) ? p.variants : [{ id: 'default', name: 'Standard', price }]
+  };
+}
+
 /* Format date to readable string */
 function formatDate(dateStr) {
   const d = new Date(dateStr);

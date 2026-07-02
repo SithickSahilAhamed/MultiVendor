@@ -44,6 +44,11 @@ builder.Services.AddScoped<FirestoreCatalogStore>();
 builder.Services.AddScoped<MarketplaceService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
+    // Without this, the default JWT handler remaps short claim names (e.g. "sub",
+    // "role") to long legacy XML-namespace URIs, so User.FindFirst("sub") and
+    // RequireClaim("role", ...) never match anything in the token - every
+    // [Authorize] endpoint fails with 403 regardless of a valid token/claim.
+    options.MapInboundClaims = false;
     options.Authority = $"https://securetoken.google.com/{projectId}";
     options.TokenValidationParameters = new TokenValidationParameters { ValidateIssuer = true, ValidIssuer = $"https://securetoken.google.com/{projectId}", ValidateAudience = true, ValidAudience = projectId, ValidateLifetime = true };
 });

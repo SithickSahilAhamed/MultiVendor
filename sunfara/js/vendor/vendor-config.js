@@ -17,12 +17,17 @@ const VendorConfig = {
 
   /* Only the transitions a vendor is allowed to trigger themselves -
      mirrors OrderStateMachine on the backend, which is the real source
-     of truth and will reject anything not listed here anyway. */
+     of truth and will reject anything not listed here anyway.
+     "pending" -> "confirmed" matters more than it looks: online-paid
+     orders get auto-confirmed by Razorpay verification, but a COD order
+     has no payment step to trigger that, so without this entry every COD
+     order would sit at "pending" forever with no way for the vendor to
+     ever move it - found by actually placing a COD order end-to-end. */
   nextVendorStatus: {
-    confirmed: 'processing', processing: 'packed', packed: 'shipped', shipped: 'delivered'
+    pending: 'confirmed', confirmed: 'processing', processing: 'packed', packed: 'shipped', shipped: 'delivered'
   },
   nextVendorStatusLabel: {
-    confirmed: 'Start Processing', processing: 'Mark as Packed', packed: 'Mark as Shipped', shipped: 'Mark as Delivered'
+    pending: 'Confirm Order', confirmed: 'Start Processing', processing: 'Mark as Packed', packed: 'Mark as Shipped', shipped: 'Mark as Delivered'
   }
 };
 

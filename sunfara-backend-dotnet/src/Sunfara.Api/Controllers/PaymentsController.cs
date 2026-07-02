@@ -8,7 +8,7 @@ using Sunfara.Infrastructure;
 namespace Sunfara.Api.Controllers;
 
 [ApiController, Route("api/payments"), Authorize]
-public sealed class PaymentsController(FirestoreCatalogStore store, IHttpClientFactory httpClientFactory, IConfiguration config) : ControllerBase
+public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceService marketplace, IHttpClientFactory httpClientFactory, IConfiguration config) : ControllerBase
 {
     private string UserId => User.FindFirst("user_id")?.Value ?? User.FindFirst("sub")?.Value ?? throw new UnauthorizedAccessException();
     private string KeyId => config["RAZORPAY_KEY_ID"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_ID") ?? throw new InvalidOperationException("Razorpay key is not configured.");
@@ -51,6 +51,7 @@ public sealed class PaymentsController(FirestoreCatalogStore store, IHttpClientF
     {
         var order = await store.GetAsync("orders", request.OrderId);
         if (order is null || order.GetValueOrDefault("customerId")?.ToString() != UserId) return NotFound(new { error = "Order not found." });
+        if (order.GetValueOrDefault("paymentStatus")?.ToString() == "paid") return Ok(new { success = true, alreadyVerified = true });
 
         var payload = $"{request.RazorpayOrderId}|{request.RazorpayPaymentId}";
         var expectedSignature = Convert.ToHexStringLower(
@@ -64,9 +65,10 @@ public sealed class PaymentsController(FirestoreCatalogStore store, IHttpClientF
         await store.UpdateAsync("orders", request.OrderId, new Dictionary<string, object>
         {
             ["paymentStatus"] = "paid",
-            ["status"] = "processing",
+            ["status"] = "confirmed",
             ["razorpayPaymentId"] = request.RazorpayPaymentId
         });
+        await marketplace.CalculateAndRecordCommissionsAsync(request.OrderId);
 
         return Ok(new { success = true });
     }

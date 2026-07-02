@@ -22,7 +22,7 @@ const AuthPage = {
           <div class="auth-panel ${this.activeTab==='login'?'active':''}" id="panel-login">
             <div class="input-group"><label class="input-label">Email</label><input class="input" id="login-email" type="email" placeholder="your@email.com"></div>
             <div class="input-group">
-              <div style="display:flex;justify-content:space-between"><label class="input-label">Password</label><span class="forgot-link" onclick="Toast.show('Password reset link sent to your email','info')">Forgot Password?</span></div>
+              <div style="display:flex;justify-content:space-between"><label class="input-label">Password</label><span class="forgot-link" onclick="AuthPage.forgotPassword()">Forgot Password?</span></div>
               <div class="password-wrapper">
                 <input class="input" id="login-password" type="password" placeholder="Enter your password">
                 <button class="password-toggle" onclick="AuthPage.togglePwd('login-password')" aria-label="Toggle password visibility">👁</button>
@@ -93,6 +93,17 @@ const AuthPage = {
       email: fbUser.email,
       phone: fbUser.phoneNumber || ''
     };
+  },
+
+  async forgotPassword() {
+    const email = document.getElementById('login-email')?.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { Toast.show('Enter your email above first, then click Forgot Password', 'error'); return; }
+    try {
+      await window.FirebaseAuth.sendPasswordResetEmail(window.firebase.auth, email);
+      Toast.show(`Password reset link sent to ${email} 🌿`, 'success', 5000);
+    } catch (err) {
+      Toast.show(this.authErrorMessage(err), 'error');
+    }
   },
 
   async login() {

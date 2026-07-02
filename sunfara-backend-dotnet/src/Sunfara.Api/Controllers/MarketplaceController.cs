@@ -16,7 +16,24 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     public async Task<IActionResult> Orders() => Ok(await store.WhereAsync("orders", "customerId", UserId));
 
     [Authorize(Policy = "Vendor"), HttpGet("vendor/orders")]
-    public async Task<IActionResult> VendorOrders() => Ok((await store.ListAsync("orders", 500)).Where(x => x.TryGetValue("items", out var items) && items.ToString()!.Contains(UserId)));
+    public async Task<IActionResult> VendorOrders() => Ok(await store.WhereArrayContainsAsync("orders", "vendorIds", UserId));
+
+    [Authorize(Policy = "Vendor"), HttpPut("vendor/orders/{id}/status")]
+    public async Task<IActionResult> UpdateVendorOrderStatus(string id, [FromBody] OrderStatusRequest request)
+    {
+        try { await marketplace.UpdateOrderStatusAsync(id, UserId, request.Status, isAdmin: false); return Ok(); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
+    }
+
+    [Authorize(Policy = "Vendor"), HttpGet("vendor/wallet")]
+    public async Task<IActionResult> VendorWallet() => Ok(await store.GetAsync("vendor_wallets", UserId) ?? new Dictionary<string, object> { ["balance"] = 0.0, ["totalEarned"] = 0.0, ["totalWithdrawn"] = 0.0 });
+
+    [Authorize(Policy = "Vendor"), HttpGet("vendor/me")]
+    public async Task<IActionResult> VendorMe() => await store.GetAsync("vendors", UserId) is { } vendor ? Ok(vendor) : NotFound(new { error = "No vendor profile found for this account." });
+
+    [Authorize(Policy = "Vendor"), HttpGet("vendor/withdrawals")]
+    public async Task<IActionResult> VendorWithdrawals() => Ok(await store.WhereAsync("withdrawals", "vendorId", UserId));
 
     [Authorize, HttpPost("reviews")]
     public async Task<IActionResult> Review([FromBody] Dictionary<string, object> review)

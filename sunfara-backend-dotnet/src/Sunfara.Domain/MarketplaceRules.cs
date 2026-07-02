@@ -16,7 +16,8 @@ public static class OrderStateMachine
     private static readonly Dictionary<string, HashSet<string>> Allowed = new(StringComparer.OrdinalIgnoreCase)
     {
         ["pending"] = ["confirmed", "cancelled"], ["confirmed"] = ["processing", "cancelled"],
-        ["processing"] = ["shipped", "cancelled"], ["shipped"] = ["delivered", "returned"],
+        ["processing"] = ["packed", "cancelled"], ["packed"] = ["shipped", "cancelled"],
+        ["shipped"] = ["delivered", "returned"],
         ["delivered"] = ["completed", "return_requested"], ["return_requested"] = ["returned", "return_rejected"],
         ["returned"] = ["refunded"], ["completed"] = [], ["cancelled"] = [], ["refunded"] = []
     };

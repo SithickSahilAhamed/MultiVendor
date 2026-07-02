@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sunfara Seller Center — manage your products, orders, and earnings" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Sunfara Seller Center</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>" />
+
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/typography.css" />
+  <link rel="stylesheet" href="css/admin/admin-variables.css" />
+  <link rel="stylesheet" href="css/admin/admin-layout.css" />
+  <link rel="stylesheet" href="css/admin/admin-sidebar.css" />
+  <link rel="stylesheet" href="css/admin/admin-topnav.css" />
+  <link rel="stylesheet" href="css/admin/admin-components.css" />
+  <link rel="stylesheet" href="css/admin/admin-tables.css" />
+  <link rel="stylesheet" href="css/admin/admin-modals.css" />
+  <link rel="stylesheet" href="css/admin/admin-cards.css" />
+  <link rel="stylesheet" href="css/admin/admin-responsive.css" />
+</head>
+<body class="admin-body">
+  <div id="vendor-auth-shell"></div>
+
+  <div id="vendor-app-shell" style="display:none">
+    <div id="vendor-app">
+      <nav id="vendor-topnav"></nav>
+      <div class="admin-layout">
+        <aside id="vendor-sidebar"></aside>
+        <main id="vendor-content">
+          <nav id="vendor-breadcrumb" class="breadcrumb"></nav>
+          <div id="vendor-page-content"></div>
+        </main>
+      </div>
+      <div id="vendor-modal-overlay" class="admin-modal-overlay"></div>
+      <div id="vendor-modal-container" class="admin-modal-container"></div>
+      <div id="vendor-toast-container" class="admin-toast-container"></div>
+      <div id="vendor-sidebar-overlay" class="admin-sidebar-overlay"></div>
+    </div>
+  </div>
+
+  <!-- Firebase Configuration (shared with the storefront) -->
+  <script type="module">
+    import { app, analytics, auth, database, storage, db, authService } from "./js/firebase-config.js";
+    window.firebase = { app, analytics, auth, database, storage, db };
+    window.FirebaseAuth = authService;
+  </script>
+
+  <script src="js/vendor/vendor-utils.js"></script>
+  <script src="js/vendor/vendor-config.js"></script>
+  <script src="js/vendor/vendor-api.js"></script>
+  <script src="js/vendor/vendor-store.js"></script>
+  <script src="js/vendor/vendor-components/toast.js"></script>
+  <script src="js/vendor/vendor-components/modal.js"></script>
+  <script src="js/vendor/vendor-layout.js"></script>
+  <script src="js/vendor/vendor-pages/auth.js"></script>
+  <script src="js/vendor/vendor-pages/dashboard.js"></script>
+  <script src="js/vendor/vendor-pages/products.js"></script>
+  <script src="js/vendor/vendor-pages/orders.js"></script>
+  <script src="js/vendor/vendor-pages/earnings.js"></script>
+  <script src="js/vendor/vendor-router.js"></script>
+  <script>
+    // Firebase init runs as a deferred module script, so by the time this
+    // fires (also deferred, same queue) window.firebase/window.FirebaseAuth
+    // are guaranteed ready.
+    document.addEventListener('DOMContentLoaded', () => VendorRouter.init());
+  </script>
+</body>
+</html>

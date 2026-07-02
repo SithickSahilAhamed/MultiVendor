@@ -47,6 +47,12 @@ public sealed class FirestoreCatalogStore(FirestoreDb db)
         return snapshot.Documents.Select(ToDocument).ToList();
     }
 
+    public async Task<IReadOnlyList<Dictionary<string, object>>> WhereArrayContainsAsync(string collection, string field, object value, int limit = 200)
+    {
+        var snapshot = await db.Collection(collection).WhereArrayContains(field, value).OrderByDescending("createdAt").Limit(Math.Clamp(limit, 1, 500)).GetSnapshotAsync();
+        return snapshot.Documents.Select(ToDocument).ToList();
+    }
+
     public FirestoreDb Database => db;
 
     private static Dictionary<string, object> Normalize(Dictionary<string, object> source) => source.ToDictionary(x => x.Key, x => NormalizeValue(x.Value));

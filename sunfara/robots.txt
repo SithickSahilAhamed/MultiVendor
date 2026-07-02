@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /vendor.html
+Disallow: /vendor/
+Allow: /

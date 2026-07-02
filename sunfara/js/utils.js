@@ -9,10 +9,15 @@ function formatPrice(amount) {
   return '₹' + Number(amount).toLocaleString('en-IN');
 }
 
-/* Fills in every field the catalog UI assumes exists (variants, image, mrp,
-   discount, brand, rating) so a minimally-created product (e.g. from the
-   admin "Add Product" form) can never crash product cards, search results,
-   or the product detail page - it just renders with sensible defaults. */
+/* Fills in every field the catalog UI assumes exists - not just card fields
+   (variants, image, mrp, discount, brand, rating) but also the product
+   detail page's fields (highlights, keyIngredients, ingredients, howToUse,
+   description, delivery/return days). A minimally-created product (e.g.
+   from the vendor/admin "Add Product" form, which only collects
+   name/category/price/stock) has none of the description-page fields the
+   demo catalog always had - without these defaults, opening that product's
+   detail page throws on `undefined.map()` and the whole page fails to
+   render, not just looks incomplete. */
 function normalizeProduct(p) {
   const price = Number(p.price) || 0;
   const mrp = p.mrp != null ? Number(p.mrp) : price;
@@ -29,7 +34,16 @@ function normalizeProduct(p) {
     stock: Number(p.stock) || 0,
     tags: p.tags || [],
     isNew: !!p.isNew, isBestseller: !!p.isBestseller, isFeatured: !!p.isFeatured,
-    variants: (p.variants && p.variants.length) ? p.variants : [{ id: 'default', name: 'Standard', price }]
+    variants: (p.variants && p.variants.length) ? p.variants : [{ id: 'default', name: 'Standard', price }],
+    category: p.category || 'general',
+    description: p.description || 'No description provided yet.',
+    ingredients: p.ingredients || 'Ingredient list not provided.',
+    howToUse: p.howToUse || 'Usage instructions not provided.',
+    highlights: p.highlights || [],
+    keyIngredients: p.keyIngredients || [],
+    certifications: p.certifications || [],
+    deliveryDays: p.deliveryDays ?? 4,
+    returnDays: p.returnDays ?? 7
   };
 }
 

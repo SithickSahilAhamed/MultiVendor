@@ -40,8 +40,8 @@ const ProductDetailPage = {
 
           <!-- Product Info -->
           <div class="product-info">
-            <a class="product-brand-link" href="#/category/${product.category}">${product.brand}</a>
-            <h1 class="product-name">${product.name}</h1>
+            <a class="product-brand-link" href="#/category/${product.category}">${escapeHtml(product.brand)}</a>
+            <h1 class="product-name">${escapeHtml(product.name)}</h1>
             <div class="product-rating-row">
               <div class="star-rating">${renderStars(product.rating)}</div>
               <span class="rating-score">${product.rating}</span>
@@ -123,7 +123,7 @@ const ProductDetailPage = {
       <div class="sticky-atc">
         <div class="sticky-atc-inner">
           <div class="sticky-atc-info">
-            <div class="sticky-atc-name">${product.name}</div>
+            <div class="sticky-atc-name">${escapeHtml(product.name)}</div>
             <div class="sticky-atc-price" id="sticky-price">${formatPrice(this.selectedVariant.price)}</div>
           </div>
           <button class="btn btn-primary" onclick="ProductDetailPage.addToCart()">Add to Cart</button>
@@ -194,7 +194,7 @@ const ProductDetailPage = {
     if (!panel) return;
 
     const contents = {
-      desc: `<div class="tab-content-inner"><p>${p.description}</p></div>`,
+      desc: `<div class="tab-content-inner"><p>${escapeHtml(p.description)}</p></div>`,
       ingredients: `<div class="tab-content-inner">
         <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-4)">
           ${p.keyIngredients.map(i=>`<span class="badge badge-organic">🌿 ${i}</span>`).join('')}

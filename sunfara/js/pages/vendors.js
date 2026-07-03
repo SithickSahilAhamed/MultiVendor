@@ -53,8 +53,8 @@ const VendorsPage = {
       <div class="vendor-card" onclick="VendorsPage.viewVendor('${vendor.id}')">
         <div class="vendor-card-image" style="background-image:url('${vendor.banner}');background-size:cover;background-position:center"></div>
         <div class="vendor-card-content">
-          <h3>${vendor.name} ${vendor.verified ? '✅' : ''}</h3>
-          <p class="vendor-tagline">${vendor.tagline}</p>
+          <h3>${escapeHtml(vendor.name)} ${vendor.verified ? '✅' : ''}</h3>
+          <p class="vendor-tagline">${escapeHtml(vendor.tagline)}</p>
           <div class="vendor-meta">
             <span class="rating">⭐ ${vendor.rating || 'New'}</span>
             <span class="reviews">${vendor.reviewCount} reviews</span>
@@ -107,10 +107,10 @@ const VendorsPage = {
         </div>
         <div class="container">
           <div class="vendor-storefront-header">
-            <img class="vendor-logo" src="${vendor.logo}" alt="${vendor.name}" onerror="this.style.display='none'">
+            <img class="vendor-logo" src="${vendor.logo}" alt="${escapeHtml(vendor.name)}" onerror="this.style.display='none'">
             <div class="vendor-storefront-info">
-              <h1>${vendor.name} ${vendor.verified ? '<span title="Verified Seller">✅</span>' : ''}</h1>
-              <p class="vendor-tagline">${vendor.tagline}</p>
+              <h1>${escapeHtml(vendor.name)} ${vendor.verified ? '<span title="Verified Seller">✅</span>' : ''}</h1>
+              <p class="vendor-tagline">${escapeHtml(vendor.tagline)}</p>
               <div class="vendor-meta">
                 <span class="rating">⭐ ${vendor.rating || 'New seller'}</span>
                 <span class="reviews">${vendor.reviewCount} reviews</span>
@@ -133,9 +133,9 @@ const VendorsPage = {
 
           <div id="vendor-tab-about" class="vendor-tab-panel">
             <div class="vendor-about-section">
-              <h3>About ${vendor.name}</h3>
-              <p>${vendor.description}</p>
-              ${vendor.address ? `<p><strong>Location:</strong> ${vendor.address}</p>` : ''}
+              <h3>About ${escapeHtml(vendor.name)}</h3>
+              <p>${escapeHtml(vendor.description)}</p>
+              ${vendor.address ? `<p><strong>Location:</strong> ${escapeHtml(vendor.address)}</p>` : ''}
               <h3 style="margin-top:var(--space-6)">Store Policies</h3>
               <ul class="vendor-policies-list">
                 <li>🚚 Standard delivery in 4-7 business days</li>

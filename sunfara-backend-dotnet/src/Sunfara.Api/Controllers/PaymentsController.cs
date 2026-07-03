@@ -71,6 +71,52 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
 
         return Ok(new { success = true });
     }
+
+    /* Fallback confirmation path for when the client-side handler never gets
+       to call /verify - reproduced live: a real Razorpay test payment was
+       captured while the order still showed "pending" because the browser
+       tab lost the moment the handler needed to fire. Razorpay calls this
+       URL server-to-server whenever a payment actually captures, independent
+       of what the customer's browser does, so it's the source of truth
+       /verify was missing. Needs RAZORPAY_WEBHOOK_SECRET configured here and
+       the same URL + secret registered in the Razorpay dashboard (Settings ->
+       Webhooks) before it does anything - until then this just 503s. */
+    [AllowAnonymous, HttpPost("webhook")]
+    public async Task<IActionResult> Webhook()
+    {
+        var webhookSecret = config["RAZORPAY_WEBHOOK_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
+        if (string.IsNullOrEmpty(webhookSecret)) return StatusCode(503, new { error = "Webhook is not configured." });
+
+        Request.EnableBuffering();
+        using var reader = new StreamReader(Request.Body, Encoding.UTF8, leaveOpen: true);
+        var rawBody = await reader.ReadToEndAsync();
+        Request.Body.Position = 0;
+
+        var signatureHeader = Request.Headers["X-Razorpay-Signature"].ToString();
+        var expectedSignature = Convert.ToHexStringLower(HMACSHA256.HashData(Encoding.UTF8.GetBytes(webhookSecret), Encoding.UTF8.GetBytes(rawBody)));
+        var expectedBytes = Encoding.UTF8.GetBytes(expectedSignature);
+        var actualBytes = Encoding.UTF8.GetBytes(signatureHeader.ToLowerInvariant());
+        if (expectedBytes.Length != actualBytes.Length || !CryptographicOperations.FixedTimeEquals(expectedBytes, actualBytes))
+            return Unauthorized();
+
+        using var doc = JsonDocument.Parse(rawBody);
+        if (doc.RootElement.GetProperty("event").GetString() != "payment.captured") return Ok();
+
+        var paymentEntity = doc.RootElement.GetProperty("payload").GetProperty("payment").GetProperty("entity");
+        var razorpayOrderId = paymentEntity.GetProperty("order_id").GetString();
+        var razorpayPaymentId = paymentEntity.GetProperty("id").GetString();
+        if (razorpayOrderId is null) return Ok();
+
+        var matches = await store.WhereAsync("orders", "razorpayOrderId", razorpayOrderId, 1);
+        var order = matches.FirstOrDefault();
+        if (order is null || order.GetValueOrDefault("paymentStatus")?.ToString() == "paid") return Ok();
+
+        var orderId = order["id"].ToString()!;
+        await store.UpdateAsync("orders", orderId, new Dictionary<string, object> { ["paymentStatus"] = "paid", ["razorpayPaymentId"] = razorpayPaymentId ?? "" });
+        await marketplace.ConfirmAllVendorOrdersForPaymentAsync(orderId);
+
+        return Ok();
+    }
 }
 
 public sealed record CreateOrderRequest(string OrderId);

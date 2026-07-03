@@ -54,8 +54,8 @@ const AdminProducts = {
               products.map(p => `
               <tr>
                 <td><input type="checkbox" /></td>
-                <td><strong>${p.image || '📦'} ${p.name}</strong></td>
-                <td>${p.vendorName || p.vendor || '—'}</td>
+                <td><strong>${p.image || '📦'} ${AdminUtils.escapeHtml(p.name)}</strong></td>
+                <td>${AdminUtils.escapeHtml(p.vendorName || p.vendor) || '—'}</td>
                 <td>${p.stock ?? '—'}</td>
                 <td>${AdminUtils.formatPrice(p.price || 0)}</td>
                 <td><span class="admin-status-badge ${AdminConfig.statusColors[p.status] || 'admin-status-pending'}">${AdminConfig.statusLabels[p.status] || p.status}</span></td>
@@ -130,7 +130,7 @@ const AdminProducts = {
     let vendors = [];
     try { vendors = await AdminStore.fetchVendors(); } catch (e) { /* fall through with empty list */ }
     const vendorOptions = vendors.length
-      ? vendors.map(v => `<option value="${v.id}" data-name="${v.name}">${v.name}</option>`).join('')
+      ? vendors.map(v => `<option value="${v.id}" data-name="${AdminUtils.escapeHtml(v.name)}">${AdminUtils.escapeHtml(v.name)}</option>`).join('')
       : '<option value="">No vendors yet — add one first</option>';
 
     AdminModal.show('Add New Product', `

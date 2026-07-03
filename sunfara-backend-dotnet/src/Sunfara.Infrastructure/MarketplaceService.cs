@@ -23,6 +23,9 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         if (items.Count == 0) throw new InvalidOperationException("Cart is empty.");
         var orderRef = store.Database.Collection("orders").Document();
 
+        var paymentMethodValue = request.TryGetValue("paymentMethod", out var pmRaw) ? FirestoreCatalogStore.NormalizeValue(pmRaw) : "";
+        var isCod = paymentMethodValue?.ToString() == "Cash on Delivery";
+
         await store.Database.RunTransactionAsync(async transaction =>
         {
             decimal subtotal = 0;
@@ -41,7 +44,15 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 var stock = product.ContainsField("stock") ? product.GetValue<long>("stock") : 0;
                 if (stock < quantity) throw new InvalidOperationException($"Insufficient stock for {productId}.");
                 var price = Convert.ToDecimal(product.GetValue<double>("price")); var lineTotal = price * quantity; subtotal += lineTotal;
-                transaction.Update(productRef, new Dictionary<string, object> { ["stock"] = stock - quantity, ["updatedAt"] = FieldValue.ServerTimestamp });
+                /* Only COD commits stock at order-creation time - it has no
+                   separate "payment confirmed" moment before delivery, so this
+                   is the earliest point that reservation can happen. Online
+                   payments decrement in ConfirmAllVendorOrdersForPaymentAsync
+                   instead: decrementing here meant an abandoned/failed Razorpay
+                   payment permanently removed real stock from sale forever
+                   (nothing ever released it), since there was no background
+                   job to notice the order stayed unpaid. */
+                if (isCod) transaction.Update(productRef, new Dictionary<string, object> { ["stock"] = stock - quantity, ["updatedAt"] = FieldValue.ServerTimestamp });
                 orderItems.Add(new()
                 {
                     ["productId"] = productId, ["vendorId"] = product.GetValue<string>("vendorId"),
@@ -51,7 +62,6 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 });
             }
 
-            var paymentMethodValue = request.TryGetValue("paymentMethod", out var pm) ? FirestoreCatalogStore.NormalizeValue(pm) : "";
             var shippingAddressValue = request.TryGetValue("shippingAddress", out var sa) ? FirestoreCatalogStore.NormalizeValue(sa) : new Dictionary<string, object>();
             var orderNumber = $"SUN-{DateTime.UtcNow:yyyyMMdd}-{orderRef.Id[..8].ToUpperInvariant()}";
 
@@ -94,25 +104,58 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         return orderRef.Id;
     }
 
-    /* Called once a master order's payment is confirmed (Razorpay verify) -
-       moves every vendor sub-order from pending to confirmed and, since
-       online payment means money has genuinely already changed hands,
-       triggers commission calculation immediately (COD instead triggers it
-       on delivery in UpdateOrderStatusAsync, since that's when cash is
-       actually collected). */
+    /* Called once a master order's payment is confirmed - either the
+       client-side Razorpay verify call, or the webhook fallback below, and
+       both can genuinely fire for the same order (a client that never gets
+       to call verify because the tab closed right after paying, followed by
+       the webhook arriving; or both firing close together), so this has to
+       be safe to call twice: skips any vendor sub-order that's already past
+       "pending", so stock only ever gets decremented once. Moves every
+       vendor sub-order from pending to confirmed and, since online payment
+       means money has genuinely already changed hands, triggers commission
+       calculation immediately (COD instead triggers it on delivery in
+       UpdateOrderStatusAsync, since that's when cash is actually collected). */
     public async Task ConfirmAllVendorOrdersForPaymentAsync(string masterOrderId)
     {
         var vendorOrdersSnap = await store.Database.Collection("vendor_orders").WhereEqualTo("masterOrderId", masterOrderId).GetSnapshotAsync();
         foreach (var doc in vendorOrdersSnap.Documents)
         {
+            if (doc.ContainsField("status") && doc.GetValue<string>("status") != "pending") continue;
             var history = doc.ContainsField("statusHistory") ? doc.GetValue<List<Dictionary<string, object>>>("statusHistory") : [];
             history.Add(new Dictionary<string, object> { ["status"] = "confirmed", ["at"] = DateTime.UtcNow.ToString("o"), ["by"] = "system:payment" });
             await doc.Reference.UpdateAsync(new Dictionary<string, object>
             {
                 ["status"] = "confirmed", ["statusHistory"] = history, ["paymentStatus"] = "paid", ["updatedAt"] = FieldValue.ServerTimestamp
             });
+            var items = doc.ContainsField("items") ? doc.GetValue<List<Dictionary<string, object>>>("items") : [];
+            await DecrementStockAsync(items);
             await CalculateAndRecordCommissionsAsync(doc.Id);
         }
+    }
+
+    /* Stock reservation for online payments happens here, not at checkout -
+       see the comment in CheckoutAsync. Money's already captured by this
+       point (Razorpay verify already succeeded), so a product that sold out
+       in the gap between checkout and payment isn't rejected here - it's
+       clamped at zero and left for the vendor/admin to notice and resolve
+       (rare in practice: it only happens if the same last few units get
+       bought by two different in-flight checkouts within one payment
+       window), rather than trying to unwind a payment that's already real. */
+    private async Task DecrementStockAsync(List<Dictionary<string, object>> items)
+    {
+        await store.Database.RunTransactionAsync(async transaction =>
+        {
+            var productRefs = items.Select(i => store.Database.Collection("products").Document(i["productId"].ToString()!)).ToList();
+            var products = new List<DocumentSnapshot>();
+            foreach (var productRef in productRefs) products.Add(await transaction.GetSnapshotAsync(productRef));
+            for (var i = 0; i < products.Count; i++)
+            {
+                if (!products[i].Exists) continue;
+                var stock = products[i].ContainsField("stock") ? products[i].GetValue<long>("stock") : 0;
+                var quantity = Convert.ToInt64(items[i]["quantity"]);
+                transaction.Update(productRefs[i], new Dictionary<string, object> { ["stock"] = Math.Max(0, stock - quantity), ["updatedAt"] = FieldValue.ServerTimestamp });
+            }
+        });
     }
 
     /* Advances a single vendor's sub-order status, validating the transition
@@ -132,6 +175,17 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         var currentStatus = snapshot.ContainsField("status") ? snapshot.GetValue<string>("status") : "pending";
         if (!isAdmin && !OrderStateMachine.CanTransition(currentStatus, newStatus))
             throw new InvalidOperationException($"Cannot move an order from '{currentStatus}' to '{newStatus}'.");
+
+        /* Cancelling used to have zero side effects - no refund, no stock
+           restore, no commission reversal - so cancelling an order that was
+           already paid online silently kept the customer's money with no
+           way to give it back. Blocking it here (even for admin) forces
+           that case through the return/refund flow instead, which does all
+           three correctly. COD orders are unaffected: no money was ever
+           collected before delivery, so a plain cancel is still safe. */
+        var existingPaymentStatus = snapshot.ContainsField("paymentStatus") ? snapshot.GetValue<string>("paymentStatus") : "";
+        if (newStatus == "cancelled" && existingPaymentStatus == "paid")
+            throw new InvalidOperationException("This order was already paid online - cancel it through the return/refund flow so the customer is actually refunded, instead of just marking it cancelled.");
 
         var history = snapshot.ContainsField("statusHistory") ? snapshot.GetValue<List<Dictionary<string, object>>>("statusHistory") : [];
         history.Add(new Dictionary<string, object> { ["status"] = newStatus, ["at"] = DateTime.UtcNow.ToString("o"), ["by"] = isAdmin ? "admin" : vendorId });
@@ -232,15 +286,46 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         });
     }
 
+    /* Balance-check-then-write used to be two separate non-transactional reads
+       followed by an unguarded write - two withdrawal requests submitted close
+       together could both read the same "available" balance before either
+       commits, both pass the check, and both get created (a real double-spend
+       race). Wrapping the read and the write in one transaction closes that.
+       Also gates on the vendor's live status - a suspended vendor's token
+       still works until it expires/is revoked (see AdminController.Update),
+       so this is the other half of actually stopping a suspended vendor from
+       pulling money out. */
     public async Task<string> RequestWithdrawalAsync(string vendorId, decimal amount)
     {
         if (amount <= 0) throw new InvalidOperationException("Amount must be positive.");
-        var walletSnap = await store.Database.Collection("vendor_wallets").Document(vendorId).GetSnapshotAsync();
-        var balance = walletSnap.Exists && walletSnap.ContainsField("balance") ? Convert.ToDecimal(walletSnap.GetValue<double>("balance")) : 0m;
-        var pendingSnap = await store.Database.Collection("withdrawals").WhereEqualTo("vendorId", vendorId).WhereEqualTo("status", "pending").GetSnapshotAsync();
-        var alreadyPending = pendingSnap.Documents.Sum(x => Convert.ToDecimal(x.GetValue<double>("amount")));
-        if (amount > balance - alreadyPending) throw new InvalidOperationException("Withdrawal exceeds available earnings.");
-        return await store.AddAsync("withdrawals", new() { ["vendorId"] = vendorId, ["amount"] = (double)amount, ["status"] = "pending" });
+        if (!await IsVendorActiveAsync(vendorId)) throw new InvalidOperationException("Your account is not in good standing and cannot request withdrawals right now.");
+
+        var withdrawalRef = store.Database.Collection("withdrawals").Document();
+        await store.Database.RunTransactionAsync(async transaction =>
+        {
+            var walletRef = store.Database.Collection("vendor_wallets").Document(vendorId);
+            var walletSnap = await transaction.GetSnapshotAsync(walletRef);
+            var balance = walletSnap.Exists && walletSnap.ContainsField("balance") ? Convert.ToDecimal(walletSnap.GetValue<double>("balance")) : 0m;
+
+            var pendingQuery = store.Database.Collection("withdrawals").WhereEqualTo("vendorId", vendorId).WhereEqualTo("status", "pending");
+            var pendingSnap = await transaction.GetSnapshotAsync(pendingQuery);
+            var alreadyPending = pendingSnap.Documents.Sum(x => Convert.ToDecimal(x.GetValue<double>("amount")));
+
+            if (amount > balance - alreadyPending) throw new InvalidOperationException("Withdrawal exceeds available earnings.");
+
+            transaction.Create(withdrawalRef, new Dictionary<string, object>
+            {
+                ["vendorId"] = vendorId, ["amount"] = (double)amount, ["status"] = "pending",
+                ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
+            });
+        });
+        return withdrawalRef.Id;
+    }
+
+    public async Task<bool> IsVendorActiveAsync(string vendorId)
+    {
+        var vendorSnap = await store.Database.Collection("vendors").Document(vendorId).GetSnapshotAsync();
+        return vendorSnap.Exists && vendorSnap.ContainsField("status") && vendorSnap.GetValue<string>("status") == "active";
     }
 
     /* Debits the vendor's wallet only on admin approval - a pending request

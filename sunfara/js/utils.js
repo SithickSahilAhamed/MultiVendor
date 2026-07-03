@@ -9,6 +9,16 @@ function formatPrice(amount) {
   return '₹' + Number(amount).toLocaleString('en-IN');
 }
 
+/* Escapes user-supplied text (product/vendor names, review comments, etc.)
+   before it's interpolated into innerHTML - without this, a vendor or
+   customer setting their name/tagline/comment to something like
+   `<img src=x onerror=...>` executes in every visitor's browser who views
+   that listing. Apply this to any ${...} that renders text a vendor or
+   customer typed, not text this app generated itself. */
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 /* Fills in every field the catalog UI assumes exists - not just card fields
    (variants, image, mrp, discount, brand, rating) but also the product
    detail page's fields (highlights, keyIngredients, ingredients, howToUse,

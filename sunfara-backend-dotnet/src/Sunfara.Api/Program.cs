@@ -1,7 +1,9 @@
+using System.Threading.RateLimiting;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Sunfara.Infrastructure;
 
@@ -59,7 +61,22 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddCors(o => o.AddPolicy("Sunfara", p => p.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? ["http://localhost:8000"]).AllowAnyHeader().AllowAnyMethod()));
 
+// Unauthenticated, money/account-affecting endpoints are the ones worth
+// throttling per-IP: nothing here needed rate limiting before because
+// nothing existed at all - checkout spam, registration spam, and login
+// brute-forcing were all completely unthrottled at the app layer.
+builder.Services.AddRateLimiter(o =>
+{
+    o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    o.AddFixedWindowLimiter("auth", opt => { opt.PermitLimit = 10; opt.Window = TimeSpan.FromMinutes(1); opt.QueueLimit = 0; });
+    o.AddFixedWindowLimiter("checkout", opt => { opt.PermitLimit = 20; opt.Window = TimeSpan.FromMinutes(1); opt.QueueLimit = 0; });
+});
+
 var app = builder.Build();
-app.UseSwagger(); app.UseSwaggerUI(); app.UseCors("Sunfara"); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
+// Swagger exposes the full API surface (every route, every request/response
+// shape) to anyone who finds the URL - fine for local dev, not something a
+// production API needs to hand an attacker for free.
+if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
+app.UseCors("Sunfara"); app.UseRateLimiter(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
 app.MapGet("/", () => Results.Ok(new { status = "ok", service = "Sunfara API", docs = "/swagger" }));
 app.Run();

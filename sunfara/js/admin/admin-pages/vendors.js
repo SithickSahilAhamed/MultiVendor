@@ -53,7 +53,7 @@ const AdminVendors = {
               vendors.map(v => `
               <tr>
                 <td><input type="checkbox" /></td>
-                <td><strong>${v.logo || '🏪'} ${v.name}</strong><br><small style="color: #6b7280;">${v.email}</small></td>
+                <td><strong>${v.logo || '🏪'} ${AdminUtils.escapeHtml(v.name)}</strong><br><small style="color: #6b7280;">${AdminUtils.escapeHtml(v.email)}</small></td>
                 <td><span class="admin-status-badge ${AdminConfig.statusColors[v.status] || 'admin-status-pending'}">${AdminConfig.statusLabels[v.status] || v.status}</span></td>
                 <td>${v.products || 0}</td>
                 <td>${AdminUtils.formatPrice(v.revenue || 0)}</td>

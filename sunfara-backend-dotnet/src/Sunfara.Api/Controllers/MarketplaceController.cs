@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -8,7 +9,7 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
 {
     private string UserId => User.FindFirst("user_id")?.Value ?? User.FindFirst("sub")?.Value ?? throw new UnauthorizedAccessException();
 
-    [Authorize, HttpPost("checkout")]
+    [Authorize, EnableRateLimiting("checkout"), HttpPost("checkout")]
     public async Task<IActionResult> Checkout([FromBody] Dictionary<string, object> request)
     { try { var id = await marketplace.CheckoutAsync(UserId, request); return Ok(new { id, message = "Order placed" }); } catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); } }
 
@@ -81,7 +82,7 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     [Authorize(Policy = "Vendor"), HttpGet("vendor/commissions")]
     public async Task<IActionResult> Commissions() => Ok(await store.WhereAsync("commissions", "vendorId", UserId));
 
-    [Authorize(Policy = "Vendor"), HttpPost("vendor/withdrawal")]
+    [Authorize(Policy = "Vendor"), EnableRateLimiting("auth"), HttpPost("vendor/withdrawal")]
     public async Task<IActionResult> Withdraw([FromBody] AmountRequest request)
     { try { var id = await marketplace.RequestWithdrawalAsync(UserId, request.Amount); return Ok(new { id }); } catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); } }
 }

@@ -9,8 +9,13 @@ public sealed class ProductsController(FirestoreCatalogStore store) : Controller
     private string UserId => User.FindFirst("user_id")?.Value ?? User.FindFirst("sub")?.Value ?? "";
     private bool IsAdmin => User.HasClaim("role", "admin");
 
-    [HttpGet] public async Task<IActionResult> List([FromQuery] int limit = 500) => Ok(await store.ListAsync("products", limit));
-    [HttpGet("{id}")] public async Task<IActionResult> Get(string id) => await store.GetAsync("products", id) is { } product ? Ok(product) : NotFound();
+    /* Public/unauthenticated - matches firestore.rules' own intent
+       (products only readable there once status=="active"), which the API
+       had silently drifted from: it was returning every product regardless
+       of moderation status, so a vendor's listing went live on the storefront
+       the instant it was created, before any admin ever looked at it. */
+    [HttpGet] public async Task<IActionResult> List([FromQuery] int limit = 500) => Ok(await store.WhereAsync("products", "status", "active", limit));
+    [HttpGet("{id}")] public async Task<IActionResult> Get(string id) => await store.GetAsync("products", id) is { } product && product.GetValueOrDefault("status")?.ToString() == "active" ? Ok(product) : NotFound();
 
     [Authorize(Policy = "Vendor"), HttpGet("mine")]
     public async Task<IActionResult> Mine() => Ok(await store.WhereAsync("products", "vendorId", UserId, 500));
@@ -18,6 +23,10 @@ public sealed class ProductsController(FirestoreCatalogStore store) : Controller
     [Authorize(Policy = "Vendor"), HttpPost]
     public async Task<IActionResult> Create([FromBody] Dictionary<string, object> product)
     {
+        var vendor = await store.GetAsync("vendors", UserId);
+        var vendorStatus = vendor?.GetValueOrDefault("status")?.ToString();
+        if (vendorStatus is "rejected" or "suspended") return Forbid();
+        if (product.TryGetValue("price", out var priceVal) && Convert.ToDouble(priceVal) <= 0) return BadRequest(new { error = "Price must be greater than zero." });
         product["status"] = "pending";
         product["vendorId"] = UserId;
         var id = await store.AddAsync("products", product);
@@ -30,6 +39,7 @@ public sealed class ProductsController(FirestoreCatalogStore store) : Controller
         var existing = await store.GetAsync("products", id);
         if (existing is null) return NotFound();
         if (!IsAdmin && existing.GetValueOrDefault("vendorId")?.ToString() != UserId) return Forbid();
+        if (updates.TryGetValue("price", out var priceVal) && Convert.ToDouble(priceVal) <= 0) return BadRequest(new { error = "Price must be greater than zero." });
         updates.Remove("vendorId"); updates.Remove("status");
         return await store.UpdateAsync("products", id, updates) ? NoContent() : NotFound();
     }

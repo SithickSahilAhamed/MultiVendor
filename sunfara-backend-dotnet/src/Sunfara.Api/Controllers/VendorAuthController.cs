@@ -1,6 +1,7 @@
 using FirebaseAdmin.Auth;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -12,7 +13,7 @@ namespace Sunfara.Api.Controllers;
 [ApiController, Route("api/vendor-auth")]
 public sealed class VendorAuthController(FirestoreCatalogStore store) : ControllerBase
 {
-    [HttpPost("register")]
+    [EnableRateLimiting("auth"), HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] VendorRegisterRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) ||

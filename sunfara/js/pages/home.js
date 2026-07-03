@@ -264,8 +264,8 @@ const HomePage = {
             aria-label="${wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">♥</button>
         </div>
         <div class="product-card-body">
-          <div class="product-card-brand">${p.brand}</div>
-          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-brand">${escapeHtml(p.brand)}</div>
+          <div class="product-card-name">${escapeHtml(p.name)}</div>
           <div class="product-card-rating"><span class="stars">${renderStars(p.rating)}</span>${p.rating} (${p.reviewCount})</div>
           <div class="product-card-price">
             <span class="price-current">${formatPrice(p.price)}</span>

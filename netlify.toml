@@ -1,5 +1,6 @@
 [build]
-  publish = "sunfara"
+  base = "sunfara"
+  publish = "."
 
 [[redirects]]
   from = "/admin"

@@ -7,9 +7,10 @@ const Navbar = {
     this.render();
     this.bindEvents();
     this.updateBadges();
+    Notifications.init();
     document.addEventListener('store:cart-updated', () => this.updateBadges());
     document.addEventListener('store:wishlist-updated', () => this.updateBadges());
-    document.addEventListener('store:user-updated', () => this.render());
+    document.addEventListener('store:user-updated', () => { this.render(); Notifications.init(); });
   },
 
   render() {
@@ -51,6 +52,14 @@ const Navbar = {
 
           <!-- Nav action icons -->
           <div class="navbar-actions">
+            ${Store.user ? `
+            <div class="nav-action-btn" id="notif-bell-wrap" style="position:relative">
+              <button class="nav-action-btn" style="padding:0" onclick="event.stopPropagation();Notifications.toggle()" aria-label="Notifications">
+                <div class="nav-action-icon">🔔<span class="nav-badge" id="notif-badge" style="display:none">0</span></div>
+                <span class="label">Alerts</span>
+              </button>
+              <div class="notif-panel" id="notif-panel"></div>
+            </div>` : ''}
             <button class="nav-action-btn" id="wishlist-nav-btn" onclick="Navbar.toggleWishlistDrawer()" aria-label="Wishlist">
               <div class="nav-action-icon">❤️<span class="nav-badge" id="wishlist-badge" style="display:none">0</span></div>
               <span class="label">Wishlist</span>

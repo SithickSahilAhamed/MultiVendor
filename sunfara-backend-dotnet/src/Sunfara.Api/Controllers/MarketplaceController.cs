@@ -85,6 +85,34 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     [Authorize(Policy = "Vendor"), EnableRateLimiting("auth"), HttpPost("vendor/withdrawal")]
     public async Task<IActionResult> Withdraw([FromBody] AmountRequest request)
     { try { var id = await marketplace.RequestWithdrawalAsync(UserId, request.Amount); return Ok(new { id }); } catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); } }
+
+    /* Same collection, same shape, for both customer and vendor - userId is
+       whichever claim value the caller has, so one endpoint covers a
+       customer checking "did my order ship" and a vendor checking "do I
+       have a new order" without needing separate controllers. */
+    [Authorize, HttpGet("notifications")]
+    public async Task<IActionResult> Notifications()
+    {
+        var notifications = await store.WhereAsync("notifications", "userId", UserId, 100);
+        return Ok(notifications.OrderByDescending(n => n.GetValueOrDefault("createdAt")?.ToString()));
+    }
+
+    [Authorize, HttpPut("notifications/{id}/read")]
+    public async Task<IActionResult> MarkNotificationRead(string id)
+    {
+        var existing = await store.GetAsync("notifications", id);
+        if (existing is null || existing.GetValueOrDefault("userId")?.ToString() != UserId) return NotFound();
+        return await store.UpdateAsync("notifications", id, new Dictionary<string, object> { ["read"] = true }) ? NoContent() : NotFound();
+    }
+
+    [Authorize, HttpPut("notifications/read-all")]
+    public async Task<IActionResult> MarkAllNotificationsRead()
+    {
+        var notifications = await store.WhereAsync("notifications", "userId", UserId, 100);
+        foreach (var n in notifications.Where(n => n.GetValueOrDefault("read") is not true))
+            await store.UpdateAsync("notifications", n["id"].ToString()!, new Dictionary<string, object> { ["read"] = true });
+        return Ok();
+    }
 }
 public sealed record AmountRequest(decimal Amount);
 public sealed record ReturnRequest(string Reason);

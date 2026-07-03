@@ -25,9 +25,19 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
 
         var paymentMethodValue = request.TryGetValue("paymentMethod", out var pmRaw) ? FirestoreCatalogStore.NormalizeValue(pmRaw) : "";
         var isCod = paymentMethodValue?.ToString() == "Cash on Delivery";
+        /* Declared here, populated inside the transaction, read after it
+           commits - a Firestore transaction can retry silently on
+           contention, so any non-transactional side effect (a notification
+           write) triggered from *inside* the lambda would double-fire on
+           every retry. Notifying only after RunTransactionAsync returns
+           guarantees it happens exactly once, for the attempt that actually
+           committed. */
+        var committedVendorOrders = new List<(string VendorId, decimal VendorSubtotal)>();
+        var committedLowStockAlerts = new List<(string VendorId, string ProductName, long RemainingStock)>();
 
         await store.Database.RunTransactionAsync(async transaction =>
         {
+            committedLowStockAlerts = [];
             decimal subtotal = 0;
             var orderItems = new List<Dictionary<string, object>>();
             var productRefs = items.Select(item => store.Database.Collection("products").Document(item["productId"].ToString()!)).ToList();
@@ -52,7 +62,13 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                    payment permanently removed real stock from sale forever
                    (nothing ever released it), since there was no background
                    job to notice the order stayed unpaid. */
-                if (isCod) transaction.Update(productRef, new Dictionary<string, object> { ["stock"] = stock - quantity, ["updatedAt"] = FieldValue.ServerTimestamp });
+                if (isCod)
+                {
+                    var remaining = stock - quantity;
+                    transaction.Update(productRef, new Dictionary<string, object> { ["stock"] = remaining, ["updatedAt"] = FieldValue.ServerTimestamp });
+                    if (remaining <= LowStockThreshold && stock > LowStockThreshold)
+                        committedLowStockAlerts.Add((product.GetValue<string>("vendorId"), product.GetValue<string>("name"), remaining));
+                }
                 orderItems.Add(new()
                 {
                     ["productId"] = productId, ["vendorId"] = product.GetValue<string>("vendorId"),
@@ -100,7 +116,20 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                     ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
                 });
             }
+
+            // Reassigned (not appended to) so a transaction retry fully
+            // overwrites the previous attempt's list rather than duplicating it.
+            committedVendorOrders = vendorOrderRefs.Select(v => (v.VendorId, v.VendorSubtotal)).ToList();
         });
+
+        if (isCod)
+        {
+            foreach (var (vendorId, vendorSubtotal) in committedVendorOrders)
+                await NotifyAsync(vendorId, "new_order", "New Order Received", $"You have a new COD order worth ₹{(double)vendorSubtotal:N2}.", "#/vendor/orders");
+            foreach (var (vendorId, productName, remaining) in committedLowStockAlerts)
+                await NotifyAsync(vendorId, "low_stock", "Low Stock Alert", $"\"{productName}\" is down to {remaining} unit(s) left.", "#/vendor/products");
+        }
+
         return orderRef.Id;
     }
 
@@ -130,6 +159,12 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             var items = doc.ContainsField("items") ? doc.GetValue<List<Dictionary<string, object>>>("items") : [];
             await DecrementStockAsync(items);
             await CalculateAndRecordCommissionsAsync(doc.Id);
+
+            var vendorId = doc.GetValue<string>("vendorId");
+            var customerId = doc.GetValue<string>("customerId");
+            var subtotal = doc.ContainsField("subtotal") ? doc.GetValue<double>("subtotal") : 0;
+            await NotifyAsync(vendorId, "new_order", "New Order Received", $"You have a new order worth ₹{subtotal:N2}.", "#/vendor/orders");
+            await NotifyAsync(customerId, "order_confirmed", "Order Confirmed", "Your payment was received and your order is confirmed.", "#/orders");
         }
     }
 
@@ -141,10 +176,14 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
        (rare in practice: it only happens if the same last few units get
        bought by two different in-flight checkouts within one payment
        window), rather than trying to unwind a payment that's already real. */
+    private const long LowStockThreshold = 5;
+
     private async Task DecrementStockAsync(List<Dictionary<string, object>> items)
     {
+        var lowStockAlerts = new List<(string VendorId, string ProductName, long RemainingStock)>();
         await store.Database.RunTransactionAsync(async transaction =>
         {
+            lowStockAlerts = [];
             var productRefs = items.Select(i => store.Database.Collection("products").Document(i["productId"].ToString()!)).ToList();
             var products = new List<DocumentSnapshot>();
             foreach (var productRef in productRefs) products.Add(await transaction.GetSnapshotAsync(productRef));
@@ -153,9 +192,14 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 if (!products[i].Exists) continue;
                 var stock = products[i].ContainsField("stock") ? products[i].GetValue<long>("stock") : 0;
                 var quantity = Convert.ToInt64(items[i]["quantity"]);
-                transaction.Update(productRefs[i], new Dictionary<string, object> { ["stock"] = Math.Max(0, stock - quantity), ["updatedAt"] = FieldValue.ServerTimestamp });
+                var remaining = Math.Max(0, stock - quantity);
+                transaction.Update(productRefs[i], new Dictionary<string, object> { ["stock"] = remaining, ["updatedAt"] = FieldValue.ServerTimestamp });
+                if (remaining <= LowStockThreshold && stock > LowStockThreshold)
+                    lowStockAlerts.Add((items[i]["vendorId"].ToString()!, items[i]["name"].ToString()!, remaining));
             }
         });
+        foreach (var (vendorId, productName, remaining) in lowStockAlerts)
+            await NotifyAsync(vendorId, "low_stock", "Low Stock Alert", $"\"{productName}\" is down to {remaining} unit(s) left.", "#/vendor/products");
     }
 
     /* Advances a single vendor's sub-order status, validating the transition
@@ -199,6 +243,12 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         var commissionsCalculated = snapshot.ContainsField("commissionsCalculated") && snapshot.GetValue<bool>("commissionsCalculated");
         if (newStatus == "delivered" && paymentMethod == "Cash on Delivery" && !commissionsCalculated)
             await CalculateAndRecordCommissionsAsync(vendorOrderId);
+
+        var notifyCustomerId = snapshot.GetValue<string>("customerId");
+        if (newStatus == "shipped")
+            await NotifyAsync(notifyCustomerId, "order_shipped", "Order Shipped", $"Your order has shipped{(string.IsNullOrWhiteSpace(trackingNumber) ? "." : $" - tracking: {trackingNumber}")}", "#/orders");
+        else if (newStatus == "delivered")
+            await NotifyAsync(notifyCustomerId, "order_delivered", "Order Delivered", "Your order has been delivered. Enjoy!", "#/orders");
     }
 
     /* Calculates one vendor's commission for their sub-order, writes a
@@ -261,6 +311,20 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         {
             ["type"] = type, ["referenceId"] = referenceId, ["vendorId"] = vendorId,
             ["amount"] = (double)amount, ["description"] = description
+        });
+    }
+
+    /* One notifications doc per (recipient, event) - userId is either a
+       customerId or a vendorId, the same claim value NotificationsController
+       reads off the caller's token, so one collection and one query shape
+       covers both without needing separate customer/vendor notification
+       systems. */
+    private async Task NotifyAsync(string userId, string type, string title, string message, string link = "")
+    {
+        await store.AddAsync("notifications", new Dictionary<string, object>
+        {
+            ["userId"] = userId, ["type"] = type, ["title"] = title, ["message"] = message,
+            ["link"] = link, ["read"] = false
         });
     }
 
@@ -357,6 +421,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
 
         await RecordTransactionAsync("payout", withdrawalId, vendorId, amount, $"Withdrawal payout of ₹{(double)amount:N2} approved");
         await UpdatePlatformRevenueAsync(grossDelta: 0, commissionDelta: 0, payoutDelta: amount);
+        await NotifyAsync(vendorId, "withdrawal_approved", "Withdrawal Approved", $"Your withdrawal of ₹{(double)amount:N2} has been approved and processed.", "#/vendor/earnings");
         return true;
     }
 
@@ -534,6 +599,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         await AppendStatusAsync(vendorOrderRef, refreshedSnap, "refunded", by: "system:refund");
         await vendorOrderRef.UpdateAsync(new Dictionary<string, object> { ["paymentStatus"] = "refunded" });
         await returnRef.UpdateAsync(new Dictionary<string, object> { ["status"] = "approved", ["refundStatus"] = "completed", ["refundedAt"] = FieldValue.ServerTimestamp });
+        await NotifyAsync(customerId, "order_refunded", "Refund Completed", $"Your refund of ₹{(double)subtotal:N2} has been processed.", "#/orders");
     }
 
     private static async Task AppendStatusAsync(DocumentReference vendorOrderRef, DocumentSnapshot snapshot, string newStatus, string by)

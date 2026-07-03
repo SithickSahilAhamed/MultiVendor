@@ -10,11 +10,18 @@ const VendorLayout = {
         <a class="admin-topnav-logo" href="#/vendor/dashboard"><span>🌿</span><span>Sunfara Seller</span></a>
       </div>
       <div class="admin-topnav-right">
+        <div id="vendor-notif-bell-wrap" style="position:relative">
+          <button class="admin-topnav-btn" onclick="event.stopPropagation();VendorNotifications.toggle()" aria-label="Notifications">
+            🔔<span class="admin-notification-badge" id="vendor-notif-badge" style="display:none">0</span>
+          </button>
+          <div class="notif-panel" id="vendor-notif-panel"></div>
+        </div>
         <div class="admin-profile-menu" onclick="VendorStore.logout()" title="Logout">
           <div class="admin-profile-avatar">${(VendorStore.user?.name || 'V')[0].toUpperCase()}</div>
           <span>${VendorStore.user?.name?.split(' ')[0] || 'Vendor'}</span>
         </div>
       </div>`;
+    VendorNotifications.init();
   },
 
   renderSidebar() {

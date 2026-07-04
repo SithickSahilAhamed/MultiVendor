@@ -36,10 +36,13 @@
       </div>
       <div id="vendor-modal-overlay" class="admin-modal-overlay"></div>
       <div id="vendor-modal-container" class="admin-modal-container"></div>
-      <div id="vendor-toast-container" class="admin-toast-container"></div>
       <div id="vendor-sidebar-overlay" class="admin-sidebar-overlay"></div>
     </div>
   </div>
+
+  <!-- Outside #vendor-app-shell: that shell is display:none on the login/
+       register screens, which used to swallow every auth error toast. -->
+  <div id="vendor-toast-container" class="admin-toast-container"></div>
 
   <!-- Firebase Configuration (shared with the storefront) -->
   <script type="module">

@@ -39,6 +39,7 @@ const CheckoutPage = {
             <hr class="divider">
             <div class="summary-row"><span>Subtotal</span><span>${formatPrice(t.price)}</span></div>
             <div class="summary-row"><span>Discount</span><span style="color:var(--color-primary)">-${formatPrice(t.discount)}</span></div>
+            ${Store.appliedCoupon ? `<div class="summary-row"><span>Coupon (${Store.appliedCoupon.code})</span><span style="color:var(--color-primary)">-${formatPrice(t.couponDiscount)}</span></div>` : ''}
             <div class="summary-row"><span>Delivery</span><span>${t.delivery===0?'FREE':formatPrice(t.delivery)}</span></div>
             <hr class="divider">
             <div class="summary-row total"><span>Total</span><span>${formatPrice(t.final)}</span></div>
@@ -186,7 +187,7 @@ const CheckoutPage = {
 
     try {
       const items = Store.cart.map(i => ({ productId: i.productId, quantity: i.quantity }));
-      const order = await SunfaraAPI.post('/checkout', { items, shippingAddress: this.selectedAddress, paymentMethod: paymentLabel });
+      const order = await SunfaraAPI.post('/checkout', { items, shippingAddress: this.selectedAddress, paymentMethod: paymentLabel, couponCode: Store.appliedCoupon?.code || '' });
       const orderId = order.id;
 
       if (this.paymentMethod !== 'cod') {
@@ -194,6 +195,7 @@ const CheckoutPage = {
       }
 
       Store.placeOrder({ orderId, address: this.selectedAddress, payment: paymentLabel });
+      Store.removeCoupon();
       this.step = 3;
       this.orderId = orderId;
       this.renderStep();

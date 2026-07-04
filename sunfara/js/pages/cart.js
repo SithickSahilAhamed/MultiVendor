@@ -106,10 +106,10 @@ const CartPage = {
       </div>`;
   },
 
-  applyCoupon() {
+  async applyCoupon() {
     const code = document.getElementById('coupon-input')?.value;
     if (!code) return;
-    const result = Store.applyCoupon(code);
+    const result = await Store.applyCoupon(code);
     Toast.show(result.message, result.success ? 'success' : 'error');
     if (result.success) this.renderSummary();
   }

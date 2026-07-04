@@ -35,6 +35,8 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         var committedVendorOrders = new List<(string VendorId, decimal VendorSubtotal)>();
         var committedLowStockAlerts = new List<(string VendorId, string ProductName, long RemainingStock)>();
 
+        var couponCodeValue = request.TryGetValue("couponCode", out var ccRaw) ? FirestoreCatalogStore.NormalizeValue(ccRaw)?.ToString()?.Trim().ToUpperInvariant() : null;
+
         await store.Database.RunTransactionAsync(async transaction =>
         {
             committedLowStockAlerts = [];
@@ -43,6 +45,14 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             var productRefs = items.Select(item => store.Database.Collection("products").Document(item["productId"].ToString()!)).ToList();
             var products = new List<DocumentSnapshot>();
             foreach (var productRef in productRefs) products.Add(await transaction.GetSnapshotAsync(productRef));
+
+            DocumentSnapshot? couponSnap = null;
+            if (!string.IsNullOrWhiteSpace(couponCodeValue))
+            {
+                var couponQuery = store.Database.Collection("coupons").WhereEqualTo("code", couponCodeValue).Limit(1);
+                var couponMatches = await transaction.GetSnapshotAsync(couponQuery);
+                couponSnap = couponMatches.Documents.FirstOrDefault();
+            }
 
             for (var index = 0; index < items.Count; index++)
             {
@@ -81,24 +91,54 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             var shippingAddressValue = request.TryGetValue("shippingAddress", out var sa) ? FirestoreCatalogStore.NormalizeValue(sa) : new Dictionary<string, object>();
             var orderNumber = $"SUN-{DateTime.UtcNow:yyyyMMdd}-{orderRef.Id[..8].ToUpperInvariant()}";
 
+            /* Validated and applied server-side now, not just stored as a
+               label - checkout.js never even sent this field before, so a
+               coupon "applied" in the cart UI silently vanished at payment
+               time and the customer was charged full price regardless of
+               what they were shown. Percent/flat only; a "freeshipping"
+               coupon type exists in the demo data but there's no delivery
+               fee charged server-side to waive, so it has no real effect
+               here (matches current reality, doesn't invent a new charge). */
+            decimal discountAmount = 0;
+            string? appliedCouponCode = null;
+            if (couponSnap is { Exists: true })
+            {
+                var minOrder = couponSnap.ContainsField("minOrder") ? Convert.ToDecimal(couponSnap.GetValue<double>("minOrder")) : 0;
+                var active = !couponSnap.ContainsField("active") || couponSnap.GetValue<bool>("active");
+                if (active && subtotal >= minOrder)
+                {
+                    var discountType = couponSnap.ContainsField("type") ? couponSnap.GetValue<string>("type") : "flat";
+                    var discountValue = couponSnap.ContainsField("discount") ? Convert.ToDecimal(couponSnap.GetValue<double>("discount")) : 0;
+                    discountAmount = discountType == "percent" ? Math.Round(subtotal * discountValue / 100m, 2) : discountValue;
+                    discountAmount = Math.Clamp(discountAmount, 0, subtotal);
+                    appliedCouponCode = couponCodeValue;
+                }
+            }
+            var totalAmount = subtotal - discountAmount;
+
             var byVendor = orderItems.GroupBy(i => i["vendorId"].ToString()!).ToList();
             var vendorOrderRefs = new List<(DocumentReference Ref, string VendorId, List<Dictionary<string, object>> Items, decimal VendorSubtotal)>();
             foreach (var group in byVendor)
             {
                 var vendorOrderRef = store.Database.Collection("vendor_orders").Document();
-                var vendorSubtotal = group.Sum(i => Convert.ToDecimal(i["total"]));
-                vendorOrderRefs.Add((vendorOrderRef, group.Key, group.ToList(), vendorSubtotal));
+                var vendorGrossSubtotal = group.Sum(i => Convert.ToDecimal(i["total"]));
+                // Each vendor absorbs a share of the coupon proportional to their
+                // share of the cart, so commission (calculated off this same
+                // subtotal later) is based on what was actually realized.
+                var vendorDiscountShare = subtotal > 0 ? discountAmount * (vendorGrossSubtotal / subtotal) : 0;
+                var vendorNetSubtotal = Math.Round(vendorGrossSubtotal - vendorDiscountShare, 2);
+                vendorOrderRefs.Add((vendorOrderRef, group.Key, group.ToList(), vendorNetSubtotal));
             }
 
             var order = new Dictionary<string, object>
             {
                 ["customerId"] = customerId, ["orderNumber"] = orderNumber, ["items"] = orderItems,
                 ["vendorOrderIds"] = vendorOrderRefs.Select(v => v.Ref.Id).ToList(),
-                ["subtotal"] = (double)subtotal, ["totalAmount"] = (double)subtotal,
+                ["subtotal"] = (double)subtotal, ["totalAmount"] = (double)totalAmount,
+                ["couponCode"] = appliedCouponCode ?? "", ["discountAmount"] = (double)discountAmount,
                 ["paymentStatus"] = "pending", ["paymentMethod"] = paymentMethodValue, ["shippingAddress"] = shippingAddressValue,
                 ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
             };
-            foreach (var pair in request.Where(x => x.Key is "couponCode")) order[pair.Key] = FirestoreCatalogStore.NormalizeValue(pair.Value);
             transaction.Create(orderRef, order);
 
             foreach (var (vendorOrderRef, vendorId, vendorItems, vendorSubtotal) in vendorOrderRefs)
@@ -166,6 +206,34 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             await NotifyAsync(vendorId, "new_order", "New Order Received", $"You have a new order worth ₹{subtotal:N2}.", "#/vendor/orders");
             await NotifyAsync(customerId, "order_confirmed", "Order Confirmed", "Your payment was received and your order is confirmed.", "#/orders");
         }
+    }
+
+    /* Preview-only mirror of the discount logic CheckoutAsync applies for
+       real, so the cart/checkout UI can show an accurate number before the
+       customer commits - reads live (no transaction) since nothing's being
+       written or charged here. */
+    public async Task<(bool Valid, decimal DiscountAmount, string Message)> PreviewCouponAsync(string code, decimal subtotal)
+    {
+        var normalizedCode = code?.Trim().ToUpperInvariant() ?? "";
+        if (string.IsNullOrWhiteSpace(normalizedCode)) return (false, 0, "Enter a coupon code.");
+
+        var matches = await store.Database.Collection("coupons").WhereEqualTo("code", normalizedCode).Limit(1).GetSnapshotAsync();
+        var coupon = matches.Documents.FirstOrDefault();
+        if (coupon is not { Exists: true }) return (false, 0, "Invalid coupon code.");
+
+        var active = !coupon.ContainsField("active") || coupon.GetValue<bool>("active");
+        if (!active) return (false, 0, "This coupon is no longer active.");
+
+        var minOrder = coupon.ContainsField("minOrder") ? Convert.ToDecimal(coupon.GetValue<double>("minOrder")) : 0;
+        if (subtotal < minOrder) return (false, 0, $"Minimum order of ₹{(double)minOrder:N0} required for this coupon.");
+
+        var discountType = coupon.ContainsField("type") ? coupon.GetValue<string>("type") : "flat";
+        var discountValue = coupon.ContainsField("discount") ? Convert.ToDecimal(coupon.GetValue<double>("discount")) : 0;
+        var discountAmount = discountType == "percent" ? Math.Round(subtotal * discountValue / 100m, 2) : discountValue;
+        discountAmount = Math.Clamp(discountAmount, 0, subtotal);
+
+        var description = coupon.ContainsField("description") ? coupon.GetValue<string>("description") : "Coupon applied";
+        return (true, discountAmount, description);
     }
 
     /* Stock reservation for online payments happens here, not at checkout -

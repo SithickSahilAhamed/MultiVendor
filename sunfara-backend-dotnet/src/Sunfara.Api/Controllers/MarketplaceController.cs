@@ -13,6 +13,17 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     public async Task<IActionResult> Checkout([FromBody] Dictionary<string, object> request)
     { try { var id = await marketplace.CheckoutAsync(UserId, request); return Ok(new { id, message = "Order placed" }); } catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); } }
 
+    /* Preview-only - lets the cart/checkout UI show the real discount
+       before the customer commits to paying, using the exact same
+       validation CheckoutAsync applies for real, so what's shown here is
+       never able to drift from what's actually charged. */
+    [Authorize, HttpPost("coupons/validate")]
+    public async Task<IActionResult> ValidateCoupon([FromBody] CouponValidateRequest request)
+    {
+        var (valid, discount, message) = await marketplace.PreviewCouponAsync(request.Code, request.Subtotal);
+        return Ok(new { valid, discountAmount = discount, message });
+    }
+
     /* Master orders enriched with each vendor's own sub-order (status,
        tracking, delivery estimate) so a customer sees one order with a
        per-seller breakdown, instead of one flat status that can't
@@ -115,5 +126,6 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     }
 }
 public sealed record AmountRequest(decimal Amount);
+public sealed record CouponValidateRequest(string Code, decimal Subtotal);
 public sealed record ReturnRequest(string Reason);
 public sealed record ReturnReviewRequest(bool Approve);

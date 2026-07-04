@@ -60,18 +60,9 @@ const Store = {
     const price = this.cart.reduce((s, i) => s + i.price * i.quantity, 0);
     const discount = mrp - price;
     const delivery = price >= 599 ? 0 : 49;
-    let couponDiscount = 0;
-
-    if (this.appliedCoupon) {
-      const c = this.appliedCoupon;
-      if (c.type === 'percent') couponDiscount = Math.min(Math.round(price * c.discount / 100), c.maxDiscount || Infinity);
-      else if (c.type === 'flat') couponDiscount = c.discount;
-      else if (c.type === 'freeshipping') couponDiscount = delivery;
-    }
-
-    const finalDelivery = this.appliedCoupon?.type === 'freeshipping' ? 0 : delivery;
-    const final = price - couponDiscount + finalDelivery;
-    return { mrp, price, discount, delivery: finalDelivery, couponDiscount, final, itemCount: this.cart.reduce((s, i) => s + i.quantity, 0) };
+    const couponDiscount = this.appliedCoupon?.discountAmount || 0;
+    const final = price - couponDiscount + delivery;
+    return { mrp, price, discount, delivery, couponDiscount, final, itemCount: this.cart.reduce((s, i) => s + i.quantity, 0) };
   },
 
   getCartCount() {
@@ -103,16 +94,25 @@ const Store = {
     this.emit('cart-updated');
   },
 
-  /* ── COUPONS ── */
-  applyCoupon(code) {
-    const coupon = Data.coupons.find(c => c.code === code.toUpperCase());
-    if (!coupon) return { success: false, message: 'Invalid coupon code.' };
+  /* ── COUPONS ──
+     Validated server-side (PreviewCouponAsync) instead of against the
+     static demo data/coupons.json - that only ever validated the code
+     shown to the customer, it never guaranteed checkout would honor the
+     same discount (and until this was wired up, checkout didn't even
+     receive the coupon code at all, so any "applied" discount silently
+     vanished at payment time). */
+  async applyCoupon(code) {
     const { price } = this.getCartTotal();
-    if (price < coupon.minOrder) return { success: false, message: `Minimum order of ${formatPrice(coupon.minOrder)} required.` };
-    this.appliedCoupon = coupon;
-    this.save();
-    this.emit('cart-updated');
-    return { success: true, message: coupon.description };
+    try {
+      const result = await SunfaraAPI.post('/coupons/validate', { code, subtotal: price });
+      if (!result.valid) return { success: false, message: result.message };
+      this.appliedCoupon = { code: code.toUpperCase(), discountAmount: result.discountAmount };
+      this.save();
+      this.emit('cart-updated');
+      return { success: true, message: result.message };
+    } catch (e) {
+      return { success: false, message: e.message || 'Could not validate coupon right now.' };
+    }
   },
 
   removeCoupon() {

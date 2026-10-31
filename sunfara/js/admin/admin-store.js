@@ -1,8 +1,31 @@
-/* Admin Data Store — with Firebase Auth + API integration */
+/* Admin Data Store — with Firebase Auth + API integration
+   CAT-003: demoVendors/Products/Orders/Customers are NEVER used as live
+   data in production. Localhost may opt into demos for UI work. */
 
 const AdminStore = {
   user: null,
   isLoggedIn: false,
+  lastError: null,
+  _cache: {
+    vendors: [],
+    products: [],
+    orders: [],
+    customers: []
+  },
+
+  // ==================== ENV / DEMO GATE (CAT-003) ====================
+
+  /* Production hostnames never render demo entities as live KPIs/lists.
+     Opt-in only on localhost, or via explicit window.SUNFARA_ALLOW_ADMIN_DEMO. */
+  allowDemoFallbacks: function() {
+    if (typeof window !== 'undefined' && window.SUNFARA_ALLOW_ADMIN_DEMO === true) return true;
+    const host = (typeof location !== 'undefined' && location.hostname) ? location.hostname : '';
+    return host === 'localhost' || host === '127.0.0.1';
+  },
+
+  isProductionAdmin: function() {
+    return !this.allowDemoFallbacks();
+  },
 
   // ==================== AUTH ====================
 
@@ -72,71 +95,116 @@ const AdminStore = {
     }
   },
 
-  // ==================== DATA — API first, demo fallback ====================
+  // ==================== DATA — API first; demo only when allowDemoFallbacks ====================
+
+  _onApiError: function(err, demoFn) {
+    this.lastError = err?.message || String(err);
+    if (this.allowDemoFallbacks()) return demoFn();
+    return [];
+  },
 
   async fetchVendors() {
-    try { return await AdminAPI.getVendors(); }
-    catch { return this.demoVendors(); }
+    try {
+      const rows = await AdminAPI.getVendors();
+      this._cache.vendors = Array.isArray(rows) ? rows : [];
+      this.lastError = null;
+      return this._cache.vendors;
+    } catch (err) {
+      return this._onApiError(err, () => this.demoVendors());
+    }
   },
 
   async fetchProducts() {
-    try { return await AdminAPI.getProducts(); }
-    catch { return this.demoProducts(); }
+    try {
+      const rows = await AdminAPI.getProducts();
+      this._cache.products = Array.isArray(rows) ? rows : [];
+      this.lastError = null;
+      return this._cache.products;
+    } catch (err) {
+      return this._onApiError(err, () => this.demoProducts());
+    }
   },
 
   async fetchOrders() {
-    try { return await AdminAPI.getOrders(); }
-    catch { return this.demoOrders(); }
+    try {
+      const rows = await AdminAPI.getOrders();
+      this._cache.orders = Array.isArray(rows) ? rows : [];
+      this.lastError = null;
+      return this._cache.orders;
+    } catch (err) {
+      return this._onApiError(err, () => this.demoOrders());
+    }
   },
 
   async fetchCustomers() {
-    try { return await AdminAPI.getCustomers(); }
-    catch { return this.demoCustomers(); }
+    try {
+      const rows = await AdminAPI.getCustomers();
+      this._cache.customers = Array.isArray(rows) ? rows : [];
+      this.lastError = null;
+      return this._cache.customers;
+    } catch (err) {
+      return this._onApiError(err, () => this.demoCustomers());
+    }
   },
 
   async fetchCommissions() {
     try { return await AdminAPI.getCommissions(); }
-    catch { return []; }
+    catch (err) { this.lastError = err?.message || String(err); return []; }
   },
 
   async fetchWithdrawals() {
     try { return await AdminAPI.getWithdrawals(); }
-    catch { return []; }
+    catch (err) { this.lastError = err?.message || String(err); return []; }
   },
 
   async fetchReturns() {
     try { return await AdminAPI.getReturns(); }
-    catch { return []; }
+    catch (err) { this.lastError = err?.message || String(err); return []; }
   },
 
   async fetchRefunds() {
     try { return await AdminAPI.getRefunds(); }
-    catch { return []; }
+    catch (err) { this.lastError = err?.message || String(err); return []; }
   },
 
-  // Sync versions (return demo data — used for layout badges and fallback)
-  getVendors()   { return this.demoVendors(); },
-  getProducts()  { return this.demoProducts(); },
-  getOrders()    { return this.demoOrders(); },
-  getCustomers() { return this.demoCustomers(); },
+  /* Sync readers: cache only in production; demos only when allowDemoFallbacks */
+  getVendors() {
+    if (this._cache.vendors.length) return this._cache.vendors;
+    return this.allowDemoFallbacks() ? this.demoVendors() : [];
+  },
+  getProducts() {
+    if (this._cache.products.length) return this._cache.products;
+    return this.allowDemoFallbacks() ? this.demoProducts() : [];
+  },
+  getOrders() {
+    if (this._cache.orders.length) return this._cache.orders;
+    return this.allowDemoFallbacks() ? this.demoOrders() : [];
+  },
+  getCustomers() {
+    if (this._cache.customers.length) return this._cache.customers;
+    return this.allowDemoFallbacks() ? this.demoCustomers() : [];
+  },
 
-  getVendorById(id)  { return this.demoVendors().find(v => v.id === id) || null; },
-  getOrderById(id)   { return this.demoOrders().find(o => o.id === id) || null; },
+  getVendorById(id) {
+    return this.getVendors().find(v => v.id === id) || null;
+  },
+  getOrderById(id) {
+    return this.getOrders().find(o => o.id === id) || null;
+  },
 
   updateVendor(id, data) {
-    // Async fire-and-forget for API; sync returns updated demo object
-    AdminAPI.updateVendor(id, data).catch(() => {});
-    const vendor = this.demoVendors().find(v => v.id === id);
+    AdminAPI.updateVendor(id, data).catch((err) => { this.lastError = err?.message || String(err); });
+    const vendor = this.getVendorById(id);
     return vendor ? Object.assign({}, vendor, data) : null;
   },
 
   updateProduct(id, data) {
-    AdminAPI.updateProduct(id, data).catch(() => {});
-    const product = this.demoProducts().find(p => p.id === id);
+    AdminAPI.updateProduct(id, data).catch((err) => { this.lastError = err?.message || String(err); });
+    const product = this.getProducts().find(p => p.id === id);
     return product ? Object.assign({}, product, data) : null;
   },
 
-  // ==================== DEMO DATA ====================
+  // ==================== DEMO DATA (local / explicit opt-in only) ====================
 
   demoVendors: () => [
     { id: "vendor-001", name: "Haaniya", email: "info@haaniya.com", phone: "+91-9876543210", status: "active", products: 142, revenue: 4520000, rating: 4.8, reviews: 245, verified: true, kycStatus: "completed", commission: 8, logo: "🧴" },

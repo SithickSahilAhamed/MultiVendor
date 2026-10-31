@@ -1,8 +1,8 @@
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -53,13 +53,8 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
         if (order is null || order.GetValueOrDefault("customerId")?.ToString() != UserId) return NotFound(new { error = "Order not found." });
         if (order.GetValueOrDefault("paymentStatus")?.ToString() == "paid") return Ok(new { success = true, alreadyVerified = true });
 
-        var payload = $"{request.RazorpayOrderId}|{request.RazorpayPaymentId}";
-        var expectedSignature = Convert.ToHexStringLower(
-            HMACSHA256.HashData(Encoding.UTF8.GetBytes(KeySecret), Encoding.UTF8.GetBytes(payload)));
-
-        var expectedBytes = Encoding.UTF8.GetBytes(expectedSignature);
-        var actualBytes = Encoding.UTF8.GetBytes(request.RazorpaySignature.ToLowerInvariant());
-        if (expectedBytes.Length != actualBytes.Length || !CryptographicOperations.FixedTimeEquals(expectedBytes, actualBytes))
+        var expectedSignature = RazorpayHmac.PaymentVerifySignature(KeySecret, request.RazorpayOrderId, request.RazorpayPaymentId);
+        if (!RazorpayHmac.FixedTimeEqualsHex(expectedSignature, request.RazorpaySignature))
             return BadRequest(new { error = "Payment verification failed." });
 
         await store.UpdateAsync("orders", request.OrderId, new Dictionary<string, object>
@@ -85,7 +80,8 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
     public async Task<IActionResult> Webhook()
     {
         var webhookSecret = config["RAZORPAY_WEBHOOK_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
-        if (string.IsNullOrEmpty(webhookSecret)) return StatusCode(503, new { error = "Webhook is not configured." });
+        if (!RazorpayWebhookStartup.IsWebhookUsable(webhookSecret))
+            return StatusCode(503, new { error = "Webhook is not configured.", detail = RazorpayWebhookStartup.MissingSecretMessage });
 
         Request.EnableBuffering();
         using var reader = new StreamReader(Request.Body, Encoding.UTF8, leaveOpen: true);
@@ -93,10 +89,8 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
         Request.Body.Position = 0;
 
         var signatureHeader = Request.Headers["X-Razorpay-Signature"].ToString();
-        var expectedSignature = Convert.ToHexStringLower(HMACSHA256.HashData(Encoding.UTF8.GetBytes(webhookSecret), Encoding.UTF8.GetBytes(rawBody)));
-        var expectedBytes = Encoding.UTF8.GetBytes(expectedSignature);
-        var actualBytes = Encoding.UTF8.GetBytes(signatureHeader.ToLowerInvariant());
-        if (expectedBytes.Length != actualBytes.Length || !CryptographicOperations.FixedTimeEquals(expectedBytes, actualBytes))
+        var expectedSignature = RazorpayHmac.WebhookSignature(webhookSecret!, rawBody);
+        if (!RazorpayHmac.FixedTimeEqualsHex(expectedSignature, signatureHeader))
             return Unauthorized();
 
         using var doc = JsonDocument.Parse(rawBody);

@@ -1,6 +1,7 @@
 using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -38,6 +39,56 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     [HttpGet("revenue")]
     public async Task<IActionResult> Revenue() => Ok(await store.GetAsync("settings", "platformRevenue") ?? new Dictionary<string, object> { ["totalGrossSales"] = 0.0, ["totalCommissionEarned"] = 0.0, ["totalVendorPayouts"] = 0.0 });
 
+    /* PAY-004: list payment mismatches (unpaid online + Razorpay capture vs Firestore).
+       Optional body of captures lets ops/tests reconcile without live Razorpay keys. */
+    [HttpGet("payments/reconciliation")]
+    public async Task<IActionResult> PaymentReconciliationReport([FromQuery] DateTimeOffset? from = null, [FromQuery] DateTimeOffset? to = null)
+    {
+        var windowEnd = to ?? DateTimeOffset.UtcNow;
+        var windowStart = from ?? windowEnd.AddDays(-30);
+        if (windowStart > windowEnd) return BadRequest(new { error = "from must be before to." });
+        var (orders, mismatches) = await marketplace.ReconcilePaymentsAsync(windowStart, windowEnd);
+        return Ok(new
+        {
+            from = windowStart,
+            to = windowEnd,
+            orderCount = orders.Count,
+            mismatchCount = mismatches.Count,
+            mismatches,
+            unpaidOnline = mismatches.Where(m => m.Kind == PaymentReconciliation.KindUnpaidOnline).ToList()
+        });
+    }
+
+    [HttpPost("payments/reconciliation")]
+    public async Task<IActionResult> PaymentReconciliationWithCaptures(
+        [FromQuery] DateTimeOffset? from = null,
+        [FromQuery] DateTimeOffset? to = null,
+        [FromBody] List<RazorpayCapturedPaymentDto>? captures = null)
+    {
+        var windowEnd = to ?? DateTimeOffset.UtcNow;
+        var windowStart = from ?? windowEnd.AddDays(-30);
+        if (windowStart > windowEnd) return BadRequest(new { error = "from must be before to." });
+        var mapped = (captures ?? []).Select(c => new RazorpayCapturedPayment(
+            c.RazorpayPaymentId, c.RazorpayOrderId, c.AmountPaise, c.CapturedAt)).ToList();
+        var (orders, mismatches) = await marketplace.ReconcilePaymentsAsync(windowStart, windowEnd, mapped);
+        return Ok(new
+        {
+            from = windowStart,
+            to = windowEnd,
+            orderCount = orders.Count,
+            mismatchCount = mismatches.Count,
+            mismatches,
+            unpaidOnline = mismatches.Where(m => m.Kind == PaymentReconciliation.KindUnpaidOnline).ToList()
+        });
+    }
+
+    [HttpPost("orders/{id}/cancel-unpaid")]
+    public async Task<IActionResult> CancelUnpaidOnline(string id)
+    {
+        try { await marketplace.CancelUnpaidOnlineOrderAsync(id); return Ok(new { success = true }); }
+        catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
+    }
+
     /* Targets a vendor's sub-order specifically (id here is a vendor_orders
        document id, not a master order id) - status/tracking live per vendor
        sub-order now, not on the shared master order. Admin override bypasses
@@ -59,3 +110,4 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     private static bool Allowed(string collection)=>Collections.Contains(collection);
 }
 public sealed record OrderStatusRequest(string Status, string? TrackingNumber = null, string? Carrier = null);
+public sealed record RazorpayCapturedPaymentDto(string RazorpayPaymentId, string RazorpayOrderId, long AmountPaise, DateTimeOffset CapturedAt);

@@ -70,6 +70,14 @@ const AdminAPI = {
   async getWithdrawals()           { return this.list("withdrawals"); },
   async approveWithdrawal(id)      { return this.post(`/admin/withdrawals/${id}/approve`, {}); },
   async getRevenue()               { return this.get('/admin/revenue'); },
+  async getPaymentReconciliation(from, to) {
+    const qs = new URLSearchParams();
+    if (from) qs.set('from', from);
+    if (to) qs.set('to', to);
+    const q = qs.toString();
+    return this.get(`/admin/payments/reconciliation${q ? `?${q}` : ''}`);
+  },
+  async cancelUnpaidOrder(id)      { return this.post(`/admin/orders/${id}/cancel-unpaid`, {}); },
   async getTransactions()          { return this.list("transactions", 500); },
   async getVendorOrders()          { return this.list("vendor_orders", 500); },
   async updateOrderStatus(id, status, trackingNumber, carrier) { return this.put(`/admin/vendor-orders/${id}/status`, { status, trackingNumber, carrier }); },

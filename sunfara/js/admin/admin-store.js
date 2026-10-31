@@ -3,14 +3,15 @@
 const AdminStore = {
   user: null,
   isLoggedIn: false,
+  _authUnsub: null,
 
-  // ==================== AUTH ====================
+  // ==================== AUTH (AUTH-001 claim gate) ====================
 
   login: async function(email, password) {
     try {
-      // Firebase Auth sign-in
-      const { signInWithEmailAndPassword, getAuth } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js");
-      const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
+      // Align with storefront modular SDK major (FE-001 / Phase 2 identity surface)
+      const { signInWithEmailAndPassword, signOut, getAuth, getIdTokenResult } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js");
+      const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js");
 
       const firebaseConfig = {
         apiKey: "AIzaSyBN-0IvpsqfHULbddiauMFz9Dh3iL5aXw0",
@@ -24,6 +25,15 @@ const AdminStore = {
       const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const credential = await signInWithEmailAndPassword(auth, email, password);
+      const tokenResult = await getIdTokenResult(credential.user);
+
+      try {
+        AdminClaimGate.assertAdminClaims(tokenResult.claims);
+      } catch (claimErr) {
+        await signOut(auth);
+        throw claimErr;
+      }
+
       const token = await credential.user.getIdToken();
 
       this.user = {
@@ -31,6 +41,7 @@ const AdminStore = {
         name: credential.user.displayName || email.split("@")[0],
         avatar: (credential.user.displayName || email)[0].toUpperCase(),
         uid: credential.user.uid,
+        role: tokenResult.claims.role,
         loginTime: new Date()
       };
       this.isLoggedIn = true;
@@ -48,9 +59,10 @@ const AdminStore = {
 
       return true;
     } catch (firebaseError) {
+      if (firebaseError.code === "auth/insufficient-admin-claim") throw firebaseError;
       throw new Error(firebaseError.code === "auth/invalid-credential"
         ? "Invalid email or password"
-        : firebaseError.message);
+        : (firebaseError.message || "Login failed"));
     }
   },
 
@@ -63,12 +75,63 @@ const AdminStore = {
     window.location.reload();
   },
 
+  /* Restore session only when Firebase confirms role=admin (do not trust localStorage alone). */
   loadStoredUser: function() {
     const stored = AdminUtils.getItem("user");
-    if (stored) {
-      this.user = stored;
-      this.isLoggedIn = true;
-      AdminAPI.init();
+    if (!stored) return;
+    // Optimistic paint; initAuthListener clears non-admins
+    this.user = stored;
+    this.isLoggedIn = true;
+    AdminAPI.init();
+  },
+
+  initAuthListener: async function() {
+    try {
+      const { getAuth, onAuthStateChanged, getIdTokenResult, signOut } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js");
+      const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js");
+      const firebaseConfig = {
+        apiKey: "AIzaSyBN-0IvpsqfHULbddiauMFz9Dh3iL5aXw0",
+        authDomain: "sunfara-500b0.firebaseapp.com",
+        projectId: "sunfara-500b0",
+        storageBucket: "sunfara-500b0.firebasestorage.app",
+        messagingSenderId: "678617069984",
+        appId: "1:678617069984:web:c807a635452f3d1f6c4cc5"
+      };
+      const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      if (this._authUnsub) this._authUnsub();
+      this._authUnsub = onAuthStateChanged(auth, async (fbUser) => {
+        if (!fbUser) {
+          this.user = null;
+          this.isLoggedIn = false;
+          AdminUtils.removeItem("user");
+          AdminUtils.removeItem("authToken");
+          return;
+        }
+        const tokenResult = await getIdTokenResult(fbUser);
+        if (!AdminClaimGate.isAdmin(tokenResult.claims)) {
+          await signOut(auth);
+          this.user = null;
+          this.isLoggedIn = false;
+          AdminUtils.removeItem("user");
+          AdminUtils.removeItem("authToken");
+          return;
+        }
+        const token = await fbUser.getIdToken();
+        this.user = {
+          email: fbUser.email,
+          name: fbUser.displayName || (fbUser.email || "").split("@")[0],
+          avatar: (fbUser.displayName || fbUser.email || "A")[0].toUpperCase(),
+          uid: fbUser.uid,
+          role: tokenResult.claims.role,
+          loginTime: new Date()
+        };
+        this.isLoggedIn = true;
+        AdminUtils.setItem("user", this.user);
+        AdminAPI.setToken(token);
+      });
+    } catch (e) {
+      console.warn("Admin auth listener init failed", e);
     }
   },
 
@@ -167,3 +230,4 @@ const AdminStore = {
 };
 
 AdminStore.loadStoredUser();
+AdminStore.initAuthListener();

@@ -20,12 +20,10 @@ public sealed class ProductsController(FirestoreCatalogStore store) : Controller
     [Authorize(Policy = "Vendor"), HttpGet("mine")]
     public async Task<IActionResult> Mine() => Ok(await store.WhereAsync("products", "vendorId", UserId, 500));
 
+    /* AUTH-006 VendorActiveFilter requires status==active (admin bypass). */
     [Authorize(Policy = "Vendor"), HttpPost]
     public async Task<IActionResult> Create([FromBody] Dictionary<string, object> product)
     {
-        var vendor = await store.GetAsync("vendors", UserId);
-        var vendorStatus = vendor?.GetValueOrDefault("status")?.ToString();
-        if (vendorStatus is "rejected" or "suspended") return Forbid();
         if (product.TryGetValue("price", out var priceVal) && Convert.ToDouble(FirestoreCatalogStore.NormalizeValue(priceVal)) <= 0) return BadRequest(new { error = "Price must be greater than zero." });
         product["status"] = "pending";
         product["vendorId"] = UserId;

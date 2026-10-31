@@ -26,6 +26,19 @@ public sealed class FirestoreCatalogStore(FirestoreDb db)
         return reference.Id;
     }
 
+    /* Merge upsert by explicit document id (AUTH-003 vendors/{uid}, AUTH-004 customers/{uid}).
+       Never deletes sibling docs; sets createdAt only when the doc is new. */
+    public async Task UpsertAsync(string collection, string id, Dictionary<string, object> data)
+    {
+        if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Document id is required for upsert.", nameof(id));
+        var reference = db.Collection(collection).Document(id);
+        var exists = (await reference.GetSnapshotAsync()).Exists;
+        data = Normalize(data);
+        data["updatedAt"] = FieldValue.ServerTimestamp;
+        if (!exists) data["createdAt"] = FieldValue.ServerTimestamp;
+        await reference.SetAsync(data, SetOptions.MergeAll);
+    }
+
     public async Task<bool> UpdateAsync(string collection, string id, Dictionary<string, object> data)
     {
         var reference = db.Collection(collection).Document(id);

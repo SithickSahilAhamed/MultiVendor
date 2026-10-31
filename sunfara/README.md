@@ -3,7 +3,7 @@
 A complete ecommerce platform and enterprise admin dashboard for organic, natural, and wellness products. Built with vanilla HTML, CSS, and JavaScript.
 
 **Live Demo**: [Sunfara on Netlify](#deployment)  
-**Admin Panel**: `/admin.html` (Demo: `admin@sunfara.com` / `admin123`)
+**Admin Panel**: `/admin.html` (Firebase Auth user with custom claim `role=admin` — no demo passwords in repo)
 
 ---
 
@@ -81,9 +81,8 @@ Visit `http://localhost:8000` in your browser.
 
 ### Access Admin Dashboard
 1. Navigate to `http://localhost:8000/admin.html`
-2. Login with demo credentials:
-   - Email: `admin@sunfara.com`
-   - Password: `admin123`
+2. Sign in with a Firebase Auth account that has custom claim `role=admin`
+3. Ops: set claims via Firebase Admin SDK / console; rotate any historical demo passwords (see project ops `AUTH_CREDENTIAL_ROTATION.md`)
 
 ---
 

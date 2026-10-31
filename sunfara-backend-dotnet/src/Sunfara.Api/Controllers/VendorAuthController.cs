@@ -2,6 +2,7 @@ using FirebaseAdmin.Auth;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -9,7 +10,7 @@ namespace Sunfara.Api.Controllers;
 /* Public (unauthenticated) endpoints for a vendor to create their own
    account - the piece that was entirely missing before: previously the
    only way a vendor record could exist was an admin typing it in by hand,
-   with no login ever attached to it. */
+   with no login ever attached to it. Doc id always equals Auth UID (AUTH-003). */
 [ApiController, Route("api/vendor-auth")]
 public sealed class VendorAuthController(FirestoreCatalogStore store) : ControllerBase
 {
@@ -21,6 +22,16 @@ public sealed class VendorAuthController(FirestoreCatalogStore store) : Controll
             return BadRequest(new { error = "Name, email, phone, and password are required." });
         if (request.Password.Length < 8)
             return BadRequest(new { error = "Password must be at least 8 characters." });
+
+        Dictionary<string, object> vendorDoc;
+        try
+        {
+            vendorDoc = VendorProvisioning.BuildVendorDocument(request.Name, request.Email, request.Phone);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
 
         UserRecord user;
         try
@@ -43,26 +54,9 @@ public sealed class VendorAuthController(FirestoreCatalogStore store) : Controll
 
         await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(user.Uid, new Dictionary<string, object> { ["role"] = "vendor" });
 
-        // Vendor doc ID intentionally matches the Firebase Auth UID - firestore.rules
-        // already assumes this (`request.auth.uid == id`), so this is the ID scheme
-        // the rest of the system was designed around, even though the admin's
-        // manual "Add Vendor" path never followed it.
-        await store.Database.Collection("vendors").Document(user.Uid).CreateAsync(new Dictionary<string, object>
-        {
-            ["name"] = request.Name,
-            ["email"] = request.Email,
-            ["phone"] = request.Phone,
-            ["status"] = "pending",
-            ["commission"] = 10.0,
-            ["products"] = 0,
-            ["revenue"] = 0.0,
-            ["rating"] = 0.0,
-            ["reviews"] = 0,
-            ["verified"] = false,
-            ["kycStatus"] = "pending",
-            ["createdAt"] = FieldValue.ServerTimestamp,
-            ["updatedAt"] = FieldValue.ServerTimestamp
-        });
+        vendorDoc["createdAt"] = FieldValue.ServerTimestamp;
+        vendorDoc["updatedAt"] = FieldValue.ServerTimestamp;
+        await store.Database.Collection("vendors").Document(user.Uid).CreateAsync(vendorDoc);
 
         return Ok(new { uid = user.Uid, message = "Registered. Your account is pending admin approval." });
     }

@@ -26,9 +26,9 @@ public sealed class FirestoreCatalogStore(FirestoreDb db)
         return reference.Id;
     }
 
-    /* Idempotent write for catalog seed / admin repairs: merges fields onto a
-       known document id without deleting other fields or wiping the collection.
-       Creates the doc when missing; never removes sibling documents. */
+    /* Idempotent merge upsert by explicit document id (catalog seed, AUTH-003
+       vendors/{uid}, AUTH-004 customers/{uid}). Creates the doc when missing;
+       never deletes sibling docs; sets createdAt only when the doc is new. */
     public async Task UpsertAsync(string collection, string id, Dictionary<string, object> data)
     {
         if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Document id is required for upsert.", nameof(id));

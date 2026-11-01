@@ -1,6 +1,8 @@
 using FirebaseAdmin.Auth;
+using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -10,7 +12,68 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     private static readonly HashSet<string> Collections = ["vendors","products","orders","vendor_orders","customers","commissions","withdrawals","reviews","categories","coupons","inventorySources","shipments","invoices","refunds","returns","settings","auditLogs","transactions","notifications"];
     [HttpGet("{collection}")] public async Task<IActionResult> List(string collection, [FromQuery] int limit=100) => Allowed(collection) ? Ok(await store.ListAsync(collection,limit)) : NotFound();
     [HttpGet("{collection}/{id}")] public async Task<IActionResult> Get(string collection,string id) => !Allowed(collection) ? NotFound() : await store.GetAsync(collection,id) is { } item ? Ok(item) : NotFound();
-    [HttpPost("{collection}")] public async Task<IActionResult> Add(string collection,[FromBody] Dictionary<string,object> item) { if(!Allowed(collection)) return NotFound(); var id=await store.AddAsync(collection,item); return Ok(new{id}); }
+
+    /* AUTH-003: refuse auto-id vendor orphans. All other collections keep generic Add. */
+    [HttpPost("{collection}")]
+    public async Task<IActionResult> Add(string collection, [FromBody] Dictionary<string, object> item)
+    {
+        if (!Allowed(collection)) return NotFound();
+        if (VendorProvisioning.IsAutoIdCreateForbidden(collection))
+            return BadRequest(new { error = VendorProvisioning.AutoIdRejectedMessage });
+        var id = await store.AddAsync(collection, item);
+        return Ok(new { id });
+    }
+
+    /* AUTH-003: create Firebase Auth user + role=vendor claim + vendors/{uid} only. */
+    [HttpPost("vendors/create-account")]
+    public async Task<IActionResult> CreateVendorAccount([FromBody] AdminCreateVendorRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) ||
+            string.IsNullOrWhiteSpace(request.Phone) || string.IsNullOrWhiteSpace(request.Password))
+            return BadRequest(new { error = "Name, email, phone, and temporary password are required." });
+        if (request.Password.Length < 8)
+            return BadRequest(new { error = "Password must be at least 8 characters." });
+
+        Dictionary<string, object> vendorDoc;
+        try
+        {
+            vendorDoc = VendorProvisioning.BuildVendorDocument(
+                request.Name, request.Email, request.Phone,
+                request.Commission ?? 10.0,
+                string.IsNullOrWhiteSpace(request.Status) ? "pending" : request.Status!);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+
+        UserRecord user;
+        try
+        {
+            user = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs
+            {
+                Email = request.Email.Trim(),
+                Password = request.Password,
+                DisplayName = request.Name.Trim(),
+                EmailVerified = false
+            });
+        }
+        catch (FirebaseAuthException e)
+        {
+            var message = e.AuthErrorCode == AuthErrorCode.EmailAlreadyExists
+                ? "An account with this email already exists."
+                : e.Message;
+            return BadRequest(new { error = message });
+        }
+
+        await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(user.Uid, new Dictionary<string, object> { ["role"] = "vendor" });
+
+        vendorDoc["createdAt"] = FieldValue.ServerTimestamp;
+        vendorDoc["updatedAt"] = FieldValue.ServerTimestamp;
+        await store.Database.Collection("vendors").Document(user.Uid).CreateAsync(vendorDoc);
+
+        return Ok(new { uid = user.Uid, id = user.Uid, message = "Vendor Auth user and vendors/{uid} created." });
+    }
 
     /* Suspending/rejecting a vendor previously only flipped a Firestore field -
        the vendor's existing ID token (and any refresh token minted before this
@@ -59,3 +122,4 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     private static bool Allowed(string collection)=>Collections.Contains(collection);
 }
 public sealed record OrderStatusRequest(string Status, string? TrackingNumber = null, string? Carrier = null);
+public sealed record AdminCreateVendorRequest(string Name, string Email, string Phone, string Password, double? Commission = null, string? Status = null);

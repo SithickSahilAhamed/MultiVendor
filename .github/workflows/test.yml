@@ -2,41 +2,73 @@ name: Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, master, develop]
   pull_request:
-    branches: [main, develop]
+    branches: [main, master, develop]
 
 jobs:
-  test:
+  dotnet-unit:
+    name: Domain unit tests
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          dotnet-version: "9.0.x"
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Restore
+        run: dotnet restore sunfara-backend-dotnet/Sunfara.Backend.sln
 
-      - name: Run tests
-        run: npm test
+      - name: Domain unit tests
+        run: >
+          dotnet test sunfara-backend-dotnet/tests/Sunfara.Domain.Tests/Sunfara.Domain.Tests.csproj
+          --configuration Release
+          --no-restore
+          --verbosity normal
+
+  dotnet-integration:
+    name: Firestore emulator integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Setup Java (Firestore emulator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Restore
+        run: dotnet restore sunfara-backend-dotnet/Sunfara.Backend.sln
+
+      - name: Build integration tests
+        run: >
+          dotnet build sunfara-backend-dotnet/tests/Sunfara.Integration.Tests/Sunfara.Integration.Tests.csproj
+          --configuration Release
+          --no-restore
+
+      - name: Emulator money-path + AuthZ matrix
+        run: >
+          npx --yes firebase-tools@13.35.1 emulators:exec
+          --only firestore
+          --project demo-sunfara-test
+          "dotnet test sunfara-backend-dotnet/tests/Sunfara.Integration.Tests/Sunfara.Integration.Tests.csproj --configuration Release --no-build --verbosity normal"
         env:
-          NODE_ENV: test
-
-      - name: Run linter
-        run: npm run lint || true
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage/coverage-final.json
-          flags: unittests
-          name: codecov-umbrella
+          FIRESTORE_EMULATOR_HOST: 127.0.0.1:8080
+          FIREBASE_PROJECT_ID: demo-sunfara-test
+          ASPNETCORE_ENVIRONMENT: Testing
+          RAZORPAY_KEY_ID: rzp_test_fixture
+          RAZORPAY_KEY_SECRET: test_key_secret_fixture
+          RAZORPAY_WEBHOOK_SECRET: whsec_fixture_phase4

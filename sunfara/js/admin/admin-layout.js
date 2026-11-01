@@ -107,9 +107,10 @@ const AdminLayout = {
   },
 
   getNotificationCount: function() {
-    const vendors = AdminStore.getVendors();
-    const products = AdminStore.getProducts();
-    const pending = vendors.filter(v => v.status === 'pending').length + 
+    // CAT-003: use cached API rows only — never inflate badges from demo entities in prod
+    const vendors = AdminStore._cache?.vendors || [];
+    const products = AdminStore._cache?.products || [];
+    const pending = vendors.filter(v => v.status === 'pending').length +
                    products.filter(p => p.status === 'pending').length;
     return pending;
   },

@@ -1,49 +1,77 @@
 using System.Threading.RateLimiting;
 using FirebaseAdmin;
+using Google.Api.Gax;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Sunfara.Api.Filters;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var projectId = builder.Configuration["Firebase:ProjectId"] ?? Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ?? "sunfara-500b0";
+var isTesting = builder.Environment.IsEnvironment("Testing");
+var emulatorHost = Environment.GetEnvironmentVariable("FIRESTORE_EMULATOR_HOST");
 
 // Load service account credentials: prefer an inline JSON env var (works in
 // containers, where the key file is intentionally not part of the image),
-// falling back to a local file for dev.
+// falling back to a local file for dev. Testing / emulator runs skip this —
+// never require a real service account for CI.
 GoogleCredential? credential = null;
-var credJson = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON");
-if (!string.IsNullOrEmpty(credJson))
+if (!isTesting && string.IsNullOrEmpty(emulatorHost))
 {
-    credential = GoogleCredential.FromJson(credJson);
-}
-else
-{
-    var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
-    var credFullPath = Path.GetFullPath(credPath);
-    if (!File.Exists(credFullPath))
-        credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
-    if (File.Exists(credFullPath))
-        credential = GoogleCredential.FromFile(credFullPath);
+    var credJson = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON");
+    if (!string.IsNullOrEmpty(credJson))
+    {
+        credential = GoogleCredential.FromJson(credJson);
+    }
+    else
+    {
+        var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
+        var credFullPath = Path.GetFullPath(credPath);
+        if (!File.Exists(credFullPath))
+            credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
+        if (File.Exists(credFullPath))
+            credential = GoogleCredential.FromFile(credFullPath);
+    }
+
+    if (credential != null && FirebaseApp.DefaultInstance == null)
+        FirebaseApp.Create(new AppOptions { Credential = credential });
 }
 
-if (credential != null && FirebaseApp.DefaultInstance == null)
-    FirebaseApp.Create(new AppOptions { Credential = credential });
-
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.AddService<VendorActiveFilter>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton(_ =>
 {
-    var firestoreBuilder = new FirestoreDbBuilder { ProjectId = projectId };
-    if (credential != null) firestoreBuilder.Credential = credential;
+    // Safety: Testing must never silently talk to production Firestore.
+    // Prefer an explicit demo project id under the emulator; refuse the live
+    // project id unless ALLOW_PROD_PROJECT_IN_EMULATOR=1 (ops escape hatch).
+    var firestoreProjectId = projectId;
+    if (!string.IsNullOrEmpty(emulatorHost) || isTesting)
+    {
+        if (string.IsNullOrEmpty(emulatorHost))
+            throw new InvalidOperationException("Testing requires FIRESTORE_EMULATOR_HOST so tests never hit production Firestore.");
+        if (firestoreProjectId.Equals("sunfara-500b0", StringComparison.Ordinal)
+            && Environment.GetEnvironmentVariable("ALLOW_PROD_PROJECT_IN_EMULATOR") != "1")
+        {
+            firestoreProjectId = "demo-sunfara-test";
+        }
+    }
+
+    var firestoreBuilder = new FirestoreDbBuilder { ProjectId = firestoreProjectId };
+    if (!string.IsNullOrEmpty(emulatorHost) || isTesting)
+        firestoreBuilder.EmulatorDetection = EmulatorDetection.EmulatorOnly;
+    else if (credential != null)
+        firestoreBuilder.Credential = credential;
     return firestoreBuilder.Build();
 });
 builder.Services.AddScoped<FirestoreCatalogStore>();
 builder.Services.AddScoped<MarketplaceService>();
+builder.Services.AddScoped<VendorActiveFilter>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     // Without this, the default JWT handler remaps short claim names (e.g. "sub",
@@ -73,6 +101,13 @@ builder.Services.AddRateLimiter(o =>
 });
 
 var app = builder.Build();
+
+/* PAY-002: Production fails closed without RAZORPAY_WEBHOOK_SECRET so tab-close
+   captures cannot silently leave orders unpaid with no server-side settle path. */
+var webhookSecret = builder.Configuration["RAZORPAY_WEBHOOK_SECRET"]
+    ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
+RazorpayWebhookStartup.EnsureConfigured(webhookSecret, app.Environment.IsProduction());
+
 // Swagger exposes the full API surface (every route, every request/response
 // shape) to anyone who finds the URL - fine for local dev, not something a
 // production API needs to hand an attacker for free.
@@ -99,4 +134,15 @@ app.Use(async (ctx, next) =>
 
 app.UseCors("Sunfara"); app.UseRateLimiter(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
 app.MapGet("/", () => Results.Ok(new { status = "ok", service = "Sunfara API", docs = "/swagger" }));
+app.MapGet("/api/health", (IHostEnvironment env, IConfiguration config) =>
+{
+    var secret = config["RAZORPAY_WEBHOOK_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
+    var webhookReady = RazorpayWebhookStartup.IsWebhookUsable(secret);
+    if (env.IsProduction() && !webhookReady)
+        return Results.Json(new { status = "unhealthy", service = "Sunfara C# Firebase Commerce API", webhookConfigured = false, error = RazorpayWebhookStartup.MissingSecretMessage }, statusCode: 503);
+    return Results.Ok(new { status = "OK", service = "Sunfara C# Firebase Commerce API", webhookConfigured = webhookReady, environment = env.EnvironmentName });
+});
 app.Run();
+
+// Expose entry point for WebApplicationFactory integration tests.
+public partial class Program { }

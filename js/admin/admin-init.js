@@ -1,15 +1,8 @@
-/* Admin Panel Initialization */
+/* Admin Panel Initialization (legacy root SPA — non-production) */
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Init admin panel
   AdminLayout.init();
   AdminRouter.init();
-
-  // Set page title
   document.title = 'Sunfara Admin Panel';
-
-  console.log('✅ Admin Panel Initialized');
-  console.log('Demo Credentials:');
-  console.log('Email: admin@sunfara.com');
-  console.log('Password: admin123');
+  console.log('Admin Panel Initialized (legacy root SPA)');
 });

@@ -95,6 +95,20 @@ const AuthPage = {
     };
   },
 
+  /* AUTH-004: upsert customers/{uid} after Firebase signup/login/Google. Failures are non-blocking. */
+  async syncCustomerProfile(user) {
+    if (!user?.id || typeof SunfaraAPI === 'undefined') return;
+    try {
+      await SunfaraAPI.post('/customers/me', {
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || ''
+      });
+    } catch (e) {
+      console.warn('Customer profile upsert skipped', e?.message || e);
+    }
+  },
+
   async forgotPassword() {
     const email = document.getElementById('login-email')?.value.trim();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { Toast.show('Enter your email above first, then click Forgot Password', 'error'); return; }
@@ -116,7 +130,9 @@ const AuthPage = {
     if (btn) { btn.disabled = true; btn.textContent = 'Logging in…'; }
     try {
       const cred = await window.FirebaseAuth.signInWithEmailAndPassword(window.firebase.auth, email, password);
-      Store.login(this.userFromFirebase(cred.user));
+      const user = this.userFromFirebase(cred.user);
+      Store.login(user);
+      await this.syncCustomerProfile(user);
       Toast.show(`Welcome back to Sunfara! 🌿`, 'success');
       Navbar.render();
       window.location.hash = '#/';
@@ -147,7 +163,9 @@ const AuthPage = {
     try {
       const cred = await window.FirebaseAuth.createUserWithEmailAndPassword(window.firebase.auth, email, password);
       await window.FirebaseAuth.updateProfile(cred.user, { displayName: name });
-      Store.login({ id: cred.user.uid, name, email, phone });
+      const user = { id: cred.user.uid, name, email, phone };
+      Store.login(user);
+      await this.syncCustomerProfile(user);
       Toast.show(`Welcome to Sunfara, ${name.split(' ')[0]}! 🌿`, 'success', 4000);
       Navbar.render();
       window.location.hash = '#/';
@@ -164,7 +182,9 @@ const AuthPage = {
     try {
       const provider = new window.FirebaseAuth.GoogleAuthProvider();
       const cred = await window.FirebaseAuth.signInWithPopup(window.firebase.auth, provider);
-      Store.login(this.userFromFirebase(cred.user));
+      const user = this.userFromFirebase(cred.user);
+      Store.login(user);
+      await this.syncCustomerProfile(user);
       Toast.show(`Welcome to Sunfara! 🌿`, 'success');
       Navbar.render();
       window.location.hash = '#/';

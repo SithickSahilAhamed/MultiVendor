@@ -1,51 +1,56 @@
-# Sunfara and backend platform
+# Sunfara / Iqral multi-vendor platform
 
-This repository combines the Sunfara storefront/admin frontend with the backend modernization work in `sunfara-backend-dotnet`.
+Authoritative production stack (Phase 0 locked):
+
+- **API:** ASP.NET Core 9 `Sunfara.Api` — Railway Docker (`Dockerfile` + `railway.json`)
+- **Frontend:** `sunfara/` SPA — Firebase Hosting / Netlify
+- **Auth / data / pay:** Firebase Auth + Cloud Firestore + Razorpay
+- **Delivery:** Browser-based responsive web only (no React Native / native apps)
+
+Express (`server.js`) and the **root** SPA (`index.html` / `js/`) are **legacy / non-production**.
+
+Ops detail: Project store `docs/ops/STACK_RUNBOOK.md` (ARCH-001).
 
 ## What is included
 
-- Sunfara storefront and admin UI in the repository root
-- Backend services and tests in `sunfara-backend-dotnet`
-- Static deployment config for the frontend
-- Firebase, Netlify, Render, Railway, and Vercel config files where needed
-
-## Frontend
-
-The frontend is a vanilla HTML, CSS, and JavaScript ecommerce experience with:
-
-- Product browsing, cart, checkout, auth, orders, profile, wishlist, and content pages
-- An admin dashboard for vendors, orders, products, reports, and settings
-- JSON-backed catalog and content data
-
-## Backend
-
-The backend workspace contains:
-
-- .NET solution and API project under `sunfara-backend-dotnet`
-- Domain, infrastructure, and test projects
-- Migration notes and supporting configuration
+- Authoritative storefront / admin / vendor UI under `sunfara/`
+- Authoritative backend under `sunfara-backend-dotnet`
+- Quarantined Express deploy stubs: `Procfile`, `render.yaml`, `vercel.json` (ARCH-002)
+- Root SPA and Express sources retained as archive only
 
 ## Run locally
 
-Frontend:
+Single local API URL (ARCH-003): **`http://localhost:5187`**
 
 ```bash
-python -m http.server 8000
-```
-
-Backend:
-
-```bash
+# API (.NET)
 dotnet run --project sunfara-backend-dotnet/src/Sunfara.Api/Sunfara.Api.csproj
+
+# Frontend (serve sunfara/)
+cd sunfara && python -m http.server 8000
 ```
+
+Smoke:
+
+```bash
+curl -sS http://localhost:5187/api/health
+bash scripts/assert-authoritative-stack.sh
+```
+
+`npm start` / `npm run dev` at the repo root are quarantined and exit non-zero. Legacy Express only via `npm run start:legacy-express` (not for production).
 
 ## Deployment
 
-Use the frontend as a static site and deploy the backend separately through your preferred .NET host.
+| Target | Path |
+| --- | --- |
+| API | Railway builds root `Dockerfile` → `dotnet Sunfara.Api.dll` |
+| Frontend | Firebase Hosting (`public: sunfara`); Netlify `base = sunfara` |
+| CI frontend deploy | `.github/workflows/deploy.yml` |
+| Stack guard | `.github/workflows/stack-guard.yml` |
 
-The Netlify config in this repo is set up for the root-level frontend files and SPA routing.
+Do **not** deploy commerce via Heroku/Render/Vercel Node configs in this repo.
 
 ## Notes
 
-- Demo admin access and catalog data are still part of the frontend experience.
-- If you want the backend and frontend split into separate deploy targets, keep the frontend static and point the frontend API client at the backend URL.
+- Root `.env.example` describes legacy Express variables; Railway uses Firebase + Razorpay env names documented in the ops runbook (names only — never commit secrets).
+- Demo admin credentials in client code are scheduled for AUTH-002 cleanup; do not treat them as production access.

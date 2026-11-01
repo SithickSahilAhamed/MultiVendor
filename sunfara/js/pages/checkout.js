@@ -30,10 +30,10 @@ const CheckoutPage = {
             <h3 style="font-size:var(--text-sm);letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:var(--space-4)">Order Summary</h3>
             ${Store.cart.map(item => `
               <div class="checkout-item-mini">
-                <img class="checkout-item-img" src="${item.image}" alt="${item.name}" onerror="this.style.background='var(--color-cream)'">
+                <img class="checkout-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" onerror="this.style.background='var(--color-cream)'">
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:.8rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div>
-                  <div style="font-size:.75rem;color:var(--color-text-muted)">${item.variantName} · Qty ${item.quantity}</div>
+                  <div style="font-size:.8rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(item.name)}</div>
+                  <div style="font-size:.75rem;color:var(--color-text-muted)">${escapeHtml(item.variantName)} · Qty ${item.quantity}</div>
                 </div>
                 <div style="font-weight:700;font-size:.85rem">${formatPrice(item.price * item.quantity)}</div>
               </div>`).join('')}
@@ -89,7 +89,7 @@ const CheckoutPage = {
         ${addresses.map(a => `
           <div class="address-card ${this.selectedAddress?.id===a.id?'selected':''}" onclick="CheckoutPage.selectedAddress=Store.user.addresses.find(x=>x.id==='${a.id}');document.querySelectorAll('.address-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
             <input type="radio" class="address-card-radio" name="address" ${this.selectedAddress?.id===a.id?'checked':''}>
-            <div><div class="address-type-badge">🏠 ${a.type||'Home'}</div><div class="address-text"><strong>${a.name}</strong> · ${a.phone}<br>${a.line1}${a.line2?', '+a.line2:''}<br>${a.city}, ${a.state} — ${a.pincode}</div></div>
+            <div><div class="address-type-badge">🏠 ${escapeHtml(a.type||'Home')}</div><div class="address-text"><strong>${escapeHtml(a.name)}</strong> · ${escapeHtml(a.phone)}<br>${escapeHtml(a.line1)}${a.line2?', '+escapeHtml(a.line2):''}<br>${escapeHtml(a.city)}, ${escapeHtml(a.state)} — ${escapeHtml(a.pincode)}</div></div>
           </div>`).join('')}
         <div class="add-address-toggle" onclick="document.getElementById('add-addr-form').classList.toggle('visible')">
           ＋ Add New Address
@@ -165,20 +165,20 @@ const CheckoutPage = {
     if (totalEl) totalEl.textContent = formatPrice(t.final);
   },
 
+  /* PAY-001 / PAY-003: only Razorpay Checkout modal + COD. No first-party
+     PAN/CVV/UPI fields; no COD surcharge claim (server CodFeeRupees = 0). */
   renderPaymentStep(el) {
-    this.paymentMethod = 'upi';
+    this.paymentMethod = 'razorpay';
     el.innerHTML = `
       <h3 style="margin-bottom:var(--space-4)">Choose Payment Method</h3>
       <div class="payment-options">
         ${[
-          { id: 'upi', icon: '📱', label: 'UPI', sub: 'PhonePe, GPay, Paytm & more', fields: `<input class="input" placeholder="Enter UPI ID (yourname@upi)" style="margin-bottom:8px">` },
-          { id: 'card', icon: '💳', label: 'Credit / Debit Card', sub: 'All major cards accepted', fields: `<input class="input card-number-input" placeholder="Card Number" maxlength="19" style="margin-bottom:8px"><input class="input" placeholder="Name on Card" style="margin-bottom:8px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="input" placeholder="MM/YY"><input class="input" placeholder="CVV" maxlength="3" type="password"></div><label style="display:flex;align-items:center;gap:8px;font-size:.8rem;margin-top:8px"><input type="checkbox"> Save card for faster checkout</label>` },
-          { id: 'netbanking', icon: '🏦', label: 'Net Banking', sub: 'SBI, HDFC, ICICI, Axis & more', fields: `<select class="input"><option>Select Bank</option>${['SBI','HDFC','ICICI','Axis','Kotak','PNB'].map(b=>`<option>${b}</option>`).join('')}</select>` },
-          { id: 'cod', icon: '💵', label: 'Cash on Delivery', sub: '₹40 additional COD charge · Pay at doorstep', fields: `<p style="font-size:.85rem;color:var(--color-text-muted)">A nominal ₹40 fee is charged for COD orders.</p>` }
+          { id: 'razorpay', icon: '🔒', label: 'Pay Online', sub: 'UPI, cards & net banking via Razorpay Checkout', fields: `<p style="font-size:.85rem;color:var(--color-text-muted)">You will complete payment in the secure Razorpay window. Card and UPI details are never entered on this site.</p>` },
+          { id: 'cod', icon: '💵', label: 'Cash on Delivery', sub: 'Pay at doorstep · no extra COD fee', fields: `<p style="font-size:.85rem;color:var(--color-text-muted)">Pay the order total in cash when your package arrives. No additional COD surcharge.</p>` }
         ].map(pm => `
-          <div class="payment-card ${pm.id==='upi'?'selected':''}" id="pm-${pm.id}" onclick="CheckoutPage.selectPayment('${pm.id}')">
+          <div class="payment-card ${pm.id==='razorpay'?'selected':''}" id="pm-${pm.id}" onclick="CheckoutPage.selectPayment('${pm.id}')">
             <div class="payment-header">
-              <input type="radio" name="payment" ${pm.id==='upi'?'checked':''}>
+              <input type="radio" name="payment" ${pm.id==='razorpay'?'checked':''}>
               <span class="payment-icon">${pm.icon}</span>
               <div><div class="payment-label">${pm.label}</div><div class="payment-sub">${pm.sub}</div></div>
             </div>
@@ -189,6 +189,7 @@ const CheckoutPage = {
   },
 
   selectPayment(method) {
+    if (method !== 'razorpay' && method !== 'cod') return;
     this.paymentMethod = method;
     document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('selected'));
     document.getElementById(`pm-${method}`)?.classList.add('selected');
@@ -196,8 +197,8 @@ const CheckoutPage = {
   },
 
   async placeOrder() {
-    const methodLabels = { upi: 'UPI', card: 'Card', netbanking: 'Net Banking', cod: 'Cash on Delivery' };
-    const paymentLabel = methodLabels[this.paymentMethod] || 'UPI';
+    const methodLabels = { razorpay: 'Razorpay', cod: 'Cash on Delivery' };
+    const paymentLabel = methodLabels[this.paymentMethod] || 'Razorpay';
     const btn = document.querySelector('#step-content .btn-primary');
     if (btn) { btn.disabled = true; btn.textContent = 'Placing order…'; }
 
@@ -206,7 +207,7 @@ const CheckoutPage = {
       const order = await SunfaraAPI.post('/checkout', { items, shippingAddress: this.selectedAddress, paymentMethod: paymentLabel, couponCode: Store.appliedCoupon?.code || '' });
       const orderId = order.id;
 
-      if (this.paymentMethod !== 'cod') {
+      if (this.paymentMethod === 'razorpay') {
         await this.payWithRazorpay(orderId);
       }
 
@@ -263,11 +264,11 @@ const CheckoutPage = {
           </svg>
         </div>
         <h2 style="color:var(--color-primary)">Order Placed Successfully! 🌿</h2>
-        <p style="color:var(--color-text-secondary)">Thank you, ${Store.user.name.split(' ')[0]}! Your organic goodies are on their way.</p>
+        <p style="color:var(--color-text-secondary)">Thank you, ${escapeHtml(Store.user.name.split(' ')[0])}! Your organic goodies are on their way.</p>
         <div class="success-card">
-          <div class="success-order-id">Order ID: ${this.orderId}</div>
+          <div class="success-order-id">Order ID: ${escapeHtml(this.orderId)}</div>
           <div style="font-size:.9rem;color:var(--color-text-secondary)">Estimated Delivery: <strong>${addDays(4)}</strong></div>
-          <div style="font-size:.85rem;color:var(--color-text-muted);margin-top:8px">A confirmation will be sent to <strong>${Store.user.email}</strong></div>
+          <div style="font-size:.85rem;color:var(--color-text-muted);margin-top:8px">A confirmation will be sent to <strong>${escapeHtml(Store.user.email)}</strong></div>
         </div>
         <div style="display:flex;gap:var(--space-4);justify-content:center;flex-wrap:wrap">
           <a href="#/orders" class="btn btn-primary">Track My Order 📦</a>

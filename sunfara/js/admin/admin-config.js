@@ -4,13 +4,8 @@ const AdminConfig = {
   version: '2026.1.0',
   appName: 'Sunfara Admin',
   
-  // Demo data
-  demoAdmin: {
-    email: 'admin@sunfara.com',
-    password: 'admin123',
-    name: 'Admin User',
-    avatar: 'A'
-  },
+  // AUTH-002: no demo passwords in client config. Operators use Firebase Auth
+  // users with custom claim role=admin (see docs/ops/AUTH_CREDENTIAL_ROTATION.md).
 
   // Routes
   routes: {

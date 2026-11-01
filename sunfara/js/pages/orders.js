@@ -23,7 +23,7 @@ const OrdersPage = {
 
     try { this._orders = await SunfaraAPI.get('/orders'); }
     catch (e) {
-      document.getElementById('orders-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Could not load orders</h3><p>${e.message}</p></div>`;
+      document.getElementById('orders-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Could not load orders</h3><p>${escapeHtml(e.message)}</p></div>`;
       return;
     }
 
@@ -51,7 +51,7 @@ const OrdersPage = {
           </div>
         </div>
         <div class="order-thumbs">
-          ${(order.items || []).slice(0,3).map(item => `<img class="order-thumb" src="${item.image || ''}" alt="${item.name}" onerror="this.style.background='var(--color-cream)'">`).join('')}
+          ${(order.items || []).slice(0,3).map(item => `<img class="order-thumb" src="${escapeHtml(item.image || '')}" alt="${escapeHtml(item.name)}" onerror="this.style.background='var(--color-cream)'">`).join('')}
           ${itemCount > 3 ? `<div class="order-more-count">+${itemCount-3}</div>` : ''}
         </div>
         <div class="order-card-footer">
@@ -69,7 +69,7 @@ const OrdersPage = {
           ${order.shippingAddress ? `
           <div class="order-address-section">
             <h5>Delivered to</h5>
-            <p style="font-size:.85rem;color:var(--color-text-secondary)">${order.shippingAddress.name} · ${order.shippingAddress.phone}<br>${order.shippingAddress.line1}, ${order.shippingAddress.city}, ${order.shippingAddress.state} — ${order.shippingAddress.pincode}</p>
+            <p style="font-size:.85rem;color:var(--color-text-secondary)">${escapeHtml(order.shippingAddress.name)} · ${escapeHtml(order.shippingAddress.phone)}<br>${escapeHtml(order.shippingAddress.line1)}, ${escapeHtml(order.shippingAddress.city)}, ${escapeHtml(order.shippingAddress.state)} — ${escapeHtml(order.shippingAddress.pincode)}</p>
           </div>` : ''}
           <div style="margin-top:var(--space-4)">
             <button class="btn btn-outline btn-sm" onclick="Toast.show('Invoice sent to ${Store.user.email} 📧','success')">📄 Download Invoice</button>
@@ -83,12 +83,12 @@ const OrdersPage = {
     return `
       <div class="vendor-suborder">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <strong style="font-size:.85rem">🏪 ${vo.vendorName || 'Seller'}</strong>
+          <strong style="font-size:.85rem">🏪 ${escapeHtml(vo.vendorName || 'Seller')}</strong>
           <span class="order-status status-${(vo.status||'pending').toLowerCase()}" style="font-size:.75rem">${label.icon} ${label.label}</span>
         </div>
         ${(vo.items || []).map(item => this.renderLineItem(item)).join('')}
-        ${typeof vo.shippingAmount === 'number' ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">Shipping on order: ${vo.shippingAmount === 0 ? 'FREE' : formatPrice(vo.shippingAmount)}${vo.shippingZoneName ? ` · ${vo.shippingZoneName}` : ''}</p>` : ''}
-        ${vo.trackingNumber ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">🚚 ${vo.carrier || ''} · Tracking: <strong>${vo.trackingNumber}</strong>${vo.lastCarrierStatus ? ` · ${vo.lastCarrierStatus}` : ''}${vo.estimatedDelivery ? ` · ETA ${new Date(vo.estimatedDelivery).toLocaleDateString()}` : ''}</p>` : ''}
+        ${typeof vo.shippingAmount === 'number' ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">Shipping on order: ${vo.shippingAmount === 0 ? 'FREE' : formatPrice(vo.shippingAmount)}${vo.shippingZoneName ? ` · ${escapeHtml(vo.shippingZoneName)}` : ''}</p>` : ''}
+        ${vo.trackingNumber ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">🚚 ${escapeHtml(vo.carrier || '')} · Tracking: <strong>${escapeHtml(vo.trackingNumber)}</strong>${vo.lastCarrierStatus ? ` · ${escapeHtml(vo.lastCarrierStatus)}` : ''}${vo.estimatedDelivery ? ` · ETA ${escapeHtml(new Date(vo.estimatedDelivery).toLocaleDateString())}` : ''}</p>` : ''}
         ${vo.status === 'delivered' ? `<button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="OrdersPage.requestReturn('${vo.id}')">↩️ Return this item</button>` : ''}
         ${vo.status === 'return_rejected' ? `<p style="font-size:.8rem;color:var(--color-danger,#c0392b);margin-top:4px">Your return request was declined by the seller.</p>` : ''}
         ${vo.status === 'refunded' ? `<p style="font-size:.8rem;color:var(--color-primary);margin-top:4px">✅ Refund completed for this item.</p>` : ''}
@@ -108,9 +108,9 @@ const OrdersPage = {
   renderLineItem(item) {
     return `
       <div class="order-detail-item">
-        <img class="order-detail-img" src="${item.image || ''}" alt="${item.name}" onerror="this.style.background='var(--color-cream)'">
+        <img class="order-detail-img" src="${escapeHtml(item.image || '')}" alt="${escapeHtml(item.name)}" onerror="this.style.background='var(--color-cream)'">
         <div class="order-detail-info">
-          <div class="order-detail-name">${item.name}</div>
+          <div class="order-detail-name">${escapeHtml(item.name)}</div>
           <div class="order-detail-meta">Qty: ${item.quantity}</div>
         </div>
         <div class="order-detail-price">${formatPrice((item.price || 0) * item.quantity)}</div>

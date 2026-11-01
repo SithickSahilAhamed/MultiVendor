@@ -16,7 +16,7 @@ const ProductListPage = {
     this.filters = { minPrice: 0, maxPrice: 5000, brands: [], minRating: 0, minDiscount: 0, skinTypes: [], concerns: [], certifications: [], sortBy: 'relevance' };
 
     const cat = this.category ? Data.getCategoryById(this.category) : null;
-    const title = cat ? cat.name : this.query ? `Search: "${this.query}"` : 'All Products';
+    const title = cat ? escapeHtml(cat.name) : this.query ? `Search: "${escapeHtml(this.query)}"` : 'All Products';
 
     document.getElementById('page-content').innerHTML = `
       <div class="container section">
@@ -108,7 +108,7 @@ const ProductListPage = {
 
       <div class="filter-section">
         <div class="filter-section-title">Brand</div>
-        ${allBrands.map(b => `<label class="checkbox-item"><input type="checkbox" ${this.filters.brands.includes(b)?'checked':''} onchange="ProductListPage.toggleFilter('brands','${b}')"> ${b}</label>`).join('')}
+        ${allBrands.map(b => `<label class="checkbox-item"><input type="checkbox" ${this.filters.brands.includes(b)?'checked':''} onchange="ProductListPage.toggleFilter('brands','${escapeHtml(b)}')"> ${escapeHtml(b)}</label>`).join('')}
       </div>
 
       <div class="filter-section">
@@ -145,8 +145,8 @@ const ProductListPage = {
     const el = document.getElementById('active-filters');
     if (!el) return;
     const chips = [];
-    this.filters.brands.forEach(b => chips.push(`<div class="chip">${b} <span class="chip-remove" onclick="ProductListPage.toggleFilter('brands','${b}')">✕</span></div>`));
-    this.filters.certifications.forEach(c => chips.push(`<div class="chip">${c} <span class="chip-remove" onclick="ProductListPage.toggleFilter('certifications','${c}')">✕</span></div>`));
+    this.filters.brands.forEach(b => chips.push(`<div class="chip">${escapeHtml(b)} <span class="chip-remove" onclick="ProductListPage.toggleFilter('brands','${escapeHtml(b)}')">✕</span></div>`));
+    this.filters.certifications.forEach(c => chips.push(`<div class="chip">${escapeHtml(c)} <span class="chip-remove" onclick="ProductListPage.toggleFilter('certifications','${escapeHtml(c)}')">✕</span></div>`));
     if (this.filters.minRating) chips.push(`<div class="chip">${this.filters.minRating}★+ <span class="chip-remove" onclick="ProductListPage.filters.minRating=0;ProductListPage.renderProducts()">✕</span></div>`);
     if (this.filters.maxPrice < 5000) chips.push(`<div class="chip">Under ₹${this.filters.maxPrice} <span class="chip-remove" onclick="ProductListPage.filters.maxPrice=5000;ProductListPage.renderProducts()">✕</span></div>`);
     el.innerHTML = chips.join('');
@@ -172,7 +172,14 @@ const ProductListPage = {
       this.renderActiveChips();
 
       if (!page.length) {
-        container.innerHTML = `
+        const catalogEmpty = Data.isCatalogEmpty();
+        container.innerHTML = catalogEmpty ? `
+          <div class="empty-state">
+            <div class="empty-state-icon">🌿</div>
+            <h3>No products listed yet</h3>
+            <p>The live catalog is empty. Products will appear here after catalog seed / vendor listings go live.</p>
+            <a href="#/" class="btn btn-primary">Back to Home</a>
+          </div>` : `
           <div class="empty-state">
             <div class="empty-state-icon">🌿</div>
             <h3>No products found</h3>

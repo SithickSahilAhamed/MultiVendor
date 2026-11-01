@@ -1,3 +1,9 @@
+// =============================================================================
+// QUARANTINED (ARCH-002 / Phase 5) — LEGACY ARCHIVE ONLY
+// Production commerce API is ASP.NET Core 9 Sunfara.Api via Railway Docker.
+// Do NOT deploy this file (Procfile / Render / Vercel Node paths are neutralized).
+// Local emergency only: npm run start:legacy-express
+// =============================================================================
 // server.js - Sunfara Express Backend with Firebase Integration
 // Production-Ready with Security Hardening
 // ============================================

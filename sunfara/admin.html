@@ -38,10 +38,15 @@
     <div id="admin-sidebar-overlay" class="admin-sidebar-overlay"></div>
   </div>
 
+  <!-- SEC-003: optional App Check reCAPTCHA v3 site key (ops). Empty until enablement. -->
+  <script>
+    window.SUNFARA_APPCHECK_SITE_KEY = window.SUNFARA_APPCHECK_SITE_KEY || '';
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <script src="js/admin/admin-config.js"></script>
   <script src="js/admin/admin-utils.js"></script>
   <script src="js/admin/admin-api.js"></script>
+  <script src="js/admin/admin-claim-gate.js"></script>
   <script src="js/admin/admin-store.js"></script>
   <script src="js/admin/admin-components/toast.js"></script>
   <script src="js/admin/admin-components/modal.js"></script>

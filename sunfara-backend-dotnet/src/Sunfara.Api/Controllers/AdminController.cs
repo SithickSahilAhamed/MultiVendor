@@ -1,6 +1,8 @@
 using FirebaseAdmin.Auth;
+using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 namespace Sunfara.Api.Controllers;
@@ -10,7 +12,68 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     private static readonly HashSet<string> Collections = ["vendors","products","orders","vendor_orders","customers","commissions","withdrawals","reviews","categories","coupons","inventorySources","shipments","shipping_zones","invoices","refunds","returns","settings","auditLogs","transactions","notifications"];
     [HttpGet("{collection}")] public async Task<IActionResult> List(string collection, [FromQuery] int limit=100) => Allowed(collection) ? Ok(await store.ListAsync(collection,limit)) : NotFound();
     [HttpGet("{collection}/{id}")] public async Task<IActionResult> Get(string collection,string id) => !Allowed(collection) ? NotFound() : await store.GetAsync(collection,id) is { } item ? Ok(item) : NotFound();
-    [HttpPost("{collection}")] public async Task<IActionResult> Add(string collection,[FromBody] Dictionary<string,object> item) { if(!Allowed(collection)) return NotFound(); var id=await store.AddAsync(collection,item); return Ok(new{id}); }
+
+    /* AUTH-003: refuse auto-id vendor orphans. All other collections keep generic Add. */
+    [HttpPost("{collection}")]
+    public async Task<IActionResult> Add(string collection, [FromBody] Dictionary<string, object> item)
+    {
+        if (!Allowed(collection)) return NotFound();
+        if (VendorProvisioning.IsAutoIdCreateForbidden(collection))
+            return BadRequest(new { error = VendorProvisioning.AutoIdRejectedMessage });
+        var id = await store.AddAsync(collection, item);
+        return Ok(new { id });
+    }
+
+    /* AUTH-003: create Firebase Auth user + role=vendor claim + vendors/{uid} only. */
+    [HttpPost("vendors/create-account")]
+    public async Task<IActionResult> CreateVendorAccount([FromBody] AdminCreateVendorRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Email) ||
+            string.IsNullOrWhiteSpace(request.Phone) || string.IsNullOrWhiteSpace(request.Password))
+            return BadRequest(new { error = "Name, email, phone, and temporary password are required." });
+        if (request.Password.Length < 8)
+            return BadRequest(new { error = "Password must be at least 8 characters." });
+
+        Dictionary<string, object> vendorDoc;
+        try
+        {
+            vendorDoc = VendorProvisioning.BuildVendorDocument(
+                request.Name, request.Email, request.Phone,
+                request.Commission ?? 10.0,
+                string.IsNullOrWhiteSpace(request.Status) ? "pending" : request.Status!);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { error = e.Message });
+        }
+
+        UserRecord user;
+        try
+        {
+            user = await FirebaseAuth.DefaultInstance.CreateUserAsync(new UserRecordArgs
+            {
+                Email = request.Email.Trim(),
+                Password = request.Password,
+                DisplayName = request.Name.Trim(),
+                EmailVerified = false
+            });
+        }
+        catch (FirebaseAuthException e)
+        {
+            var message = e.AuthErrorCode == AuthErrorCode.EmailAlreadyExists
+                ? "An account with this email already exists."
+                : e.Message;
+            return BadRequest(new { error = message });
+        }
+
+        await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(user.Uid, new Dictionary<string, object> { ["role"] = "vendor" });
+
+        vendorDoc["createdAt"] = FieldValue.ServerTimestamp;
+        vendorDoc["updatedAt"] = FieldValue.ServerTimestamp;
+        await store.Database.Collection("vendors").Document(user.Uid).CreateAsync(vendorDoc);
+
+        return Ok(new { uid = user.Uid, id = user.Uid, message = "Vendor Auth user and vendors/{uid} created." });
+    }
 
     /* Suspending/rejecting a vendor previously only flipped a Firestore field -
        the vendor's existing ID token (and any refresh token minted before this
@@ -38,6 +101,56 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     [HttpGet("revenue")]
     public async Task<IActionResult> Revenue() => Ok(await store.GetAsync("settings", "platformRevenue") ?? new Dictionary<string, object> { ["totalGrossSales"] = 0.0, ["totalCommissionEarned"] = 0.0, ["totalVendorPayouts"] = 0.0 });
 
+    /* PAY-004: list payment mismatches (unpaid online + Razorpay capture vs Firestore).
+       Optional body of captures lets ops/tests reconcile without live Razorpay keys. */
+    [HttpGet("payments/reconciliation")]
+    public async Task<IActionResult> PaymentReconciliationReport([FromQuery] DateTimeOffset? from = null, [FromQuery] DateTimeOffset? to = null)
+    {
+        var windowEnd = to ?? DateTimeOffset.UtcNow;
+        var windowStart = from ?? windowEnd.AddDays(-30);
+        if (windowStart > windowEnd) return BadRequest(new { error = "from must be before to." });
+        var (orders, mismatches) = await marketplace.ReconcilePaymentsAsync(windowStart, windowEnd);
+        return Ok(new
+        {
+            from = windowStart,
+            to = windowEnd,
+            orderCount = orders.Count,
+            mismatchCount = mismatches.Count,
+            mismatches,
+            unpaidOnline = mismatches.Where(m => m.Kind == PaymentReconciliation.KindUnpaidOnline).ToList()
+        });
+    }
+
+    [HttpPost("payments/reconciliation")]
+    public async Task<IActionResult> PaymentReconciliationWithCaptures(
+        [FromQuery] DateTimeOffset? from = null,
+        [FromQuery] DateTimeOffset? to = null,
+        [FromBody] List<RazorpayCapturedPaymentDto>? captures = null)
+    {
+        var windowEnd = to ?? DateTimeOffset.UtcNow;
+        var windowStart = from ?? windowEnd.AddDays(-30);
+        if (windowStart > windowEnd) return BadRequest(new { error = "from must be before to." });
+        var mapped = (captures ?? []).Select(c => new RazorpayCapturedPayment(
+            c.RazorpayPaymentId, c.RazorpayOrderId, c.AmountPaise, c.CapturedAt)).ToList();
+        var (orders, mismatches) = await marketplace.ReconcilePaymentsAsync(windowStart, windowEnd, mapped);
+        return Ok(new
+        {
+            from = windowStart,
+            to = windowEnd,
+            orderCount = orders.Count,
+            mismatchCount = mismatches.Count,
+            mismatches,
+            unpaidOnline = mismatches.Where(m => m.Kind == PaymentReconciliation.KindUnpaidOnline).ToList()
+        });
+    }
+
+    [HttpPost("orders/{id}/cancel-unpaid")]
+    public async Task<IActionResult> CancelUnpaidOnline(string id)
+    {
+        try { await marketplace.CancelUnpaidOnlineOrderAsync(id); return Ok(new { success = true }); }
+        catch (InvalidOperationException e) { return BadRequest(new { error = e.Message }); }
+    }
+
     /* Targets a vendor's sub-order specifically (id here is a vendor_orders
        document id, not a master order id) - status/tracking live per vendor
        sub-order now, not on the shared master order. Admin override bypasses
@@ -59,3 +172,5 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     private static bool Allowed(string collection)=>Collections.Contains(collection);
 }
 public sealed record OrderStatusRequest(string Status, string? TrackingNumber = null, string? Carrier = null);
+public sealed record AdminCreateVendorRequest(string Name, string Email, string Phone, string Password, double? Commission = null, string? Status = null);
+public sealed record RazorpayCapturedPaymentDto(string RazorpayPaymentId, string RazorpayOrderId, long AmountPaise, DateTimeOffset CapturedAt);

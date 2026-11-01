@@ -102,7 +102,7 @@ const AdminProducts = {
     if (!product) return;
     AdminModal.show(product.name, `
       ${product.image ? `<img src="${AdminUtils.escapeHtml(product.image)}" alt="" onerror="this.style.display='none'" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin-bottom:12px;background:#f3f4f6" />` : ''}
-      <p><strong>Vendor:</strong> ${product.vendorName || product.vendor || '—'}</p>
+      <p><strong>Vendor:</strong> ${AdminUtils.escapeHtml(product.vendorName || product.vendor || '—')}</p>
       <p><strong>Price:</strong> ${AdminUtils.formatPrice(product.price || 0)}</p>
       <p><strong>Stock:</strong> ${product.stock ?? '—'}</p>
       <p><strong>Status:</strong> ${AdminConfig.statusLabels[product.status] || product.status}</p>

@@ -18,18 +18,25 @@ const AdminDashboard = {
     const totalOrders = orders.length;
     const totalCustomers = customers.length;
     const pendingApprovals = vendors.filter(v => v.status === 'pending').length + products.filter(p => p.status === 'pending').length;
+    const apiErrorBanner = AdminStore.lastError && AdminStore.isProductionAdmin()
+      ? `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:12px 16px;margin-bottom:24px;color:#991b1b;">
+           <strong>API error</strong> — showing live/empty data only (demo KPIs disabled in production). ${AdminStore.lastError}
+         </div>`
+      : '';
 
     const html = `
       <div class="admin-page-header">
         <div>
           <h1 class="admin-page-title">Dashboard</h1>
-          <p class="admin-page-subtitle">Welcome back, ${AdminStore.user?.name}! Here's your marketplace overview.</p>
+          <p class="admin-page-subtitle">Welcome back, ${AdminUtils.escapeHtml(AdminStore.user?.name)}! Here's your marketplace overview.</p>
         </div>
         <div class="admin-page-actions">
           <button class="admin-btn admin-btn-secondary">📥 Export Report</button>
           <button class="admin-btn admin-btn-primary">📊 View Analytics</button>
         </div>
       </div>
+
+      ${apiErrorBanner}
 
       <!-- KPI Cards -->
       <div class="admin-grid">

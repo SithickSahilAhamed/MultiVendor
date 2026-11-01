@@ -13,6 +13,7 @@ const HomePage = {
     main.innerHTML = `
       <div id="hero-slider-section"></div>
       <div class="container">
+        <section class="section" id="catalog-empty-section" style="display:none"></section>
         <section class="section" id="categories-section"></section>
         <section class="section" id="deals-section"></section>
         <section class="section" id="trending-section"></section>
@@ -24,6 +25,7 @@ const HomePage = {
       </div>`;
 
     this.renderSlider();
+    this.renderCatalogEmptyState();
     this.renderCategories();
     this.renderDeals();
     this.renderTrending();
@@ -34,6 +36,28 @@ const HomePage = {
     this.renderRecentlyViewed();
     setupRevealAnimations();
     setupBackToTop();
+  },
+
+  /* CAT-002: successful empty catalog must not look like a silent failure */
+  renderCatalogEmptyState() {
+    const el = document.getElementById('catalog-empty-section');
+    if (!el) return;
+    if (!Data.isCatalogEmpty()) {
+      el.style.display = 'none';
+      el.innerHTML = '';
+      return;
+    }
+    el.style.display = '';
+    const fromApi = Data.catalogSource === 'api-empty' || Data.catalogSource === 'api';
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🌿</div>
+        <h3>${fromApi ? 'Catalog coming soon' : 'Catalog unavailable'}</h3>
+        <p>${fromApi
+          ? 'No products are listed yet. Check back soon — we are stocking the shelves.'
+          : 'We could not reach the live catalog. Please try again shortly.'}</p>
+        <a href="#/search" class="btn btn-primary">Browse products</a>
+      </div>`;
   },
 
   renderSlider() {
@@ -80,6 +104,17 @@ const HomePage = {
 
   renderCategories() {
     const el = document.getElementById('categories-section');
+    if (!Data.categories.length) {
+      el.style.display = Data.isCatalogEmpty() ? 'none' : '';
+      el.innerHTML = Data.isCatalogEmpty() ? '' : `
+        <div class="empty-state">
+          <div class="empty-state-icon">🗂️</div>
+          <h3>No categories yet</h3>
+          <p>Categories will appear here once the catalog is published.</p>
+        </div>`;
+      return;
+    }
+    el.style.display = '';
     el.innerHTML = `
       <div class="section-header">
         <div><h2 class="section-title">Shop by Category</h2><p class="section-subtitle">Find exactly what your skin and body needs</p></div>
@@ -103,6 +138,8 @@ const HomePage = {
   renderDeals() {
     const el = document.getElementById('deals-section');
     const deals = Data.getDeals().slice(0, 6);
+    if (!deals.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+    el.style.display = '';
     const endTime = Date.now() + 10 * 60 * 60 * 1000;
 
     el.innerHTML = `
@@ -151,6 +188,8 @@ const HomePage = {
   renderTrending() {
     const el = document.getElementById('trending-section');
     const products = [...Data.getBestsellers(), ...Data.getFeaturedProducts()].filter((p, i, arr) => arr.findIndex(x => x.id === p.id) === i).slice(0, 8);
+    if (!products.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+    el.style.display = '';
     el.innerHTML = `
       <div class="section-header">
         <div><h2 class="section-title">Trending Now</h2><p class="section-subtitle">Our bestsellers, loved by thousands</p></div>
@@ -272,7 +311,7 @@ const HomePage = {
             <span class="price-mrp">${formatPrice(p.mrp)}</span>
             <span class="price-discount">${p.discount}% off</span>
           </div>
-          <button class="btn btn-primary btn-full btn-sm" onclick="event.stopPropagation();Store.addToCart('${p.id}','${p.variants[0].id}',1);Toast.show('${p.name.substring(0,20)}... added to cart 🛒','success');Navbar.updateBadges()">Add to Cart</button>
+          <button class="btn btn-primary btn-full btn-sm" onclick="event.stopPropagation();Store.addToCart('${p.id}','${p.variants[0].id}',1);Toast.show('Added to cart 🛒','success');Navbar.updateBadges()">Add to Cart</button>
         </div>
       </div>`;
   }

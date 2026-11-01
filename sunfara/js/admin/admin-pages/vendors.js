@@ -104,7 +104,8 @@ const AdminVendors = {
   },
 
   showAddModal: function() {
-    AdminModal.show('Add New Vendor', `
+    AdminModal.show('Invite Vendor (Auth UID-linked)', `
+      <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">Creates a Firebase Auth user with <code>role=vendor</code> and <code>vendors/{uid}</code>. No auto-id orphans.</p>
       <div class="admin-form-group">
         <label class="admin-label">Vendor Name *</label>
         <input type="text" class="admin-input" placeholder="Enter vendor name" id="vendor-name" />
@@ -118,24 +119,30 @@ const AdminVendors = {
         <input type="text" class="admin-input" placeholder="+91-9876543210" id="vendor-phone" />
       </div>
       <div class="admin-form-group">
+        <label class="admin-label">Temporary password *</label>
+        <input type="password" class="admin-input" placeholder="Min 8 characters" id="vendor-password" autocomplete="new-password" />
+      </div>
+      <div class="admin-form-group">
         <label class="admin-label">Commission Rate (%)</label>
         <input type="number" class="admin-input" value="8" min="1" max="30" id="vendor-commission" />
       </div>
     `, [
       { label: 'Cancel', class: 'admin-btn-secondary', onclick: 'AdminModal.close()' },
-      { label: 'Add Vendor', class: 'admin-btn-primary', onclick: 'AdminVendors.addVendor()' }
+      { label: 'Create Vendor Account', class: 'admin-btn-primary', onclick: 'AdminVendors.addVendor()' }
     ]);
   },
 
   addVendor: async function() {
-    const name = document.getElementById('vendor-name')?.value;
-    const email = document.getElementById('vendor-email')?.value;
-    const phone = document.getElementById('vendor-phone')?.value;
+    const name = document.getElementById('vendor-name')?.value?.trim();
+    const email = document.getElementById('vendor-email')?.value?.trim();
+    const phone = document.getElementById('vendor-phone')?.value?.trim();
+    const password = document.getElementById('vendor-password')?.value;
     const commission = parseFloat(document.getElementById('vendor-commission')?.value) || 8;
-    if (!name || !email) { AdminToast.error('Please fill all required fields'); return; }
+    if (!name || !email || !phone || !password) { AdminToast.error('Please fill all required fields'); return; }
+    if (password.length < 8) { AdminToast.error('Password must be at least 8 characters'); return; }
     try {
-      await AdminAPI.createVendor({ name, email, phone, status: 'pending', commission });
-      AdminToast.success('Vendor added successfully!');
+      const result = await AdminAPI.createVendor({ name, email, phone, password, commission, status: 'pending' });
+      AdminToast.success('Vendor account created (uid ' + (result?.uid || result?.id || '') + '). Share the temporary password securely.');
       AdminModal.close();
       await this.render();
     } catch(e) { AdminToast.error(e.message || 'Failed to add vendor'); }
@@ -176,7 +183,7 @@ const AdminVendors = {
     AdminModal.show('Edit Vendor: ' + vendor.name, `
       <div class="admin-form-group">
         <label class="admin-label">Vendor Name</label>
-        <input type="text" class="admin-input" value="${vendor.name}" id="edit-vendor-name" />
+        <input type="text" class="admin-input" value="${AdminUtils.escapeHtml(vendor.name)}" id="edit-vendor-name" />
       </div>
       <div class="admin-form-group">
         <label class="admin-label">Commission Rate (%)</label>

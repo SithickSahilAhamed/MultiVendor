@@ -58,7 +58,7 @@ const AdminOrdersEnhanced = {
             ${orders.map(o => `
               <tr style="cursor: pointer;">
                 <td><strong>${o.id}</strong></td>
-                <td onclick="AdminOrdersEnhanced.showOrderDetail('${o.id}')">${o.customer}</td>
+                <td onclick="AdminOrdersEnhanced.showOrderDetail('${o.id}')">${AdminUtils.escapeHtml(o.customer)}</td>
                 <td><strong>${AdminUtils.formatPrice(o.amount)}</strong></td>
                 <td>${o.items}</td>
                 <td><span class="admin-status-badge ${AdminConfig.statusColors[o.status]}">${AdminConfig.statusLabels[o.status]}</span></td>
@@ -136,11 +136,11 @@ const AdminOrdersEnhanced = {
             <div style="display: grid; gap: 16px;">
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Name</div>
-                <div style="font-weight: 600; margin-top: 4px;">${order.customer}</div>
+                <div style="font-weight: 600; margin-top: 4px;">${AdminUtils.escapeHtml(order.customer)}</div>
               </div>
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Email</div>
-                <div style="margin-top: 4px;"><a href="mailto:${order.email}" style="color: #22c55e; text-decoration: none;">${order.email}</a></div>
+                <div style="margin-top: 4px;"><a href="mailto:${AdminUtils.escapeHtml(order.email)}" style="color: #22c55e; text-decoration: none;">${AdminUtils.escapeHtml(order.email)}</a></div>
               </div>
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Phone</div>

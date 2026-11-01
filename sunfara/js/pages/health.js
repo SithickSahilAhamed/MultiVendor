@@ -120,8 +120,8 @@ const HealthPage = {
         <div class="product-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
         <div class="product-badge" style="background: #e74c3c;">-${product.discount}%</div>
         <div class="product-content">
-          <h3>${product.name}</h3>
-          <p class="product-brand">${product.brand}</p>
+          <h3>${escapeHtml(product.name)}</h3>
+          <p class="product-brand">${escapeHtml(product.brand)}</p>
           <div class="product-rating">
             <span class="stars">⭐ ${product.rating}</span>
             <span class="reviews">(${product.reviewCount})</span>
@@ -130,7 +130,7 @@ const HealthPage = {
             <span class="price">₹${product.price}</span>
             <span class="mrp">₹${product.mrp}</span>
           </div>
-          <button class="btn-add-cart" onclick="Store.addToCart(${JSON.stringify({id: product.id, name: product.name, price: product.price, brand: product.brand})})">Add to Cart</button>
+          <button class="btn-add-cart" onclick="Store.addToCart('${product.id}')">Add to Cart</button>
         </div>
       </div>
     `;

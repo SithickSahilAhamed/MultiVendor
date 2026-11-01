@@ -5,7 +5,7 @@ const AdminToast = {
     const container = document.getElementById('admin-toast-container');
     const toast = AdminUtils.el('div', 'admin-toast ' + type);
     toast.innerHTML = `
-      <div style="flex: 1;">${message}</div>
+      <div style="flex: 1;">${AdminUtils.escapeHtml(message)}</div>
       <button style="background: none; border: none; color: inherit; cursor: pointer; font-size: 16px;" onclick="this.parentElement.remove()">✕</button>
     `;
     container.appendChild(toast);

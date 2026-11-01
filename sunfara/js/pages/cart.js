@@ -48,11 +48,11 @@ const CartPage = {
     if (!el) return;
     el.innerHTML = Store.cart.map(item => `
       <div class="cart-item">
-        <img class="cart-item-img" src="${item.image}" alt="${item.name}" onclick="window.location.hash='#/product/${item.productId}'" style="cursor:pointer" onerror="this.style.background='var(--color-cream)'">
+        <img class="cart-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" onclick="window.location.hash='#/product/${item.productId}'" style="cursor:pointer" onerror="this.style.background='var(--color-cream)'">
         <div class="cart-item-info">
-          <div class="cart-item-brand">${item.brand}</div>
-          <div class="cart-item-name" onclick="window.location.hash='#/product/${item.productId}'" style="cursor:pointer">${item.name}</div>
-          <div class="cart-item-variant">Size: ${item.variantName}</div>
+          <div class="cart-item-brand">${escapeHtml(item.brand)}</div>
+          <div class="cart-item-name" onclick="window.location.hash='#/product/${item.productId}'" style="cursor:pointer">${escapeHtml(item.name)}</div>
+          <div class="cart-item-variant">Size: ${escapeHtml(item.variantName)}</div>
           <div class="cart-item-rating" style="color:#f59e0b">★★★★★ ${item.rating}</div>
           <div class="cart-item-price-row">
             <span class="cart-item-price">${formatPrice(item.price)}</span>

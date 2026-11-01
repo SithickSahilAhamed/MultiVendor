@@ -108,11 +108,11 @@ const AdminOrders = {
         ${subOrders.length === 0 ? '<p style="color:#6b7280">No vendor sub-orders found for this order.</p>' : subOrders.map(vo => `
           <div style="border:1px solid var(--admin-border,#e5e7eb);border-radius:8px;padding:12px;margin-bottom:4px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <strong>🏪 ${vo.vendorName || vo.vendorId}</strong>
+              <strong>🏪 ${AdminUtils.escapeHtml(vo.vendorName || vo.vendorId)}</strong>
               <span class="admin-status-badge ${AdminConfig.statusColors[vo.status] || 'admin-status-processing'}">${AdminConfig.statusLabels[vo.status] || vo.status}</span>
             </div>
             <ul style="margin:0 0 8px 20px;padding:0;font-size:13px">
-              ${(vo.items || []).map(i => `<li>${i.name} × ${i.quantity} — ${AdminUtils.formatPrice(i.total)}</li>`).join('') || '<li>—</li>'}
+              ${(vo.items || []).map(i => `<li>${AdminUtils.escapeHtml(i.name)} × ${i.quantity} — ${AdminUtils.formatPrice(i.total)}</li>`).join('') || '<li>—</li>'}
             </ul>
             ${typeof vo.shippingAmount === 'number' ? `<p style="font-size:12px;color:#6b7280">Shipping: ${vo.shippingAmount === 0 ? 'FREE' : AdminUtils.formatPrice(vo.shippingAmount)}${vo.shippingZoneName ? ` · ${AdminUtils.escapeHtml(vo.shippingZoneName)}` : ''}</p>` : ''}
             ${vo.trackingNumber ? `<p style="font-size:12px;color:#6b7280">🚚 ${AdminUtils.escapeHtml(vo.carrier || '')} · ${AdminUtils.escapeHtml(vo.trackingNumber)}${vo.lastCarrierStatus ? ` · ${AdminUtils.escapeHtml(vo.lastCarrierStatus)}` : ''}</p>` : ''}

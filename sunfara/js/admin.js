@@ -24,27 +24,19 @@ class AdminAuth {
     loginBtn.disabled = true;
     btnText.textContent = 'Signing in...';
 
-    setTimeout(() => {
-      if (email === 'admin@sunfara.com' && password === 'admin123') {
-        localStorage.setItem('adminAuth', JSON.stringify({ email, loggedInAt: new Date().toISOString() }));
-        document.getElementById('admin-login').style.display = 'none';
-        document.getElementById('admin-app').style.display = 'grid';
-        Admin.showSection('dashboard');
-        AdminToast.success('Welcome back, Admin!');
-      } else {
-        AdminToast.error('Invalid credentials');
-        loginBtn.disabled = false;
-        btnText.textContent = originalText;
-      }
-    }, 800);
+    // AUTH-002: legacy monolithic admin.js is non-authoritative.
+    // Use sunfara/admin.html + Firebase Auth with role=admin claim.
+    AdminToast.error('This legacy admin shell is disabled. Open /admin.html and sign in with a Firebase admin account.');
+    loginBtn.disabled = false;
+    btnText.textContent = originalText;
   }
 
   static logout() {
     localStorage.removeItem('adminAuth');
     document.getElementById('admin-app').style.display = 'none';
     document.getElementById('admin-login').style.display = 'flex';
-    document.getElementById('admin-email').value = 'admin@sunfara.com';
-    document.getElementById('admin-password').value = 'admin123';
+    document.getElementById('admin-email').value = '';
+    document.getElementById('admin-password').value = '';
     AdminToast.info('Logged out');
   }
 
@@ -469,8 +461,8 @@ class Admin {
           <tbody>
             ${vendors.map(v => `
               <tr>
-                <td><strong>${v.name}</strong></td>
-                <td>${v.email}</td>
+                <td><strong>${AdminUtils.escapeHtml(v.name)}</strong></td>
+                <td>${AdminUtils.escapeHtml(v.email)}</td>
                 <td>${v.products}</td>
                 <td><span class="status-badge ${v.status === 'Active' ? 'success' : 'warning'}">${v.status}</span></td>
                 <td>${v.commission}</td>

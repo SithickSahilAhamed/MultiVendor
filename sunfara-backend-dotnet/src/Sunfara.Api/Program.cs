@@ -112,6 +112,26 @@ RazorpayWebhookStartup.EnsureConfigured(webhookSecret, app.Environment.IsProduct
 // shape) to anyone who finds the URL - fine for local dev, not something a
 // production API needs to hand an attacker for free.
 if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
+
+// SEC-002: baseline security headers on all API responses. CSP lives on the
+// static hosts (firebase.json / netlify.toml) — JSON APIs do not need a
+// document CSP, but nosniff / frame / referrer baselines reduce abuse of
+// mis-interpreted responses and clickjacking of any accidental HTML.
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.OnStarting(() =>
+    {
+        var headers = ctx.Response.Headers;
+        headers["X-Content-Type-Options"] = "nosniff";
+        headers["X-Frame-Options"] = "DENY";
+        headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+        headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()";
+        headers["Cross-Origin-Resource-Policy"] = "cross-origin";
+        return Task.CompletedTask;
+    });
+    await next();
+});
+
 app.UseCors("Sunfara"); app.UseRateLimiter(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
 app.MapGet("/", () => Results.Ok(new { status = "ok", service = "Sunfara API", docs = "/swagger" }));
 app.MapGet("/api/health", (IHostEnvironment env, IConfiguration config) =>

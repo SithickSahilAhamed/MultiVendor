@@ -62,18 +62,18 @@ const BundlesPage = {
         <div class="bundle-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
         <div class="bundle-badge discount">Save ${bundle.discount}%</div>
         <div class="bundle-content">
-          <h3>${bundle.name}</h3>
-          <p class="bundle-desc">${bundle.description}</p>
+          <h3>${escapeHtml(bundle.name)}</h3>
+          <p class="bundle-desc">${escapeHtml(bundle.description)}</p>
           
           <div class="bundle-products">
             <p class="products-label">Includes:</p>
             <ul class="products-list">
-              ${products.map(p => `<li>✓ ${p.name}</li>`).join('')}
+              ${products.map(p => `<li>✓ ${escapeHtml(p.name)}</li>`).join('')}
             </ul>
           </div>
 
           <div class="bundle-benefits">
-            ${bundle.benefits.map(b => `<span class="benefit">${b}</span>`).join('')}
+            ${bundle.benefits.map(b => `<span class="benefit">${escapeHtml(b)}</span>`).join('')}
           </div>
 
           <div class="bundle-pricing">
@@ -86,7 +86,7 @@ const BundlesPage = {
             <span class="reviews">(${bundle.reviewCount} reviews)</span>
           </div>
 
-          <button class="btn-bundle" onclick="Store.addToCart({id: '${bundle.id}', name: '${bundle.name}', price: ${bundle.bundlePrice}, type: 'bundle'})">Add to Cart</button>
+          <button class="btn-bundle" onclick="Store.addToCart('${bundle.id}')">Add to Cart</button>
         </div>
       </div>
     `;

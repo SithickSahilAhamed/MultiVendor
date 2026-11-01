@@ -44,10 +44,15 @@
        register screens, which used to swallow every auth error toast. -->
   <div id="vendor-toast-container" class="admin-toast-container"></div>
 
+  <!-- SEC-003: optional App Check site key (ops). Empty until console enablement. -->
+  <script>
+    window.SUNFARA_APPCHECK_SITE_KEY = window.SUNFARA_APPCHECK_SITE_KEY || '';
+  </script>
+
   <!-- Firebase Configuration (shared with the storefront) -->
   <script type="module">
-    import { app, analytics, auth, database, storage, db, authService } from "./js/firebase-config.js";
-    window.firebase = { app, analytics, auth, database, storage, db };
+    import { app, analytics, auth, database, storage, db, authService, appCheck } from "./js/firebase-config.js";
+    window.firebase = { app, analytics, auth, database, storage, db, appCheck };
     window.FirebaseAuth = authService;
   </script>
 

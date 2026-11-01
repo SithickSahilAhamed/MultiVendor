@@ -17,8 +17,8 @@ const ProfilePage = {
           <div class="profile-sidebar">
             <div class="profile-avatar-section">
               <div class="profile-avatar">${u.name.charAt(0).toUpperCase()}</div>
-              <div class="profile-name">${u.name}</div>
-              <div class="profile-email">${u.email}</div>
+              <div class="profile-name">${escapeHtml(u.name)}</div>
+              <div class="profile-email">${escapeHtml(u.email)}</div>
             </div>
             <nav class="profile-nav">
               <a class="profile-nav-link ${this.activeSection==='profile'?'active':''}" onclick="ProfilePage.showSection('profile')">👤 My Profile</a>
@@ -50,17 +50,17 @@ const ProfilePage = {
         <h2 class="profile-section-title">My Profile</h2>
         <div id="profile-view">
           <div class="profile-form" style="margin-bottom:var(--space-6)">
-            <div class="profile-field"><div class="profile-field-label">Full Name</div><div class="profile-field-value">${u.name}</div></div>
-            <div class="profile-field"><div class="profile-field-label">Email</div><div class="profile-field-value">${u.email}</div></div>
-            <div class="profile-field"><div class="profile-field-label">Phone</div><div class="profile-field-value">${u.phone || 'Not added'}</div></div>
+            <div class="profile-field"><div class="profile-field-label">Full Name</div><div class="profile-field-value">${escapeHtml(u.name)}</div></div>
+            <div class="profile-field"><div class="profile-field-label">Email</div><div class="profile-field-value">${escapeHtml(u.email)}</div></div>
+            <div class="profile-field"><div class="profile-field-label">Phone</div><div class="profile-field-value">${escapeHtml(u.phone || 'Not added')}</div></div>
           </div>
           <button class="btn btn-primary" onclick="ProfilePage.showEditForm()">Edit Profile</button>
         </div>
         <div id="profile-edit" style="display:none">
           <div class="profile-form">
-            <div class="input-group"><label class="input-label">Full Name</label><input class="input" id="edit-name" value="${u.name}"></div>
-            <div class="input-group"><label class="input-label">Email</label><input class="input" id="edit-email" type="email" value="${u.email}"></div>
-            <div class="input-group full-width"><label class="input-label">Phone</label><input class="input" id="edit-phone" value="${u.phone||''}"></div>
+            <div class="input-group"><label class="input-label">Full Name</label><input class="input" id="edit-name" value="${escapeHtml(u.name)}"></div>
+            <div class="input-group"><label class="input-label">Email</label><input class="input" id="edit-email" type="email" value="${escapeHtml(u.email)}"></div>
+            <div class="input-group full-width"><label class="input-label">Phone</label><input class="input" id="edit-phone" value="${escapeHtml(u.phone||'')}"></div>
           </div>
           <div style="display:flex;gap:var(--space-3);margin-top:var(--space-4)">
             <button class="btn btn-primary" onclick="ProfilePage.saveProfile()">Save Changes</button>
@@ -74,9 +74,9 @@ const ProfilePage = {
           ${u.addresses.length ? u.addresses.map(a => `
             <div class="saved-address-card" style="margin-bottom:var(--space-4)">
               ${a.isDefault ? '<span class="default-badge">Default</span>' : ''}
-              <div class="address-type-badge">🏠 ${a.type||'Home'}</div>
-              <div style="font-size:.9rem;margin-top:8px"><strong>${a.name}</strong> · ${a.phone}</div>
-              <div style="font-size:.85rem;color:var(--color-text-secondary)">${a.line1}${a.line2?', '+a.line2:''}, ${a.city}, ${a.state} — ${a.pincode}</div>
+              <div class="address-type-badge">🏠 ${escapeHtml(a.type||'Home')}</div>
+              <div style="font-size:.9rem;margin-top:8px"><strong>${escapeHtml(a.name)}</strong> · ${escapeHtml(a.phone)}</div>
+              <div style="font-size:.85rem;color:var(--color-text-secondary)">${escapeHtml(a.line1)}${a.line2?', '+escapeHtml(a.line2):''}, ${escapeHtml(a.city)}, ${escapeHtml(a.state)} — ${escapeHtml(a.pincode)}</div>
               <div class="address-actions">
                 <button class="btn btn-outline btn-sm" onclick="Toast.show('Edit address feature coming soon!','info')">Edit</button>
                 <button class="btn btn-outline btn-sm" onclick="Store.removeAddress('${a.id}');ProfilePage.showSection('addresses');Toast.show('Address removed','info')" style="color:var(--color-error);border-color:var(--color-error)">Delete</button>

@@ -8,7 +8,7 @@ const AdminModal = {
     const modal = AdminUtils.el('div', 'admin-modal');
     modal.innerHTML = `
       <div class="admin-modal-header">
-        <h2 class="admin-modal-title">${title}</h2>
+        <h2 class="admin-modal-title">${AdminUtils.escapeHtml(title)}</h2>
         <button class="admin-modal-close" onclick="AdminModal.close()">✕</button>
       </div>
       <div class="admin-modal-body">
@@ -32,7 +32,7 @@ const AdminModal = {
   },
 
   confirm: function(title, message, onConfirm) {
-    this.show(title, `<p>${message}</p>`, [
+    this.show(title, `<p>${AdminUtils.escapeHtml(message)}</p>`, [
       { label: 'Cancel', class: 'admin-btn-secondary', onclick: 'AdminModal.close()' },
       { label: 'Confirm', class: 'admin-btn-primary', onclick: `${onConfirm}; AdminModal.close();` }
     ]);

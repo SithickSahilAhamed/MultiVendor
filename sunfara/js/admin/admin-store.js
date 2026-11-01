@@ -46,6 +46,22 @@ const AdminStore = {
       };
 
       const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+
+      // SEC-003: attach App Check when ops has set the reCAPTCHA v3 site key.
+      // Uses the same major as this admin dynamic import path (v10). No-op when unset.
+      const siteKey = (typeof window !== "undefined" && window.SUNFARA_APPCHECK_SITE_KEY) || "";
+      if (siteKey && !window.__sunfaraAdminAppCheck) {
+        try {
+          const { initializeAppCheck, ReCaptchaV3Provider } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check.js");
+          window.__sunfaraAdminAppCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider(siteKey),
+            isTokenAutoRefreshEnabled: true
+          });
+        } catch (e) {
+          console.warn("[Sunfara Admin] App Check init failed; continuing without attestation:", e?.message || e);
+        }
+      }
+
       const auth = getAuth(app);
       const credential = await signInWithEmailAndPassword(auth, email, password);
       const tokenResult = await getIdTokenResult(credential.user);

@@ -25,7 +25,7 @@ const Navbar = {
             <a href="#/blog">Blog</a>
             <a href="#/about">About</a>
             <a href="#/contact">Contact</a>
-            ${Store.user ? `<a href="#/profile">👤 ${Store.user.name.split(' ')[0]}</a>` : '<a href="#/login">Login</a>'}
+            ${Store.user ? `<a href="#/profile">👤 ${escapeHtml(Store.user.name.split(' ')[0])}</a>` : '<a href="#/login">Login</a>'}
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ const Navbar = {
           <button onclick="Navbar.closeMobileNav()" aria-label="Close menu" style="font-size:1.5rem;background:none;border:none;cursor:pointer;">✕</button>
         </div>
         <div class="mobile-nav-links">
-          ${Store.user ? `<div class="mobile-nav-link">👋 Hi, ${Store.user.name.split(' ')[0]}</div>` : ''}
+          ${Store.user ? `<div class="mobile-nav-link">👋 Hi, ${escapeHtml(Store.user.name.split(' ')[0])}</div>` : ''}
           <a class="mobile-nav-link" href="#/" onclick="Navbar.closeMobileNav()">🏠 Home</a>
           <div class="mobile-nav-divider"></div>
           ${cats.map(c => `<a class="mobile-nav-link" href="#/category/${c.slug}" onclick="Navbar.closeMobileNav()">${c.icon} ${c.name}</a>`).join('')}
@@ -208,11 +208,11 @@ const Navbar = {
       <div class="cart-drawer-items">
         ${Store.cart.length ? Store.cart.map(item => `
           <div class="cart-drawer-item">
-            <img class="cart-drawer-item-img" src="${item.image}" alt="${item.name}" onerror="this.style.background='#6a9e78'">
+            <img class="cart-drawer-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" onerror="this.style.background='#6a9e78'">
             <div style="flex:1;min-width:0;">
-              <div style="font-size:0.8rem;color:var(--color-text-muted)">${item.brand}</div>
-              <div style="font-size:0.85rem;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${item.name}</div>
-              <div style="font-size:0.8rem;color:var(--color-text-muted)">${item.variantName}</div>
+              <div style="font-size:0.8rem;color:var(--color-text-muted)">${escapeHtml(item.brand)}</div>
+              <div style="font-size:0.85rem;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(item.name)}</div>
+              <div style="font-size:0.8rem;color:var(--color-text-muted)">${escapeHtml(item.variantName)}</div>
               <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
                 <span style="font-weight:700;color:var(--color-primary)">${formatPrice(item.price)}</span>
                 <span style="font-size:0.8rem;color:var(--color-text-muted)">Qty: ${item.quantity}</span>
@@ -240,9 +240,9 @@ const Navbar = {
       <div style="padding:0 var(--space-6);">
         ${items.length ? items.map(p => `
           <div class="wishlist-drawer-item">
-            <img class="wishlist-drawer-img" src="${p.image}" alt="${p.name}" onerror="this.style.background='#6a9e78'">
+            <img class="wishlist-drawer-img" src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.style.background='#6a9e78'">
             <div class="wishlist-drawer-info">
-              <div class="wishlist-drawer-name">${p.name}</div>
+              <div class="wishlist-drawer-name">${escapeHtml(p.name)}</div>
               <div class="wishlist-drawer-price">${formatPrice(p.price)}</div>
               <button onclick="Store.moveToCart('${p.id}');Navbar.closeWishlistDrawer();Toast.show('Moved to cart 🛒','success')" style="font-size:0.75rem;color:var(--color-primary);background:none;border:none;cursor:pointer;padding:4px 0">Move to Cart →</button>
             </div>

@@ -29,10 +29,10 @@ const CheckoutPage = {
             <h3 style="font-size:var(--text-sm);letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:var(--space-4)">Order Summary</h3>
             ${Store.cart.map(item => `
               <div class="checkout-item-mini">
-                <img class="checkout-item-img" src="${item.image}" alt="${item.name}" onerror="this.style.background='var(--color-cream)'">
+                <img class="checkout-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" onerror="this.style.background='var(--color-cream)'">
                 <div style="flex:1;min-width:0">
-                  <div style="font-size:.8rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.name}</div>
-                  <div style="font-size:.75rem;color:var(--color-text-muted)">${item.variantName} · Qty ${item.quantity}</div>
+                  <div style="font-size:.8rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(item.name)}</div>
+                  <div style="font-size:.75rem;color:var(--color-text-muted)">${escapeHtml(item.variantName)} · Qty ${item.quantity}</div>
                 </div>
                 <div style="font-weight:700;font-size:.85rem">${formatPrice(item.price * item.quantity)}</div>
               </div>`).join('')}
@@ -88,7 +88,7 @@ const CheckoutPage = {
         ${addresses.map(a => `
           <div class="address-card ${this.selectedAddress?.id===a.id?'selected':''}" onclick="CheckoutPage.selectedAddress=Store.user.addresses.find(x=>x.id==='${a.id}');document.querySelectorAll('.address-card').forEach(c=>c.classList.remove('selected'));this.classList.add('selected')">
             <input type="radio" class="address-card-radio" name="address" ${this.selectedAddress?.id===a.id?'checked':''}>
-            <div><div class="address-type-badge">🏠 ${a.type||'Home'}</div><div class="address-text"><strong>${a.name}</strong> · ${a.phone}<br>${a.line1}${a.line2?', '+a.line2:''}<br>${a.city}, ${a.state} — ${a.pincode}</div></div>
+            <div><div class="address-type-badge">🏠 ${escapeHtml(a.type||'Home')}</div><div class="address-text"><strong>${escapeHtml(a.name)}</strong> · ${escapeHtml(a.phone)}<br>${escapeHtml(a.line1)}${a.line2?', '+escapeHtml(a.line2):''}<br>${escapeHtml(a.city)}, ${escapeHtml(a.state)} — ${escapeHtml(a.pincode)}</div></div>
           </div>`).join('')}
         <div class="add-address-toggle" onclick="document.getElementById('add-addr-form').classList.toggle('visible')">
           ＋ Add New Address
@@ -248,11 +248,11 @@ const CheckoutPage = {
           </svg>
         </div>
         <h2 style="color:var(--color-primary)">Order Placed Successfully! 🌿</h2>
-        <p style="color:var(--color-text-secondary)">Thank you, ${Store.user.name.split(' ')[0]}! Your organic goodies are on their way.</p>
+        <p style="color:var(--color-text-secondary)">Thank you, ${escapeHtml(Store.user.name.split(' ')[0])}! Your organic goodies are on their way.</p>
         <div class="success-card">
-          <div class="success-order-id">Order ID: ${this.orderId}</div>
+          <div class="success-order-id">Order ID: ${escapeHtml(this.orderId)}</div>
           <div style="font-size:.9rem;color:var(--color-text-secondary)">Estimated Delivery: <strong>${addDays(4)}</strong></div>
-          <div style="font-size:.85rem;color:var(--color-text-muted);margin-top:8px">A confirmation will be sent to <strong>${Store.user.email}</strong></div>
+          <div style="font-size:.85rem;color:var(--color-text-muted);margin-top:8px">A confirmation will be sent to <strong>${escapeHtml(Store.user.email)}</strong></div>
         </div>
         <div style="display:flex;gap:var(--space-4);justify-content:center;flex-wrap:wrap">
           <a href="#/orders" class="btn btn-primary">Track My Order 📦</a>

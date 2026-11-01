@@ -41,7 +41,8 @@ const AdminAPI = {
 
   async getVendors()            { return this.list("vendors"); },
   async getVendorById(id)       { return this.getOne("vendors", id); },
-  async createVendor(data)      { return this.create("vendors", data); },
+  /* AUTH-003: UID-linked Auth create — never POST /admin/vendors auto-id */
+  async createVendor(data)      { return this.post("/admin/vendors/create-account", data); },
   async updateVendor(id, data)  { return this.update("vendors", id, data); },
   async deleteVendor(id)        { return this.remove("vendors", id); },
   async approveVendor(id)       { return this.update("vendors", id, { status: "active" }); },
@@ -104,11 +105,12 @@ const AdminAPI = {
         AdminStore.logout();
         throw new Error("Session expired. Please log in again.");
       }
+      const body = response.status === 204 ? null : await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error(`API Error ${response.status}: ${response.statusText}`);
+        throw new Error(body?.error || `API Error ${response.status}: ${response.statusText}`);
       }
       if (response.status === 204 || response.headers.get("content-length") === "0") return null;
-      return await response.json();
+      return body;
     } catch (error) {
       console.error("AdminAPI Error:", error);
       if (typeof AdminToast !== "undefined") AdminToast.error(error.message);

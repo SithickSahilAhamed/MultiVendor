@@ -5,6 +5,7 @@ using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Sunfara.Api.Filters;
 using Sunfara.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +33,7 @@ else
 if (credential != null && FirebaseApp.DefaultInstance == null)
     FirebaseApp.Create(new AppOptions { Credential = credential });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.AddService<VendorActiveFilter>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
@@ -44,6 +45,7 @@ builder.Services.AddSingleton(_ =>
 });
 builder.Services.AddScoped<FirestoreCatalogStore>();
 builder.Services.AddScoped<MarketplaceService>();
+builder.Services.AddScoped<VendorActiveFilter>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     // Without this, the default JWT handler remaps short claim names (e.g. "sub",

@@ -86,9 +86,14 @@ public sealed class AuthZMatrixTests : IClassFixture<SunfaraApiFactory>
 
         using var client = _factory.CreateAuthedClient(vendorId, "vendor");
         var response = await client.PostAsJsonAsync("/api/vendor/withdrawal", new { amount = 10 });
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        // AUTH-006 VendorActiveFilter rejects mutating Vendor-policy calls with 403
+        // before MarketplaceService.RequestWithdrawalAsync (which would 400).
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         var payload = await response.Content.ReadAsStringAsync();
-        Assert.Contains("not in good standing", payload, StringComparison.OrdinalIgnoreCase);
+        Assert.True(
+            payload.Contains("not active", StringComparison.OrdinalIgnoreCase)
+            || payload.Contains("not in good standing", StringComparison.OrdinalIgnoreCase),
+            $"Unexpected body: {payload}");
     }
 
     [EmulatorFact]

@@ -4,7 +4,8 @@ namespace Sunfara.Api.Controllers;
 [ApiController, Route("api")]
 public sealed class CatalogController(FirestoreCatalogStore store) : ControllerBase
 {
- [HttpGet("health")] public IActionResult Health()=>Ok(new{status="OK",service="Sunfara C# Firebase Commerce API",utc=DateTime.UtcNow});
+ /* Health lives solely on Program.cs MapGet("/api/health") (PAY-002 webhook readiness).
+    A second [HttpGet("health")] here caused AmbiguousMatchException in CI. */
  [HttpGet("categories")] public async Task<IActionResult> Categories()=>Ok(await store.ListAsync("categories"));
  // GET /api/vendors moved to VendorsController - this one returned every
  // vendor regardless of status (pending/rejected included), and having

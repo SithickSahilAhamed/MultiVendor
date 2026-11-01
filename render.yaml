@@ -1,25 +1,6 @@
-services:
-  - type: web
-    name: sunfara-backend
-    env: node
-    plan: starter
-    branch: main
-    buildCommand: npm install
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 5000
-      - key: FIREBASE_PROJECT_ID
-        sync: false
-      - key: FIREBASE_PRIVATE_KEY
-        sync: false
-      - key: FIREBASE_CLIENT_EMAIL
-        sync: false
-      - key: FIREBASE_DATABASE_URL
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: CORS_ORIGIN
-        value: https://sunfara-500b0.web.app,https://yourdomain.com
+# QUARANTINED (ARCH-002 / Phase 0) — Node/Express Render stub is obsolete.
+# Authoritative backend: Railway + Dockerfile → Sunfara.Api (.NET 9)
+# Authoritative frontend: Firebase Hosting / Netlify → sunfara/
+# Neutralized so an accidental Render blueprint cannot start Express.
+# Historical Node service definition removed from active services list.
+services: []

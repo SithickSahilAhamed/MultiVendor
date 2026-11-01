@@ -172,7 +172,14 @@ const ProductListPage = {
       this.renderActiveChips();
 
       if (!page.length) {
-        container.innerHTML = `
+        const catalogEmpty = Data.isCatalogEmpty();
+        container.innerHTML = catalogEmpty ? `
+          <div class="empty-state">
+            <div class="empty-state-icon">🌿</div>
+            <h3>No products listed yet</h3>
+            <p>The live catalog is empty. Products will appear here after catalog seed / vendor listings go live.</p>
+            <a href="#/" class="btn btn-primary">Back to Home</a>
+          </div>` : `
           <div class="empty-state">
             <div class="empty-state-icon">🌿</div>
             <h3>No products found</h3>

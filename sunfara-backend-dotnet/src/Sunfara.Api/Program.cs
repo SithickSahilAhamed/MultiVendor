@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using FirebaseAdmin;
+using Google.Api.Gax;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,28 +10,34 @@ using Sunfara.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var projectId = builder.Configuration["Firebase:ProjectId"] ?? Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ?? "sunfara-500b0";
+var isTesting = builder.Environment.IsEnvironment("Testing");
+var emulatorHost = Environment.GetEnvironmentVariable("FIRESTORE_EMULATOR_HOST");
 
 // Load service account credentials: prefer an inline JSON env var (works in
 // containers, where the key file is intentionally not part of the image),
-// falling back to a local file for dev.
+// falling back to a local file for dev. Testing / emulator runs skip this —
+// never require a real service account for CI.
 GoogleCredential? credential = null;
-var credJson = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON");
-if (!string.IsNullOrEmpty(credJson))
+if (!isTesting && string.IsNullOrEmpty(emulatorHost))
 {
-    credential = GoogleCredential.FromJson(credJson);
-}
-else
-{
-    var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
-    var credFullPath = Path.GetFullPath(credPath);
-    if (!File.Exists(credFullPath))
-        credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
-    if (File.Exists(credFullPath))
-        credential = GoogleCredential.FromFile(credFullPath);
-}
+    var credJson = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON");
+    if (!string.IsNullOrEmpty(credJson))
+    {
+        credential = GoogleCredential.FromJson(credJson);
+    }
+    else
+    {
+        var credPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "serviceAccountKey.json");
+        var credFullPath = Path.GetFullPath(credPath);
+        if (!File.Exists(credFullPath))
+            credFullPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") ?? "";
+        if (File.Exists(credFullPath))
+            credential = GoogleCredential.FromFile(credFullPath);
+    }
 
-if (credential != null && FirebaseApp.DefaultInstance == null)
-    FirebaseApp.Create(new AppOptions { Credential = credential });
+    if (credential != null && FirebaseApp.DefaultInstance == null)
+        FirebaseApp.Create(new AppOptions { Credential = credential });
+}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -38,8 +45,26 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton(_ =>
 {
-    var firestoreBuilder = new FirestoreDbBuilder { ProjectId = projectId };
-    if (credential != null) firestoreBuilder.Credential = credential;
+    // Safety: Testing must never silently talk to production Firestore.
+    // Prefer an explicit demo project id under the emulator; refuse the live
+    // project id unless ALLOW_PROD_PROJECT_IN_EMULATOR=1 (ops escape hatch).
+    var firestoreProjectId = projectId;
+    if (!string.IsNullOrEmpty(emulatorHost) || isTesting)
+    {
+        if (string.IsNullOrEmpty(emulatorHost))
+            throw new InvalidOperationException("Testing requires FIRESTORE_EMULATOR_HOST so tests never hit production Firestore.");
+        if (firestoreProjectId.Equals("sunfara-500b0", StringComparison.Ordinal)
+            && Environment.GetEnvironmentVariable("ALLOW_PROD_PROJECT_IN_EMULATOR") != "1")
+        {
+            firestoreProjectId = "demo-sunfara-test";
+        }
+    }
+
+    var firestoreBuilder = new FirestoreDbBuilder { ProjectId = firestoreProjectId };
+    if (!string.IsNullOrEmpty(emulatorHost) || isTesting)
+        firestoreBuilder.EmulatorDetection = EmulatorDetection.EmulatorOnly;
+    else if (credential != null)
+        firestoreBuilder.Credential = credential;
     return firestoreBuilder.Build();
 });
 builder.Services.AddScoped<FirestoreCatalogStore>();
@@ -80,3 +105,6 @@ if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
 app.UseCors("Sunfara"); app.UseRateLimiter(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
 app.MapGet("/", () => Results.Ok(new { status = "ok", service = "Sunfara API", docs = "/swagger" }));
 app.Run();
+
+// Expose entry point for WebApplicationFactory integration tests.
+public partial class Program { }

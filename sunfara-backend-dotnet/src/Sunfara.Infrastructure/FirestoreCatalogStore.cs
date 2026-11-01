@@ -26,6 +26,20 @@ public sealed class FirestoreCatalogStore(FirestoreDb db)
         return reference.Id;
     }
 
+    /* Idempotent write for catalog seed / admin repairs: merges fields onto a
+       known document id without deleting other fields or wiping the collection.
+       Creates the doc when missing; never removes sibling documents. */
+    public async Task UpsertAsync(string collection, string id, Dictionary<string, object> data)
+    {
+        if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Document id is required for upsert.", nameof(id));
+        var reference = db.Collection(collection).Document(id);
+        var exists = (await reference.GetSnapshotAsync()).Exists;
+        data = Normalize(data);
+        data["updatedAt"] = FieldValue.ServerTimestamp;
+        if (!exists) data["createdAt"] = FieldValue.ServerTimestamp;
+        await reference.SetAsync(data, SetOptions.MergeAll);
+    }
+
     public async Task<bool> UpdateAsync(string collection, string id, Dictionary<string, object> data)
     {
         var reference = db.Collection(collection).Document(id);

@@ -37,7 +37,7 @@ public sealed class ProductsController(FirestoreCatalogStore store) : Controller
         var existing = await store.GetAsync("products", id);
         if (existing is null) return NotFound();
         if (!IsAdmin && existing.GetValueOrDefault("vendorId")?.ToString() != UserId) return Forbid();
-        if (updates.TryGetValue("price", out var priceVal) && Convert.ToDouble(priceVal) <= 0) return BadRequest(new { error = "Price must be greater than zero." });
+        if (updates.TryGetValue("price", out var priceVal) && Convert.ToDouble(FirestoreCatalogStore.NormalizeValue(priceVal)) <= 0) return BadRequest(new { error = "Price must be greater than zero." });
         updates.Remove("vendorId"); updates.Remove("status");
         return await store.UpdateAsync("products", id, updates) ? NoContent() : NotFound();
     }

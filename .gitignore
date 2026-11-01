@@ -69,3 +69,8 @@ bagisto-2.4/.env
 .deploy/
 .deployment/
 .firebase/
+
+# Firebase emulator local logs
+firestore-debug.log
+firebase-debug.log
+ui-debug.log

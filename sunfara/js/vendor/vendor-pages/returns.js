@@ -14,7 +14,7 @@ const VendorReturns = {
     el.innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280">Loading return requests…</div>';
 
     try { this._returns = await VendorAPI.getMyReturns(); }
-    catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load returns: ${e.message}</div>`; return; }
+    catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load returns: ${VendorUtils.escapeHtml(e.message)}</div>`; return; }
 
     const returns = [...this._returns].sort((a, b) => new Date(b.requestedAt?.toDate ? b.requestedAt.toDate() : b.requestedAt || 0) - new Date(a.requestedAt?.toDate ? a.requestedAt.toDate() : a.requestedAt || 0));
 

@@ -272,7 +272,7 @@ const HomePage = {
             <span class="price-mrp">${formatPrice(p.mrp)}</span>
             <span class="price-discount">${p.discount}% off</span>
           </div>
-          <button class="btn btn-primary btn-full btn-sm" onclick="event.stopPropagation();Store.addToCart('${p.id}','${p.variants[0].id}',1);Toast.show('${p.name.substring(0,20)}... added to cart 🛒','success');Navbar.updateBadges()">Add to Cart</button>
+          <button class="btn btn-primary btn-full btn-sm" onclick="event.stopPropagation();Store.addToCart('${p.id}','${p.variants[0].id}',1);Toast.show('Added to cart 🛒','success');Navbar.updateBadges()">Add to Cart</button>
         </div>
       </div>`;
   }

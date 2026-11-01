@@ -12,7 +12,7 @@ const VendorEarnings = {
       [this._wallet, this._commissions, this._withdrawals] = await Promise.all([
         VendorAPI.getMyWallet(), VendorAPI.getMyCommissions(), VendorAPI.getMyWithdrawals()
       ]);
-    } catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load earnings: ${e.message}</div>`; return; }
+    } catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load earnings: ${VendorUtils.escapeHtml(e.message)}</div>`; return; }
 
     const wallet = this._wallet;
     const pendingWithdrawals = this._withdrawals.filter(w => w.status === 'pending').reduce((s, w) => s + (w.amount || 0), 0);

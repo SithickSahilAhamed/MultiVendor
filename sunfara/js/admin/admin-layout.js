@@ -24,7 +24,7 @@ const AdminLayout = {
         </button>
         <div class="admin-profile-menu" onclick="AdminLayout.toggleProfileMenu()">
           <div class="admin-profile-avatar">${AdminStore.user?.avatar || 'A'}</div>
-          <span>${AdminStore.user?.name.split(' ')[0] || 'Admin'}</span>
+          <span>${AdminUtils.escapeHtml(AdminStore.user?.name.split(' ')[0] || 'Admin')}</span>
         </div>
       </div>
     `;

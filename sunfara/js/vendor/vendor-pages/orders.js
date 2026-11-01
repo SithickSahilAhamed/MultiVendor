@@ -13,7 +13,7 @@ const VendorOrders = {
     el.innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280">Loading orders…</div>';
 
     try { this._orders = await VendorAPI.getMyOrders(); }
-    catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load orders: ${e.message}</div>`; return; }
+    catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load orders: ${VendorUtils.escapeHtml(e.message)}</div>`; return; }
 
     const orders = this._orders;
 
@@ -29,11 +29,11 @@ const VendorOrders = {
                 const next = VendorConfig.nextVendorStatus[o.status];
                 return `<tr>
                   <td><strong>${o.orderNumber || o.id}</strong></td>
-                  <td>${(o.items || []).map(i => `${i.name} ×${i.quantity}`).join(', ')}</td>
+                  <td>${(o.items || []).map(i => `${VendorUtils.escapeHtml(i.name)} ×${i.quantity}`).join(', ')}</td>
                   <td>${VendorUtils.formatPrice(o.subtotal)}</td>
                   <td>${o.paymentStatus === 'paid' ? '✅ Paid' : o.paymentMethod === 'Cash on Delivery' ? '💵 COD' : '⏳ Pending'}</td>
                   <td><span class="admin-status-badge ${VendorConfig.statusColors[o.status] || 'admin-status-pending'}">${VendorConfig.statusLabels[o.status] || o.status}</span></td>
-                  <td>${o.trackingNumber ? `${o.carrier || ''} ${o.trackingNumber}` : '—'}</td>
+                  <td>${o.trackingNumber ? `${VendorUtils.escapeHtml(o.carrier || '')} ${VendorUtils.escapeHtml(o.trackingNumber)}` : '—'}</td>
                   <td>${VendorUtils.formatDate(o.createdAt)}</td>
                   <td>${next ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="VendorOrders.advance('${o.id}','${next}')">${VendorConfig.nextVendorStatusLabel[o.status]}</button>` : '—'}</td>
                 </tr>`;

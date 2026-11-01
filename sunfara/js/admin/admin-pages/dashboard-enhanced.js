@@ -140,7 +140,7 @@ const AdminDashboardEnhanced = {
             ${vendors.map(v => {
               const performance = vendorPerformance[v.id] || 0;
               const color = performance >= 80 ? '#10b981' : performance >= 60 ? '#f59e0b' : '#ef4444';
-              return `<div style="padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><strong>${v.name}</strong><span style="color: ${color}; font-weight: 600;">${performance}%</span></div><div style="background: #f3f4f6; height: 8px; border-radius: 4px; overflow: hidden;"><div style="background: ${color}; height: 100%; width: ${performance}%; transition: width 0.3s;"></div></div></div>`;
+              return `<div style="padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><strong>${AdminUtils.escapeHtml(v.name)}</strong><span style="color: ${color}; font-weight: 600;">${performance}%</span></div><div style="background: #f3f4f6; height: 8px; border-radius: 4px; overflow: hidden;"><div style="background: ${color}; height: 100%; width: ${performance}%; transition: width 0.3s;"></div></div></div>`;
             }).join('')}
           </div>
         </div>

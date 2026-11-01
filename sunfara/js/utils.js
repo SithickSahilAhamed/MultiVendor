@@ -139,13 +139,13 @@ function truncate(str, maxLength) {
 
 /* Get image with fallback — returns img element HTML */
 function imgWithFallback(src, alt, cls = '') {
-  return `<img src="${src}" alt="${alt}" class="${cls}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy">
+  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="${cls}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy">
           <div class="gallery-fallback" style="display:none">🌿</div>`;
 }
 
 /* Simple img tag with fallback (no sibling div) */
 function safeImg(src, alt, cls = '') {
-  return `<img src="${src}" alt="${alt}" class="${cls}" onerror="this.src='';this.style.background='linear-gradient(135deg,#6a9e78,#4a7c59)'" loading="lazy">`;
+  return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="${cls}" onerror="this.src='';this.style.background='linear-gradient(135deg,#6a9e78,#4a7c59)'" loading="lazy">`;
 }
 
 /* Scroll page to top smoothly */

@@ -20,7 +20,7 @@ const Toast = {
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
       <span class="toast-icon">${icons[type] || icons.success}</span>
-      <span class="toast-msg">${message}</span>
+      <span class="toast-msg">${escapeHtml(message)}</span>
       <button class="toast-close" onclick="this.parentElement.remove()" aria-label="Close">✕</button>`;
 
     toast.style.cssText = `

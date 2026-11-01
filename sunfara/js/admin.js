@@ -469,8 +469,8 @@ class Admin {
           <tbody>
             ${vendors.map(v => `
               <tr>
-                <td><strong>${v.name}</strong></td>
-                <td>${v.email}</td>
+                <td><strong>${AdminUtils.escapeHtml(v.name)}</strong></td>
+                <td>${AdminUtils.escapeHtml(v.email)}</td>
                 <td>${v.products}</td>
                 <td><span class="status-badge ${v.status === 'Active' ? 'success' : 'warning'}">${v.status}</span></td>
                 <td>${v.commission}</td>

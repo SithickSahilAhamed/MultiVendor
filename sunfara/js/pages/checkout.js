@@ -15,6 +15,7 @@ const CheckoutPage = {
 
     this.step = 1;
     this.selectedAddress = Store.user.addresses[0] || null;
+    if (this.selectedAddress) Store.refreshShippingQuote(this.selectedAddress).then(() => this.refreshSummary());
 
     const t = Store.getCartTotal();
     document.getElementById('page-content').innerHTML = `
@@ -142,11 +143,26 @@ const CheckoutPage = {
     this.renderAddressStep(document.getElementById('step-content'));
   },
 
-  goToPayment() {
+  async goToPayment() {
     if (!this.selectedAddress && !Store.user.addresses.length) { Toast.show('Please add a delivery address', 'error'); return; }
     if (!this.selectedAddress) this.selectedAddress = Store.user.addresses[0];
+    await Store.refreshShippingQuote(this.selectedAddress);
     this.step = 2;
     this.renderStep();
+    this.refreshSummary();
+  },
+
+  refreshSummary() {
+    const summary = document.querySelector('.checkout-summary');
+    if (!summary) return;
+    const t = Store.getCartTotal();
+    const deliveryEl = [...summary.querySelectorAll('.summary-row')].find(row => row.firstElementChild?.textContent === 'Delivery');
+    if (deliveryEl) {
+      const span = deliveryEl.querySelector('span:last-child');
+      if (span) span.textContent = t.delivery === 0 ? 'FREE' : formatPrice(t.delivery);
+    }
+    const totalEl = summary.querySelector('.summary-row.total span:last-child');
+    if (totalEl) totalEl.textContent = formatPrice(t.final);
   },
 
   renderPaymentStep(el) {

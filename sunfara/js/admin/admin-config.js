@@ -25,6 +25,7 @@ const AdminConfig = {
     '/admin/withdrawals': 'withdrawals',
     '/admin/returns': 'returns',
     '/admin/reports': 'reports',
+    '/admin/shipping': 'shipping',
     '/admin/settings': 'settings',
   },
 
@@ -98,6 +99,13 @@ const AdminConfig = {
       label: 'Reports',
       icon: '📊',
       route: '#/admin/reports',
+      badge: null
+    },
+    {
+      id: 'shipping',
+      label: 'Shipping',
+      icon: '🚚',
+      route: '#/admin/shipping',
       badge: null
     },
     {

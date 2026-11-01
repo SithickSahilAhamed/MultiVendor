@@ -37,6 +37,10 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
 
         var couponCodeValue = request.TryGetValue("couponCode", out var ccRaw) ? FirestoreCatalogStore.NormalizeValue(ccRaw)?.ToString()?.Trim().ToUpperInvariant() : null;
 
+        // Zones are rate config, not inventory — load outside the checkout
+        // transaction so we never mix non-transactional reads into a write txn.
+        var shippingZones = await LoadShippingZonesAsync();
+
         await store.Database.RunTransactionAsync(async transaction =>
         {
             committedLowStockAlerts = [];
@@ -95,12 +99,11 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                label - checkout.js never even sent this field before, so a
                coupon "applied" in the cart UI silently vanished at payment
                time and the customer was charged full price regardless of
-               what they were shown. Percent/flat only; a "freeshipping"
-               coupon type exists in the demo data but there's no delivery
-               fee charged server-side to waive, so it has no real effect
-               here (matches current reality, doesn't invent a new charge). */
+               what they were shown. Percent/flat reduce merchandise;
+               freeshipping waives the computed delivery fee (SHIP-001). */
             decimal discountAmount = 0;
             string? appliedCouponCode = null;
+            var freeShippingCoupon = false;
             if (couponSnap is { Exists: true })
             {
                 var minOrder = couponSnap.ContainsField("minOrder") ? Convert.ToDecimal(couponSnap.GetValue<double>("minOrder")) : 0;
@@ -108,13 +111,27 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 if (active && subtotal >= minOrder)
                 {
                     var discountType = couponSnap.ContainsField("type") ? couponSnap.GetValue<string>("type") : "flat";
-                    var discountValue = couponSnap.ContainsField("discount") ? Convert.ToDecimal(couponSnap.GetValue<double>("discount")) : 0;
-                    discountAmount = discountType == "percent" ? Math.Round(subtotal * discountValue / 100m, 2) : discountValue;
-                    discountAmount = Math.Clamp(discountAmount, 0, subtotal);
-                    appliedCouponCode = couponCodeValue;
+                    if (string.Equals(discountType, "freeshipping", StringComparison.OrdinalIgnoreCase))
+                    {
+                        freeShippingCoupon = true;
+                        appliedCouponCode = couponCodeValue;
+                    }
+                    else
+                    {
+                        var discountValue = couponSnap.ContainsField("discount") ? Convert.ToDecimal(couponSnap.GetValue<double>("discount")) : 0;
+                        discountAmount = discountType == "percent" ? Math.Round(subtotal * discountValue / 100m, 2) : discountValue;
+                        discountAmount = Math.Clamp(discountAmount, 0, subtotal);
+                        appliedCouponCode = couponCodeValue;
+                    }
                 }
             }
-            var totalAmount = subtotal - discountAmount;
+
+            var merchandiseTotal = subtotal - discountAmount;
+            var destination = DestinationFromAddress(shippingAddressValue);
+            var shippingQuote = ShippingRateEngine.Quote(shippingZones, destination, merchandiseTotal, freeShippingCoupon);
+            var shippingAmount = shippingQuote.Amount;
+            var totalAmount = merchandiseTotal + shippingAmount;
+            var estimatedDelivery = DateTime.UtcNow.AddDays(Math.Max(1, shippingQuote.EstimatedDaysMax)).ToString("o");
 
             var byVendor = orderItems.GroupBy(i => i["vendorId"].ToString()!).ToList();
             var vendorOrderRefs = new List<(DocumentReference Ref, string VendorId, List<Dictionary<string, object>> Items, decimal VendorSubtotal)>();
@@ -135,6 +152,11 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 ["customerId"] = customerId, ["orderNumber"] = orderNumber, ["items"] = orderItems,
                 ["vendorOrderIds"] = vendorOrderRefs.Select(v => v.Ref.Id).ToList(),
                 ["subtotal"] = (double)subtotal, ["totalAmount"] = (double)totalAmount,
+                ["shippingAmount"] = (double)shippingAmount,
+                ["shippingZoneId"] = shippingQuote.ZoneId,
+                ["shippingZoneName"] = shippingQuote.ZoneName,
+                ["shippingMatchedBy"] = shippingQuote.MatchedBy,
+                ["freeShippingApplied"] = shippingQuote.FreeShippingApplied,
                 ["couponCode"] = appliedCouponCode ?? "", ["discountAmount"] = (double)discountAmount,
                 ["paymentStatus"] = "pending", ["paymentMethod"] = paymentMethodValue, ["shippingAddress"] = shippingAddressValue,
                 ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
@@ -149,8 +171,13 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                     ["masterOrderId"] = orderRef.Id, ["orderNumber"] = orderNumber, ["customerId"] = customerId,
                     ["vendorId"] = vendorId, ["vendorName"] = vendorItems.FirstOrDefault()?.GetValueOrDefault("vendorName") ?? "",
                     ["items"] = vendorItems, ["subtotal"] = (double)vendorSubtotal,
+                    // Full order shipping fee mirrored for vendor visibility (platform-collected).
+                    ["shippingAmount"] = (double)shippingAmount,
+                    ["shippingZoneId"] = shippingQuote.ZoneId,
+                    ["shippingZoneName"] = shippingQuote.ZoneName,
                     ["status"] = "pending", ["statusHistory"] = statusHistory,
-                    ["trackingNumber"] = "", ["carrier"] = "", ["estimatedDelivery"] = DateTime.UtcNow.AddDays(4).ToString("o"),
+                    ["trackingNumber"] = "", ["carrier"] = "",
+                    ["estimatedDelivery"] = estimatedDelivery,
                     ["paymentStatus"] = "pending", ["paymentMethod"] = paymentMethodValue,
                     ["commissionsCalculated"] = false,
                     ["createdAt"] = FieldValue.ServerTimestamp, ["updatedAt"] = FieldValue.ServerTimestamp
@@ -212,28 +239,191 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
        real, so the cart/checkout UI can show an accurate number before the
        customer commits - reads live (no transaction) since nothing's being
        written or charged here. */
-    public async Task<(bool Valid, decimal DiscountAmount, string Message)> PreviewCouponAsync(string code, decimal subtotal)
+    public async Task<(bool Valid, decimal DiscountAmount, string Message, bool FreeShipping)> PreviewCouponAsync(string code, decimal subtotal)
     {
         var normalizedCode = code?.Trim().ToUpperInvariant() ?? "";
-        if (string.IsNullOrWhiteSpace(normalizedCode)) return (false, 0, "Enter a coupon code.");
+        if (string.IsNullOrWhiteSpace(normalizedCode)) return (false, 0, "Enter a coupon code.", false);
 
         var matches = await store.Database.Collection("coupons").WhereEqualTo("code", normalizedCode).Limit(1).GetSnapshotAsync();
         var coupon = matches.Documents.FirstOrDefault();
-        if (coupon is not { Exists: true }) return (false, 0, "Invalid coupon code.");
+        if (coupon is not { Exists: true }) return (false, 0, "Invalid coupon code.", false);
 
         var active = !coupon.ContainsField("active") || coupon.GetValue<bool>("active");
-        if (!active) return (false, 0, "This coupon is no longer active.");
+        if (!active) return (false, 0, "This coupon is no longer active.", false);
 
         var minOrder = coupon.ContainsField("minOrder") ? Convert.ToDecimal(coupon.GetValue<double>("minOrder")) : 0;
-        if (subtotal < minOrder) return (false, 0, $"Minimum order of ₹{(double)minOrder:N0} required for this coupon.");
+        if (subtotal < minOrder) return (false, 0, $"Minimum order of ₹{(double)minOrder:N0} required for this coupon.", false);
 
         var discountType = coupon.ContainsField("type") ? coupon.GetValue<string>("type") : "flat";
+        var description = coupon.ContainsField("description") ? coupon.GetValue<string>("description") : "Coupon applied";
+        if (string.Equals(discountType, "freeshipping", StringComparison.OrdinalIgnoreCase))
+            return (true, 0, description, true);
+
         var discountValue = coupon.ContainsField("discount") ? Convert.ToDecimal(coupon.GetValue<double>("discount")) : 0;
         var discountAmount = discountType == "percent" ? Math.Round(subtotal * discountValue / 100m, 2) : discountValue;
         discountAmount = Math.Clamp(discountAmount, 0, subtotal);
 
-        var description = coupon.ContainsField("description") ? coupon.GetValue<string>("description") : "Coupon applied";
-        return (true, discountAmount, description);
+        return (true, discountAmount, description, false);
+    }
+
+    /* SHIP-001: public quote used by checkout UI before place-order so the
+       Delivery line matches what CheckoutAsync will charge. */
+    public async Task<ShippingQuote> QuoteShippingAsync(string? pincode, string? state, decimal merchandiseSubtotalAfterDiscount, bool freeShippingCoupon = false)
+    {
+        var zones = await LoadShippingZonesAsync();
+        return ShippingRateEngine.Quote(zones, new ShippingDestination(pincode, state), merchandiseSubtotalAfterDiscount, freeShippingCoupon);
+    }
+
+    /* SHIP-002: carrier tracker webhook → update vendor_orders tracking /
+       ETA and optionally advance status when the state machine allows. */
+    public async Task<bool> ApplyCarrierTrackingEventAsync(CarrierTrackingEvent evt)
+    {
+        DocumentSnapshot? snapshot = null;
+        DocumentReference? vendorOrderRef = null;
+
+        if (!string.IsNullOrWhiteSpace(evt.VendorOrderId))
+        {
+            vendorOrderRef = store.Database.Collection("vendor_orders").Document(evt.VendorOrderId!);
+            snapshot = await vendorOrderRef.GetSnapshotAsync();
+            if (!snapshot.Exists) snapshot = null;
+        }
+
+        if (snapshot is null && !string.IsNullOrWhiteSpace(evt.TrackingNumber))
+        {
+            var matches = await store.Database.Collection("vendor_orders")
+                .WhereEqualTo("trackingNumber", evt.TrackingNumber!.Trim())
+                .Limit(1)
+                .GetSnapshotAsync();
+            snapshot = matches.Documents.FirstOrDefault();
+            if (snapshot is { Exists: true }) vendorOrderRef = snapshot.Reference;
+        }
+
+        if (snapshot is null || vendorOrderRef is null || !snapshot.Exists) return false;
+
+        var updates = new Dictionary<string, object> { ["updatedAt"] = FieldValue.ServerTimestamp };
+        if (!string.IsNullOrWhiteSpace(evt.TrackingNumber)) updates["trackingNumber"] = evt.TrackingNumber!.Trim();
+        if (!string.IsNullOrWhiteSpace(evt.Carrier)) updates["carrier"] = evt.Carrier!.Trim();
+        if (!string.IsNullOrWhiteSpace(evt.EstimatedDeliveryIso)) updates["estimatedDelivery"] = evt.EstimatedDeliveryIso!;
+        if (!string.IsNullOrWhiteSpace(evt.Location)) updates["lastTrackingLocation"] = evt.Location!;
+        if (!string.IsNullOrWhiteSpace(evt.Status)) updates["lastCarrierStatus"] = evt.Status!;
+        if (!string.IsNullOrWhiteSpace(evt.RawEventId)) updates["lastCarrierEventId"] = evt.RawEventId!;
+
+        var currentStatus = snapshot.ContainsField("status") ? snapshot.GetValue<string>("status") : "pending";
+        var mapped = CarrierEventMapper.MapToOrderStatus(evt.Status);
+        var advanced = false;
+        if (CarrierEventMapper.ShouldApplyStatusTransition(currentStatus, mapped))
+        {
+            var history = snapshot.ContainsField("statusHistory") ? snapshot.GetValue<List<Dictionary<string, object>>>("statusHistory") : [];
+            history.Add(new Dictionary<string, object>
+            {
+                ["status"] = mapped!,
+                ["at"] = DateTime.UtcNow.ToString("o"),
+                ["by"] = "system:carrier"
+            });
+            updates["status"] = mapped!;
+            updates["statusHistory"] = history;
+            advanced = true;
+            currentStatus = mapped!;
+        }
+
+        await vendorOrderRef.UpdateAsync(updates);
+
+        if (advanced)
+        {
+            var paymentMethod = snapshot.ContainsField("paymentMethod") ? snapshot.GetValue<string>("paymentMethod") : "";
+            var commissionsCalculated = snapshot.ContainsField("commissionsCalculated") && snapshot.GetValue<bool>("commissionsCalculated");
+            if (currentStatus == "delivered" && paymentMethod == "Cash on Delivery" && !commissionsCalculated)
+                await CalculateAndRecordCommissionsAsync(vendorOrderRef.Id);
+
+            var notifyCustomerId = snapshot.GetValue<string>("customerId");
+            var tracking = updates.TryGetValue("trackingNumber", out var tn) ? tn?.ToString() : (snapshot.ContainsField("trackingNumber") ? snapshot.GetValue<string>("trackingNumber") : "");
+            if (currentStatus == "shipped")
+                await NotifyAsync(notifyCustomerId, "order_shipped", "Order Shipped", $"Your order has shipped{(string.IsNullOrWhiteSpace(tracking) ? "." : $" - tracking: {tracking}")}", "#/orders");
+            else if (currentStatus == "delivered")
+                await NotifyAsync(notifyCustomerId, "order_delivered", "Order Delivered", "Your order has been delivered. Enjoy!", "#/orders");
+        }
+
+        return true;
+    }
+
+    private async Task<IReadOnlyList<ShippingZone>> LoadShippingZonesAsync()
+    {
+        var snap = await store.Database.Collection("shipping_zones").Limit(200).GetSnapshotAsync();
+        return snap.Documents.Select(MapShippingZone).ToList();
+    }
+
+    private static ShippingZone MapShippingZone(DocumentSnapshot doc)
+    {
+        var prefixes = ReadStringList(doc, "pincodePrefixes");
+        var states = ReadStringList(doc, "states");
+        var ranges = new List<PincodeRange>();
+        if (doc.ContainsField("pincodeRanges"))
+        {
+            try
+            {
+                foreach (var raw in doc.GetValue<List<object>>("pincodeRanges") ?? [])
+                {
+                    if (raw is not Dictionary<string, object> map) continue;
+                    var from = map.TryGetValue("from", out var f) ? Convert.ToInt64(f) : 0;
+                    var to = map.TryGetValue("to", out var t) ? Convert.ToInt64(t) : 0;
+                    if (from > 0 && to >= from) ranges.Add(new PincodeRange(from, to));
+                }
+            }
+            catch { /* ignore malformed range lists */ }
+        }
+
+        decimal? freeAbove = null;
+        var freeAboveVal = ReadDecimalField(doc, "freeAboveSubtotal");
+        if (freeAboveVal is > 0) freeAbove = freeAboveVal;
+
+        return new ShippingZone(
+            Id: doc.Id,
+            Name: doc.ContainsField("name") ? doc.GetValue<string>("name") : doc.Id,
+            Active: !doc.ContainsField("active") || doc.GetValue<bool>("active"),
+            Priority: (int)(ReadDecimalField(doc, "priority") ?? 0),
+            FlatAmount: ReadDecimalField(doc, "flatAmount") ?? ShippingRateEngine.DefaultFlatAmount,
+            FreeAboveSubtotal: freeAbove,
+            EstimatedDaysMin: (int)(ReadDecimalField(doc, "estimatedDaysMin") ?? 4),
+            EstimatedDaysMax: (int)(ReadDecimalField(doc, "estimatedDaysMax") ?? 6),
+            PincodePrefixes: prefixes,
+            PincodeRanges: ranges,
+            States: states,
+            DefaultCarrier: doc.ContainsField("defaultCarrier") ? doc.GetValue<string>("defaultCarrier") : "");
+    }
+
+    private static decimal? ReadDecimalField(DocumentSnapshot doc, string field)
+    {
+        if (!doc.ContainsField(field)) return null;
+        try { return Convert.ToDecimal(doc.GetValue<object>(field)); }
+        catch { return null; }
+    }
+
+    private static List<string> ReadStringList(DocumentSnapshot doc, string field)
+    {
+        if (!doc.ContainsField(field)) return [];
+        try
+        {
+            return (doc.GetValue<List<object>>(field) ?? [])
+                .Select(x => x?.ToString()?.Trim() ?? "")
+                .Where(s => s.Length > 0)
+                .ToList();
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    private static ShippingDestination DestinationFromAddress(object? shippingAddressValue)
+    {
+        string? pincode = null;
+        string? state = null;
+        if (shippingAddressValue is Dictionary<string, object> map)
+        {
+            if (map.TryGetValue("pincode", out var p)) pincode = p?.ToString();
+            if (map.TryGetValue("state", out var s)) state = s?.ToString();
+        }
+        return new ShippingDestination(pincode, state);
     }
 
     /* Stock reservation for online payments happens here, not at checkout -

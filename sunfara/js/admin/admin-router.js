@@ -40,6 +40,7 @@ const AdminRouter = {
     '/admin/withdrawals': 'withdrawals',
     '/admin/returns': 'returns',
     '/admin/reports': 'reports',
+    '/admin/shipping': 'shipping',
     '/admin/settings': 'settings'
   },
 
@@ -61,6 +62,7 @@ const AdminRouter = {
     else if (page === 'withdrawals') AdminWithdrawals.render();
     else if (page === 'returns') AdminReturns.render();
     else if (page === 'reports') AdminReports.render();
+    else if (page === 'shipping') AdminShipping.render();
     else if (page === 'settings') AdminSettings.render();
     else AdminDashboard.render();
 

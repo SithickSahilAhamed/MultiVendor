@@ -100,6 +100,7 @@ const AdminOrders = {
       <div style="display: grid; gap: 16px;">
         <div><strong>Customer:</strong> ${order.customerId || '—'}</div>
         <div><strong>Total:</strong> ${AdminUtils.formatPrice(order.totalAmount)}</div>
+        ${typeof order.shippingAmount === 'number' ? `<div><strong>Shipping:</strong> ${order.shippingAmount === 0 ? 'FREE' : AdminUtils.formatPrice(order.shippingAmount)}${order.shippingZoneName ? ` (${AdminUtils.escapeHtml(order.shippingZoneName)})` : ''}</div>` : ''}
         ${order.paymentMethod ? `<div><strong>Payment Method:</strong> ${order.paymentMethod} ${order.paymentStatus === 'paid' ? '(Paid ✅)' : ''}</div>` : ''}
         <div><strong>Order Date:</strong> ${AdminUtils.formatDateTime(order.createdAt)}</div>
         <hr>
@@ -113,7 +114,8 @@ const AdminOrders = {
             <ul style="margin:0 0 8px 20px;padding:0;font-size:13px">
               ${(vo.items || []).map(i => `<li>${i.name} × ${i.quantity} — ${AdminUtils.formatPrice(i.total)}</li>`).join('') || '<li>—</li>'}
             </ul>
-            ${vo.trackingNumber ? `<p style="font-size:12px;color:#6b7280">🚚 ${vo.carrier || ''} · ${vo.trackingNumber}</p>` : ''}
+            ${typeof vo.shippingAmount === 'number' ? `<p style="font-size:12px;color:#6b7280">Shipping: ${vo.shippingAmount === 0 ? 'FREE' : AdminUtils.formatPrice(vo.shippingAmount)}${vo.shippingZoneName ? ` · ${AdminUtils.escapeHtml(vo.shippingZoneName)}` : ''}</p>` : ''}
+            ${vo.trackingNumber ? `<p style="font-size:12px;color:#6b7280">🚚 ${AdminUtils.escapeHtml(vo.carrier || '')} · ${AdminUtils.escapeHtml(vo.trackingNumber)}${vo.lastCarrierStatus ? ` · ${AdminUtils.escapeHtml(vo.lastCarrierStatus)}` : ''}</p>` : ''}
             <select class="admin-select" id="status-select-${vo.id}" style="width:100%;margin-top:8px">
               ${this.ALL_STATUSES.map(s => `<option value="${s}" ${s === vo.status ? 'selected' : ''}>${s}</option>`).join('')}
             </select>

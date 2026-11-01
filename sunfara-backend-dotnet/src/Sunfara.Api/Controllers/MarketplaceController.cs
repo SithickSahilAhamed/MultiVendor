@@ -20,8 +20,8 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     [Authorize, HttpPost("coupons/validate")]
     public async Task<IActionResult> ValidateCoupon([FromBody] CouponValidateRequest request)
     {
-        var (valid, discount, message) = await marketplace.PreviewCouponAsync(request.Code, request.Subtotal);
-        return Ok(new { valid, discountAmount = discount, message });
+        var (valid, discount, message, freeShipping) = await marketplace.PreviewCouponAsync(request.Code, request.Subtotal);
+        return Ok(new { valid, discountAmount = discount, message, freeShipping });
     }
 
     /* Master orders enriched with each vendor's own sub-order (status,

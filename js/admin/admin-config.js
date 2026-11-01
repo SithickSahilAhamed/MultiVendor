@@ -4,13 +4,7 @@ const AdminConfig = {
   version: '2026.1.0',
   appName: 'Sunfara Admin',
   
-  // Demo data
-  demoAdmin: {
-    email: 'admin@sunfara.com',
-    password: 'admin123',
-    name: 'Admin User',
-    avatar: 'A'
-  },
+  // AUTH-002: demo passwords removed from client config (legacy root SPA).
 
   // Routes
   routes: {

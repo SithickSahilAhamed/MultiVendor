@@ -80,7 +80,8 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
     public async Task<IActionResult> Webhook()
     {
         var webhookSecret = config["RAZORPAY_WEBHOOK_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
-        if (string.IsNullOrEmpty(webhookSecret)) return StatusCode(503, new { error = "Webhook is not configured." });
+        if (!RazorpayWebhookStartup.IsWebhookUsable(webhookSecret))
+            return StatusCode(503, new { error = "Webhook is not configured.", detail = RazorpayWebhookStartup.MissingSecretMessage });
 
         Request.EnableBuffering();
         using var reader = new StreamReader(Request.Body, Encoding.UTF8, leaveOpen: true);
@@ -88,7 +89,7 @@ public sealed class PaymentsController(FirestoreCatalogStore store, MarketplaceS
         Request.Body.Position = 0;
 
         var signatureHeader = Request.Headers["X-Razorpay-Signature"].ToString();
-        var expectedSignature = RazorpayHmac.WebhookSignature(webhookSecret, rawBody);
+        var expectedSignature = RazorpayHmac.WebhookSignature(webhookSecret!, rawBody);
         if (!RazorpayHmac.FixedTimeEqualsHex(expectedSignature, signatureHeader))
             return Unauthorized();
 

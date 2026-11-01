@@ -41,7 +41,8 @@ const AdminAPI = {
 
   async getVendors()            { return this.list("vendors"); },
   async getVendorById(id)       { return this.getOne("vendors", id); },
-  async createVendor(data)      { return this.create("vendors", data); },
+  /* AUTH-003: UID-linked Auth create — never POST /admin/vendors auto-id */
+  async createVendor(data)      { return this.post("/admin/vendors/create-account", data); },
   async updateVendor(id, data)  { return this.update("vendors", id, data); },
   async deleteVendor(id)        { return this.remove("vendors", id); },
   async approveVendor(id)       { return this.update("vendors", id, { status: "active" }); },
@@ -70,6 +71,14 @@ const AdminAPI = {
   async getWithdrawals()           { return this.list("withdrawals"); },
   async approveWithdrawal(id)      { return this.post(`/admin/withdrawals/${id}/approve`, {}); },
   async getRevenue()               { return this.get('/admin/revenue'); },
+  async getPaymentReconciliation(from, to) {
+    const qs = new URLSearchParams();
+    if (from) qs.set('from', from);
+    if (to) qs.set('to', to);
+    const q = qs.toString();
+    return this.get(`/admin/payments/reconciliation${q ? `?${q}` : ''}`);
+  },
+  async cancelUnpaidOrder(id)      { return this.post(`/admin/orders/${id}/cancel-unpaid`, {}); },
   async getTransactions()          { return this.list("transactions", 500); },
   async getVendorOrders()          { return this.list("vendor_orders", 500); },
   async updateOrderStatus(id, status, trackingNumber, carrier) { return this.put(`/admin/vendor-orders/${id}/status`, { status, trackingNumber, carrier }); },
@@ -104,11 +113,12 @@ const AdminAPI = {
         AdminStore.logout();
         throw new Error("Session expired. Please log in again.");
       }
+      const body = response.status === 204 ? null : await response.json().catch(() => null);
       if (!response.ok) {
-        throw new Error(`API Error ${response.status}: ${response.statusText}`);
+        throw new Error(body?.error || `API Error ${response.status}: ${response.statusText}`);
       }
       if (response.status === 204 || response.headers.get("content-length") === "0") return null;
-      return await response.json();
+      return body;
     } catch (error) {
       console.error("AdminAPI Error:", error);
       if (typeof AdminToast !== "undefined") AdminToast.error(error.message);

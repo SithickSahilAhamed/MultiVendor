@@ -1,0 +1,19 @@
+name: Authoritative stack guard
+
+# ARCH-002: ensure production backend image/path remains Sunfara.Api and
+# quarantined Express deploy stubs stay neutralized. Does not replace TEST-001.
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+
+jobs:
+  assert-stack:
+    name: Assert Dockerfile / quarantine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run stack assertions
+        run: bash scripts/assert-authoritative-stack.sh

@@ -17,6 +17,10 @@ firebase-config-private.js
 serviceAccountKey.json
 **/serviceAccountKey.json
 
+# Local catalog seed UID maps (CAT-001) — keep *.example.json only
+**/vendor-uids.json
+!**/vendor-uids.example.json
+
 # IDE
 .vscode/
 .idea/

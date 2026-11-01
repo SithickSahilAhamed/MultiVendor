@@ -8,8 +8,5 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set page title
   document.title = 'Sunfara Admin Panel';
 
-  console.log('✅ Admin Panel Initialized');
-  console.log('Demo Credentials:');
-  console.log('Email: admin@sunfara.com');
-  console.log('Password: admin123');
+  console.log('Admin Panel Initialized');
 });

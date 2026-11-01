@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Sunfara.Integration.Tests.Infrastructure;
+using Sunfara.Infrastructure;
 
 namespace Sunfara.Integration.Tests;
 
@@ -145,6 +146,11 @@ public sealed class AuthZMatrixTests : IClassFixture<SunfaraApiFactory>
             ["RAZORPAY_KEY_SECRET"] = SunfaraApiFactory.KeySecret,
             ["RAZORPAY_WEBHOOK_SECRET"] = SunfaraApiFactory.WebhookSecret,
         }).Build();
-        return new Sunfara.Infrastructure.MarketplaceService(store, new FixedHttpClientFactory(_factory.HttpHandler), config);
+        return new Sunfara.Infrastructure.MarketplaceService(
+            store,
+            new FixedHttpClientFactory(_factory.HttpHandler),
+            config,
+            new SandboxPayoutRail(),
+            new RecordingNotificationChannelSender());
     }
 }

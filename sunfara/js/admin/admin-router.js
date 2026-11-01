@@ -41,6 +41,7 @@ const AdminRouter = {
     '/admin/returns': 'returns',
     '/admin/reports': 'reports',
     '/admin/shipping': 'shipping',
+    '/admin/cms': 'cms',
     '/admin/settings': 'settings'
   },
 
@@ -63,6 +64,7 @@ const AdminRouter = {
     else if (page === 'returns') AdminReturns.render();
     else if (page === 'reports') AdminReports.render();
     else if (page === 'shipping') AdminShipping.render();
+    else if (page === 'cms') AdminCms.render();
     else if (page === 'settings') AdminSettings.render();
     else AdminDashboard.render();
 

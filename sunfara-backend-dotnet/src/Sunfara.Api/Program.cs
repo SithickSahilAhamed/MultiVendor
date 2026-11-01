@@ -70,6 +70,8 @@ builder.Services.AddSingleton(_ =>
     return firestoreBuilder.Build();
 });
 builder.Services.AddScoped<FirestoreCatalogStore>();
+builder.Services.AddScoped<IPayoutRail, SandboxPayoutRail>();
+builder.Services.AddSingleton<INotificationChannelSender, LoggingNotificationChannelSender>();
 builder.Services.AddScoped<MarketplaceService>();
 builder.Services.AddScoped<VendorActiveFilter>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -84,8 +86,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", p => p.RequireClaim("role", "admin"));
+    // RBAC-001: legacy role=admin still works; staff may use role=staff + staffPerms.
+    options.AddPolicy("Admin", p => p.RequireAssertion(ctx =>
+    {
+        var role = ctx.User.FindFirst(StaffRbac.ClaimRole)?.Value;
+        if (string.Equals(role, StaffRbac.RoleAdmin, StringComparison.OrdinalIgnoreCase)) return true;
+        if (!string.Equals(role, "staff", StringComparison.OrdinalIgnoreCase)) return false;
+        var perms = StaffRbac.ParsePermissions(role, ctx.User.FindFirst(StaffRbac.ClaimStaffPerms)?.Value);
+        return perms.Count > 0;
+    }));
     options.AddPolicy("Vendor", p => p.RequireClaim("role", "vendor", "admin"));
+    options.AddPolicy("Delivery", p => p.RequireClaim("role", "delivery", "admin"));
+    options.AddPolicy("FinanceStaff", p => p.RequireAssertion(ctx =>
+    {
+        var role = ctx.User.FindFirst(StaffRbac.ClaimRole)?.Value;
+        var perms = StaffRbac.ParsePermissions(role, ctx.User.FindFirst(StaffRbac.ClaimStaffPerms)?.Value);
+        return StaffRbac.HasPermission(perms, StaffRbac.PermFinance);
+    }));
 });
 builder.Services.AddCors(o => o.AddPolicy("Sunfara", p => p.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? ["http://localhost:8000"]).AllowAnyHeader().AllowAnyMethod()));
 

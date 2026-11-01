@@ -1,0 +1,70 @@
+/* WEB-003 — delivery partner responsive shell */
+.delivery-body {
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(34, 197, 94, 0.18), transparent 55%),
+    linear-gradient(180deg, #f3f7f4 0%, #e8efe9 100%);
+  min-height: 100vh;
+}
+
+.delivery-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.delivery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.delivery-brand {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #14532d;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+
+.delivery-header h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #166534;
+}
+
+.delivery-sub,
+.delivery-hint {
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.delivery-main {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 101, 52, 0.12);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+
+.delivery-card {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 14px 0;
+  display: grid;
+  gap: 8px;
+}
+
+.delivery-card:last-child { border-bottom: 0; }
+
+.delivery-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 640px) {
+  .delivery-header { flex-direction: column; }
+  .delivery-brand { font-size: 1.5rem; }
+}

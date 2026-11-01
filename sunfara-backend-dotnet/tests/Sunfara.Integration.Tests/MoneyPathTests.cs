@@ -272,7 +272,12 @@ public sealed class MoneyPathTests : IClassFixture<SunfaraApiFactory>
             ["RAZORPAY_KEY_SECRET"] = SunfaraApiFactory.KeySecret,
             ["RAZORPAY_WEBHOOK_SECRET"] = SunfaraApiFactory.WebhookSecret,
         }).Build();
-        return new MarketplaceService(store, new FixedHttpClientFactory(_factory.HttpHandler), config);
+        return new MarketplaceService(
+            store,
+            new FixedHttpClientFactory(_factory.HttpHandler),
+            config,
+            new SandboxPayoutRail(),
+            new RecordingNotificationChannelSender());
     }
 
     private static Dictionary<string, object> CheckoutBody(string productId, string method, int qty = 1)

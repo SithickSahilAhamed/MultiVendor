@@ -33,8 +33,10 @@ const AdminLayout = {
   renderSidebar: function() {
     const sidebar = document.getElementById('admin-sidebar');
     let html = '<div class="admin-sidebar">';
-    
-    AdminConfig.sidebar.forEach(item => {
+    const perms = new Set(AdminStore.user?.permissions || AdminRbac.parse(AdminStore.user?.role, AdminStore.user?.staffPerms || ''));
+    const items = AdminRbac.filterSidebar(AdminConfig.sidebar, perms);
+
+    items.forEach(item => {
       if (item.submenu) {
         html += `
           <button class="admin-sidebar-item parent-item" onclick="AdminLayout.toggleSubmenu('${item.id}')">

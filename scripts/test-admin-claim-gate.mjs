@@ -22,6 +22,8 @@ function assert(cond, msg) {
 }
 
 assert(AdminClaimGate.isAdmin({ role: 'admin' }) === true, 'admin claim accepted');
+assert(AdminClaimGate.isAdmin({ role: 'staff', staffPerms: 'finance' }) === true, 'staff with perms accepted');
+assert(AdminClaimGate.isAdmin({ role: 'staff' }) === false, 'staff without perms rejected');
 assert(AdminClaimGate.isAdmin({ role: 'vendor' }) === false, 'vendor claim rejected');
 assert(AdminClaimGate.isAdmin({ role: 'customer' }) === false, 'customer/no-role rejected');
 assert(AdminClaimGate.isAdmin({}) === false, 'empty claims rejected');
@@ -33,5 +35,6 @@ try { AdminClaimGate.assertAdminClaims({ role: 'vendor' }); } catch (e) {
 }
 assert(threw, 'assertAdminClaims throws for non-admin');
 assert(AdminClaimGate.assertAdminClaims({ role: 'admin' }) === true, 'assertAdminClaims passes for admin');
+assert(AdminClaimGate.assertAdminClaims({ role: 'staff', staffPerms: 'catalog,cms' }) === true, 'assertAdminClaims passes for staff');
 
 console.log(`\n${passed} assertions passed`);

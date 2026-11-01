@@ -9,7 +9,7 @@ namespace Sunfara.Api.Controllers;
 [Authorize(Policy = "Admin"), ApiController, Route("api/admin")]
 public sealed class AdminController(FirestoreCatalogStore store, MarketplaceService marketplace) : ControllerBase
 {
-    private static readonly HashSet<string> Collections = ["vendors","products","orders","vendor_orders","customers","commissions","withdrawals","reviews","categories","coupons","inventorySources","shipments","invoices","refunds","returns","settings","auditLogs","transactions","notifications"];
+    private static readonly HashSet<string> Collections = ["vendors","products","orders","vendor_orders","customers","commissions","withdrawals","reviews","categories","coupons","inventorySources","shipments","shipping_zones","invoices","refunds","returns","settings","auditLogs","transactions","notifications"];
     [HttpGet("{collection}")] public async Task<IActionResult> List(string collection, [FromQuery] int limit=100) => Allowed(collection) ? Ok(await store.ListAsync(collection,limit)) : NotFound();
     [HttpGet("{collection}/{id}")] public async Task<IActionResult> Get(string collection,string id) => !Allowed(collection) ? NotFound() : await store.GetAsync(collection,id) is { } item ? Ok(item) : NotFound();
 

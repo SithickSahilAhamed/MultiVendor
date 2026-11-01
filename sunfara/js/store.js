@@ -59,10 +59,38 @@ const Store = {
     const mrp = this.cart.reduce((s, i) => s + i.mrp * i.quantity, 0);
     const price = this.cart.reduce((s, i) => s + i.price * i.quantity, 0);
     const discount = mrp - price;
-    const delivery = price >= 599 ? 0 : 49;
     const couponDiscount = this.appliedCoupon?.discountAmount || 0;
-    const final = price - couponDiscount + delivery;
+    const merchandise = Math.max(0, price - couponDiscount);
+    // Prefer last server quote (SHIP-001); else legacy client estimate until quote loads.
+    let delivery;
+    if (this.appliedCoupon?.freeShipping) delivery = 0;
+    else if (this.shippingQuote && typeof this.shippingQuote.shippingAmount === 'number') delivery = this.shippingQuote.shippingAmount;
+    else delivery = merchandise >= 599 ? 0 : 49;
+    const final = merchandise + delivery;
     return { mrp, price, discount, delivery, couponDiscount, final, itemCount: this.cart.reduce((s, i) => s + i.quantity, 0) };
+  },
+
+  /* Cache of POST /shipping/quote so cart/checkout Delivery lines track the
+     same rate engine CheckoutAsync uses (zone match + free-above). */
+  shippingQuote: null,
+
+  async refreshShippingQuote(address) {
+    const { price, couponDiscount } = this.getCartTotal();
+    const merchandise = Math.max(0, price - couponDiscount);
+    try {
+      const quote = await SunfaraAPI.post('/shipping/quote', {
+        pincode: address?.pincode || '',
+        state: address?.state || '',
+        subtotal: merchandise,
+        freeShippingCoupon: !!this.appliedCoupon?.freeShipping
+      });
+      this.shippingQuote = quote;
+      this.emit('cart-updated');
+      return quote;
+    } catch {
+      this.shippingQuote = null;
+      return null;
+    }
   },
 
   getCartCount() {
@@ -106,7 +134,12 @@ const Store = {
     try {
       const result = await SunfaraAPI.post('/coupons/validate', { code, subtotal: price });
       if (!result.valid) return { success: false, message: result.message };
-      this.appliedCoupon = { code: code.toUpperCase(), discountAmount: result.discountAmount };
+      this.appliedCoupon = {
+        code: code.toUpperCase(),
+        discountAmount: result.discountAmount || 0,
+        freeShipping: !!result.freeShipping
+      };
+      this.shippingQuote = null;
       this.save();
       this.emit('cart-updated');
       return { success: true, message: result.message };
@@ -117,6 +150,7 @@ const Store = {
 
   removeCoupon() {
     this.appliedCoupon = null;
+    this.shippingQuote = null;
     this.save();
     this.emit('cart-updated');
   },

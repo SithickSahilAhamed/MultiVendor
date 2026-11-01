@@ -24,7 +24,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         var orderRef = store.Database.Collection("orders").Document();
 
         var paymentMethodValue = request.TryGetValue("paymentMethod", out var pmRaw) ? FirestoreCatalogStore.NormalizeValue(pmRaw) : "";
-        var isCod = paymentMethodValue?.ToString() == "Cash on Delivery";
+        var isCod = CheckoutPricing.IsCashOnDelivery(paymentMethodValue?.ToString());
         /* Declared here, populated inside the transaction, read after it
            commits - a Firestore transaction can retry silently on
            contention, so any non-transactional side effect (a notification
@@ -114,7 +114,7 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                     appliedCouponCode = couponCodeValue;
                 }
             }
-            var totalAmount = subtotal - discountAmount;
+            var totalAmount = CheckoutPricing.OrderTotal(subtotal, discountAmount, paymentMethodValue?.ToString());
 
             var byVendor = orderItems.GroupBy(i => i["vendorId"].ToString()!).ToList();
             var vendorOrderRefs = new List<(DocumentReference Ref, string VendorId, List<Dictionary<string, object>> Items, decimal VendorSubtotal)>();
@@ -681,5 +681,105 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
     {
         if (!request.TryGetValue("items", out var raw) || raw is not System.Text.Json.JsonElement json || json.ValueKind != System.Text.Json.JsonValueKind.Array) return [];
         return json.EnumerateArray().Select(x => x.EnumerateObject().ToDictionary(p => p.Name, p => p.Value.ValueKind == System.Text.Json.JsonValueKind.Number ? (object)p.Value.GetInt32() : p.Value.GetString()!)).ToList();
+    }
+
+    /* PAY-004: build order payment snapshots for a date window (in-memory filter;
+       avoids new composite indexes). Optional Razorpay capture list can be empty
+       for an unpaid-online-only scan, or filled from the Razorpay API / fixtures. */
+    public async Task<(IReadOnlyList<OrderPaymentSnapshot> Orders, IReadOnlyList<ReconciliationMismatch> Mismatches)> ReconcilePaymentsAsync(
+        DateTimeOffset from,
+        DateTimeOffset to,
+        IReadOnlyList<RazorpayCapturedPayment>? captures = null)
+    {
+        var docs = await store.ListAsync("orders", 500);
+        var snapshots = docs.Select(ToOrderPaymentSnapshot).Where(o => o.CreatedAt >= from && o.CreatedAt <= to).ToList();
+        var captureList = captures ?? await TryFetchRazorpayCapturesAsync(from, to);
+        var mismatches = PaymentReconciliation.FindMismatches(snapshots, captureList, from, to);
+        return (snapshots, mismatches);
+    }
+
+    /* Cancels a stuck unpaid online master order (and its pending vendor sub-orders)
+       so operators can clear tab-close / abandoned Razorpay checkouts from PAY-004. */
+    public async Task CancelUnpaidOnlineOrderAsync(string masterOrderId)
+    {
+        var order = await store.GetAsync("orders", masterOrderId) ?? throw new InvalidOperationException("Order not found.");
+        var paymentStatus = order.GetValueOrDefault("paymentStatus")?.ToString() ?? "";
+        var paymentMethod = order.GetValueOrDefault("paymentMethod")?.ToString() ?? "";
+        if (CheckoutPricing.IsCashOnDelivery(paymentMethod))
+            throw new InvalidOperationException("COD orders cannot be cancelled via unpaid-online reconciliation.");
+        if (string.Equals(paymentStatus, "paid", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Order is already paid.");
+
+        await store.UpdateAsync("orders", masterOrderId, new Dictionary<string, object>
+        {
+            ["paymentStatus"] = "cancelled",
+            ["cancellationReason"] = "unpaid_online_reconciliation"
+        });
+
+        var vendorOrders = await store.Database.Collection("vendor_orders").WhereEqualTo("masterOrderId", masterOrderId).GetSnapshotAsync();
+        foreach (var doc in vendorOrders.Documents)
+        {
+            if (doc.ContainsField("status") && doc.GetValue<string>("status") != "pending") continue;
+            await AppendStatusAsync(doc.Reference, doc, "cancelled", by: "admin:unpaid_reconciliation");
+            await doc.Reference.UpdateAsync(new Dictionary<string, object> { ["paymentStatus"] = "cancelled", ["updatedAt"] = FieldValue.ServerTimestamp });
+        }
+    }
+
+    private static OrderPaymentSnapshot ToOrderPaymentSnapshot(Dictionary<string, object> order)
+    {
+        var created = order.TryGetValue("createdAt", out var createdRaw) && createdRaw is DateTime dt
+            ? new DateTimeOffset(DateTime.SpecifyKind(dt, DateTimeKind.Utc))
+            : DateTimeOffset.UtcNow;
+        var total = order.TryGetValue("totalAmount", out var totalRaw) ? Convert.ToDecimal(totalRaw) : 0m;
+        return new OrderPaymentSnapshot(
+            order.GetValueOrDefault("id")?.ToString() ?? "",
+            order.GetValueOrDefault("paymentStatus")?.ToString() ?? "",
+            order.GetValueOrDefault("paymentMethod")?.ToString() ?? "",
+            order.GetValueOrDefault("razorpayOrderId")?.ToString(),
+            order.GetValueOrDefault("razorpayPaymentId")?.ToString(),
+            created,
+            total);
+    }
+
+    private async Task<IReadOnlyList<RazorpayCapturedPayment>> TryFetchRazorpayCapturesAsync(DateTimeOffset from, DateTimeOffset to)
+    {
+        var keyId = config["RAZORPAY_KEY_ID"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_ID");
+        var keySecret = config["RAZORPAY_KEY_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_SECRET");
+        if (string.IsNullOrWhiteSpace(keyId) || string.IsNullOrWhiteSpace(keySecret)) return [];
+
+        try
+        {
+            var client = httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+                "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{keyId}:{keySecret}")));
+            var fromUnix = from.ToUnixTimeSeconds();
+            var toUnix = to.ToUnixTimeSeconds();
+            var url = $"https://api.razorpay.com/v1/payments?from={fromUnix}&to={toUnix}&count=100";
+            var response = await client.GetAsync(url);
+            if (!response.IsSuccessStatusCode) return [];
+            var body = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(body);
+            if (!doc.RootElement.TryGetProperty("items", out var items) || items.ValueKind != JsonValueKind.Array) return [];
+
+            var captures = new List<RazorpayCapturedPayment>();
+            foreach (var item in items.EnumerateArray())
+            {
+                var status = item.TryGetProperty("status", out var st) ? st.GetString() : null;
+                if (!string.Equals(status, "captured", StringComparison.OrdinalIgnoreCase)) continue;
+                var paymentId = item.GetProperty("id").GetString() ?? "";
+                var orderId = item.TryGetProperty("order_id", out var oid) ? oid.GetString() ?? "" : "";
+                var amount = item.TryGetProperty("amount", out var amt) ? amt.GetInt64() : 0;
+                var createdAt = item.TryGetProperty("created_at", out var ca) && ca.TryGetInt64(out var unix)
+                    ? DateTimeOffset.FromUnixTimeSeconds(unix)
+                    : DateTimeOffset.UtcNow;
+                captures.Add(new RazorpayCapturedPayment(paymentId, orderId, amount, createdAt));
+            }
+            return captures;
+        }
+        catch
+        {
+            // Reconciliation still returns Firestore unpaid list when Razorpay is unreachable.
+            return [];
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Sunfara.Api.Filters;
+using Sunfara.Domain;
 using Sunfara.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,10 +76,25 @@ builder.Services.AddRateLimiter(o =>
 });
 
 var app = builder.Build();
+
+/* PAY-002: Production fails closed without RAZORPAY_WEBHOOK_SECRET so tab-close
+   captures cannot silently leave orders unpaid with no server-side settle path. */
+var webhookSecret = builder.Configuration["RAZORPAY_WEBHOOK_SECRET"]
+    ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
+RazorpayWebhookStartup.EnsureConfigured(webhookSecret, app.Environment.IsProduction());
+
 // Swagger exposes the full API surface (every route, every request/response
 // shape) to anyone who finds the URL - fine for local dev, not something a
 // production API needs to hand an attacker for free.
 if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
 app.UseCors("Sunfara"); app.UseRateLimiter(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
 app.MapGet("/", () => Results.Ok(new { status = "ok", service = "Sunfara API", docs = "/swagger" }));
+app.MapGet("/api/health", (IHostEnvironment env, IConfiguration config) =>
+{
+    var secret = config["RAZORPAY_WEBHOOK_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_WEBHOOK_SECRET");
+    var webhookReady = RazorpayWebhookStartup.IsWebhookUsable(secret);
+    if (env.IsProduction() && !webhookReady)
+        return Results.Json(new { status = "unhealthy", service = "Sunfara C# Firebase Commerce API", webhookConfigured = false, error = RazorpayWebhookStartup.MissingSecretMessage }, statusCode: 503);
+    return Results.Ok(new { status = "OK", service = "Sunfara C# Firebase Commerce API", webhookConfigured = webhookReady, environment = env.EnvironmentName });
+});
 app.Run();

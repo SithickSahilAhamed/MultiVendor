@@ -12,7 +12,7 @@ const VendorDashboard = {
         VendorAPI.getMyProducts(), VendorAPI.getMyOrders(), VendorAPI.getMyWallet()
       ]);
     } catch (e) {
-      el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load dashboard data: ${e.message}</div>`;
+      el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load dashboard data: ${VendorUtils.escapeHtml(e.message)}</div>`;
       return;
     }
 
@@ -27,7 +27,7 @@ const VendorDashboard = {
     const el2 = document.getElementById('vendor-page-content');
     el2.innerHTML = `
       ${VendorLayout.renderApprovalBanner()}
-      <div class="admin-page-header"><div><h1 class="admin-page-title">Welcome, ${VendorStore.user.name}</h1><p class="admin-page-subtitle">Here's how your store is doing</p></div></div>
+      <div class="admin-page-header"><div><h1 class="admin-page-title">Welcome, ${VendorUtils.escapeHtml(VendorStore.user.name)}</h1><p class="admin-page-subtitle">Here's how your store is doing</p></div></div>
 
       <div class="admin-grid">
         <div class="admin-kpi-card"><div class="admin-kpi-header"><span class="admin-kpi-label">Total Sales</span><span class="admin-kpi-icon">💰</span></div><div class="admin-kpi-value">${VendorUtils.formatPrice(totalSales)}</div><div class="admin-kpi-trend">${itemCount} items sold</div></div>

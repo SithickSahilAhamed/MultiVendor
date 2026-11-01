@@ -18,7 +18,7 @@ const VendorLayout = {
         </div>
         <div class="admin-profile-menu" onclick="VendorStore.logout()" title="Logout">
           <div class="admin-profile-avatar">${(VendorStore.user?.name || 'V')[0].toUpperCase()}</div>
-          <span>${VendorStore.user?.name?.split(' ')[0] || 'Vendor'}</span>
+          <span>${VendorUtils.escapeHtml(VendorStore.user?.name?.split(' ')[0] || 'Vendor')}</span>
         </div>
       </div>`;
     VendorNotifications.init();

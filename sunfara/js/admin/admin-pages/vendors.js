@@ -183,7 +183,7 @@ const AdminVendors = {
     AdminModal.show('Edit Vendor: ' + vendor.name, `
       <div class="admin-form-group">
         <label class="admin-label">Vendor Name</label>
-        <input type="text" class="admin-input" value="${vendor.name}" id="edit-vendor-name" />
+        <input type="text" class="admin-input" value="${AdminUtils.escapeHtml(vendor.name)}" id="edit-vendor-name" />
       </div>
       <div class="admin-form-group">
         <label class="admin-label">Commission Rate (%)</label>

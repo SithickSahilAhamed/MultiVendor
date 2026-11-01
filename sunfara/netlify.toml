@@ -1,21 +1,33 @@
-# Netlify Configuration for Sunfara Marketplace
+# Netlify Configuration for Sunfara Marketplace (served when base = sunfara)
 
 [build]
-# Static site - no build step needed
 publish = "."
 command = ""
 
-# Redirect all routes to index.html for SPA routing
+[[redirects]]
+from = "/admin"
+to = "/admin.html"
+status = 200
+
+[[redirects]]
+from = "/admin/*"
+to = "/admin.html"
+status = 200
+
+[[redirects]]
+from = "/vendor"
+to = "/vendor.html"
+status = 200
+
+[[redirects]]
+from = "/vendor/*"
+to = "/vendor.html"
+status = 200
+
 [[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
-
-# Cache headers for static assets
-[[headers]]
-for = "/**/*"
-[headers.values]
-  Cache-Control = "public, max-age=3600"
 
 [[headers]]
 for = "/css/*"
@@ -32,7 +44,7 @@ for = "/assets/**/*"
 [headers.values]
   Cache-Control = "public, max-age=86400"
 
-# Security headers
+# SEC-002 security headers + CSP (mirrors root netlify.toml)
 [[headers]]
 for = "/*"
 [headers.values]
@@ -41,8 +53,8 @@ for = "/*"
   X-XSS-Protection = "1; mode=block"
   Referrer-Policy = "strict-origin-when-cross-origin"
   Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+  Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.googletagmanager.com https://apis.google.com https://checkout.razorpay.com https://cdn.jsdelivr.net; connect-src 'self' http://localhost:* http://127.0.0.1:* https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app https://*.cloudfunctions.net https://identitytoolkit.googleapis.com https://securetoken.google.com https://firestore.googleapis.com https://firebaseinstallations.googleapis.com https://firebaseappcheck.googleapis.com https://content-firebaseappcheck.googleapis.com https://www.google.com https://www.gstatic.com https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com https://*.web.app https://*.firebaseapp.com https://*.up.railway.app https://iqral.com https://www.iqral.com https://iqral.in https://www.iqral.in https://sunfaraecom.netlify.app; frame-src https://checkout.razorpay.com https://api.razorpay.com https://www.google.com https://www.recaptcha.net https://recaptcha.google.com; worker-src 'self' blob:"
 
-# Environment variables (set in Netlify dashboard)
 [context.production]
 environment = { NODE_ENV = "production" }
 

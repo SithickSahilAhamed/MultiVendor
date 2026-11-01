@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ARCH-002 stack guard: production backend entrypoint must be Sunfara.Api;
+# ARCH-002 / Phase 5 stack guard: production backend entrypoint must be Sunfara.Api;
 # quarantined Node deploy stubs must not start Express as the active command.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -54,5 +54,12 @@ grep -q 'localhost:5187' "$ROOT/sunfara-backend-dotnet/src/Sunfara.Api/Propertie
 grep -q "localhost:5187/api" "$ROOT/sunfara/index.html" \
   || fail "sunfara/index.html must target localhost:5187/api"
 pass "Local API URL aligned on :5187"
+
+# SEC-002: security headers present in hosting + API
+grep -q 'Content-Security-Policy' "$ROOT/firebase.json" || fail "firebase.json missing CSP header"
+grep -q 'Content-Security-Policy' "$ROOT/netlify.toml" || fail "netlify.toml missing CSP header"
+grep -q 'X-Content-Type-Options' "$ROOT/sunfara-backend-dotnet/src/Sunfara.Api/Program.cs" \
+  || fail "Program.cs missing API security headers"
+pass "SEC-002 CSP / API header hooks present"
 
 echo "All authoritative-stack assertions passed."

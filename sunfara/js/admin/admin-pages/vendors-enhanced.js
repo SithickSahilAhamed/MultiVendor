@@ -68,7 +68,7 @@ const AdminVendorsEnhanced = {
             ${vendors.map(v => `
               <tr style="cursor: pointer;">
                 <td><input type="checkbox" /></td>
-                <td onclick="AdminVendorsEnhanced.showDetailPage('${v.id}')" style="font-weight: 600; color: #22c55e;">${v.logo} ${v.name}</td>
+                <td onclick="AdminVendorsEnhanced.showDetailPage('${v.id}')" style="font-weight: 600; color: #22c55e;">${v.logo} ${AdminUtils.escapeHtml(v.name)}</td>
                 <td><span class="admin-status-badge ${AdminConfig.statusColors[v.status]}">${AdminConfig.statusLabels[v.status]}</span></td>
                 <td>
                   ${v.kycStatus === 'completed' ? '<span class="admin-status-badge admin-status-active">✅ Verified</span>' : 
@@ -98,13 +98,13 @@ const AdminVendorsEnhanced = {
     AdminLayout.renderBreadcrumb([
       { label: 'Dashboard', route: '#/admin/dashboard' },
       { label: 'Vendors', route: '#/admin/vendors' },
-      { label: vendor.name, route: '#/admin/vendors/' + vendorId }
+      { label: AdminUtils.escapeHtml(vendor.name), route: '#/admin/vendors/' + vendorId }
     ]);
 
     const html = `
       <div class="admin-page-header">
         <div>
-          <h1 class="admin-page-title">${vendor.logo} ${vendor.name}</h1>
+          <h1 class="admin-page-title">${vendor.logo} ${AdminUtils.escapeHtml(vendor.name)}</h1>
           <p class="admin-page-subtitle">Complete vendor profile and management</p>
         </div>
         <div class="admin-page-actions">
@@ -121,15 +121,15 @@ const AdminVendorsEnhanced = {
             <div style="display: grid; gap: 16px;">
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Name</div>
-                <div style="font-weight: 600; margin-top: 4px;">${vendor.name}</div>
+                <div style="font-weight: 600; margin-top: 4px;">${AdminUtils.escapeHtml(vendor.name)}</div>
               </div>
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Email</div>
-                <div style="margin-top: 4px;"><a href="mailto:${vendor.email}" style="color: #22c55e; text-decoration: none;">${vendor.email}</a></div>
+                <div style="margin-top: 4px;"><a href="mailto:${AdminUtils.escapeHtml(vendor.email)}" style="color: #22c55e; text-decoration: none;">${AdminUtils.escapeHtml(vendor.email)}</a></div>
               </div>
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Phone</div>
-                <div style="margin-top: 4px;"><a href="tel:${vendor.phone}" style="color: #22c55e; text-decoration: none;">${vendor.phone}</a></div>
+                <div style="margin-top: 4px;"><a href="tel:${AdminUtils.escapeHtml(vendor.phone)}" style="color: #22c55e; text-decoration: none;">${AdminUtils.escapeHtml(vendor.phone)}</a></div>
               </div>
               <div>
                 <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Status</div>

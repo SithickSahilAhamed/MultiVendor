@@ -62,7 +62,7 @@ const AdminCommissions = {
                 const commission = (v.revenue || 0) * (v.commission || 0) / 100;
                 return `
                 <tr>
-                  <td><strong>${v.logo || '🏪'} ${v.name}</strong></td>
+                  <td><strong>${v.logo || '🏪'} ${AdminUtils.escapeHtml(v.name)}</strong></td>
                   <td>${AdminUtils.formatPrice(v.revenue || 0)}</td>
                   <td>${v.commission || 0}%</td>
                   <td><strong>${AdminUtils.formatPrice(commission)}</strong></td>

@@ -16,14 +16,14 @@ const Search = {
       if (q.length < 2) { dropdown.classList.remove('visible'); dropdown.innerHTML = ''; return; }
       const results = Data.search(q).slice(0, 6);
       if (!results.length) {
-        dropdown.innerHTML = `<div class="search-no-results">No results for "<strong>${q}</strong>"</div>`;
+        dropdown.innerHTML = `<div class="search-no-results">No results for "<strong>${escapeHtml(q)}</strong>"</div>`;
       } else {
         dropdown.innerHTML = results.map((p, idx) => `
           <div class="search-result-item" data-id="${p.id}" tabindex="0" data-index="${idx}">
-            <img class="search-result-thumb" src="${p.image}" alt="${p.name}" onerror="this.style.background='#6a9e78';this.src=''">
+            <img class="search-result-thumb" src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.style.background='#6a9e78';this.src=''">
             <div class="search-result-info">
-              <div class="search-result-name">${p.name}</div>
-              <div class="search-result-meta">${p.brand} · ${p.category.replace(/-/g,' ')}</div>
+              <div class="search-result-name">${escapeHtml(p.name)}</div>
+              <div class="search-result-meta">${escapeHtml(p.brand)} · ${escapeHtml(p.category.replace(/-/g,' '))}</div>
             </div>
             <div class="search-result-price">${formatPrice(p.price)}</div>
           </div>`).join('');

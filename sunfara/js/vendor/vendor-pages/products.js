@@ -9,7 +9,7 @@ const VendorProducts = {
     el.innerHTML = '<div style="padding:40px;text-align:center;color:#6b7280">Loading products…</div>';
 
     try { this._products = await VendorAPI.getMyProducts(); }
-    catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load products: ${e.message}</div>`; return; }
+    catch (e) { el.innerHTML = `<div class="admin-page-header" style="color:#991b1b">Could not load products: ${VendorUtils.escapeHtml(e.message)}</div>`; return; }
 
     const products = this._products;
     el.innerHTML = `
@@ -25,8 +25,8 @@ const VendorProducts = {
             ${products.length === 0 ? '<tr><td colspan="6" style="text-align:center;padding:32px;color:#6b7280">No products yet — add your first one</td></tr>' :
               products.map(p => `
               <tr>
-                <td><img src="${p.image || ''}" alt="" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:8px;background:#f3f4f6" /><strong>${p.name}</strong></td>
-                <td>${p.category || '—'}</td>
+                <td><img src="${VendorUtils.escapeHtml(p.image || '')}" alt="" onerror="this.style.display='none'" style="width:40px;height:40px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:8px;background:#f3f4f6" /><strong>${VendorUtils.escapeHtml(p.name)}</strong></td>
+                <td>${VendorUtils.escapeHtml(p.category || '—')}</td>
                 <td style="color:${(p.stock ?? 0) === 0 ? '#ef4444' : (p.stock ?? 0) <= 5 ? '#f59e0b' : 'inherit'}">${p.stock ?? 0}</td>
                 <td>${VendorUtils.formatPrice(p.price)}</td>
                 <td><span class="admin-status-badge ${VendorConfig.statusColors[p.status] || 'admin-status-pending'}">${VendorConfig.statusLabels[p.status] || p.status}</span></td>
@@ -42,14 +42,14 @@ const VendorProducts = {
 
   formFields(p = {}) {
     return `
-      <div class="admin-form-group"><label class="admin-label">Product Name *</label><input type="text" class="admin-input" id="vp-name" value="${p.name || ''}" placeholder="Enter product name" /></div>
-      <div class="admin-form-group"><label class="admin-label">Category</label><input type="text" class="admin-input" id="vp-category" value="${p.category || ''}" placeholder="e.g. Skincare" /></div>
+      <div class="admin-form-group"><label class="admin-label">Product Name *</label><input type="text" class="admin-input" id="vp-name" value="${VendorUtils.escapeHtml(p.name || '')}" placeholder="Enter product name" /></div>
+      <div class="admin-form-group"><label class="admin-label">Category</label><input type="text" class="admin-input" id="vp-category" value="${VendorUtils.escapeHtml(p.category || '')}" placeholder="e.g. Skincare" /></div>
       <div class="admin-form-group"><label class="admin-label">Product Photo</label>
         <div style="display:flex;gap:12px;align-items:flex-start">
-          <img id="vp-image-preview" src="${p.image || ''}" alt="" onerror="this.style.visibility='hidden'" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;flex-shrink:0;${p.image ? '' : 'visibility:hidden'}" />
+          <img id="vp-image-preview" src="${VendorUtils.escapeHtml(p.image || '')}" alt="" onerror="this.style.visibility='hidden'" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;flex-shrink:0;${p.image ? '' : 'visibility:hidden'}" />
           <div style="flex:1">
             <input type="file" class="admin-input" id="vp-image-file" accept="image/jpeg,image/png,image/webp" onchange="VendorProducts.previewImage(this)" style="padding:8px" />
-            <input type="text" class="admin-input" id="vp-image" value="${p.image || ''}" placeholder="…or paste an image URL" style="margin-top:8px" />
+            <input type="text" class="admin-input" id="vp-image" value="${VendorUtils.escapeHtml(p.image || '')}" placeholder="…or paste an image URL" style="margin-top:8px" />
           </div>
         </div>
       </div>

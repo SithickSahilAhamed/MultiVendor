@@ -41,9 +41,9 @@ const AdminCustomers = {
             ${customers.length === 0 ? '<tr><td colspan="6" style="text-align:center;padding:32px;color:#6b7280;">No customers found</td></tr>' :
               customers.map(c => `
               <tr>
-                <td><strong>${c.name || c.displayName || '—'}</strong></td>
-                <td>${c.email || '—'}</td>
-                <td>${c.phone || '—'}</td>
+                <td><strong>${AdminUtils.escapeHtml(c.name || c.displayName || '—')}</strong></td>
+                <td>${AdminUtils.escapeHtml(c.email || '—')}</td>
+                <td>${AdminUtils.escapeHtml(c.phone || '—')}</td>
                 <td>${c.orders ?? '—'}</td>
                 <td>${AdminUtils.formatPrice(c.spent || c.totalSpent || 0)}</td>
                 <td>
@@ -70,8 +70,8 @@ const AdminCustomers = {
     const orders = customer.orders || 1;
     AdminModal.show((customer.name || customer.displayName) + ' - Customer Profile', `
       <div style="display: grid; gap: 16px;">
-        <div><strong>Email:</strong> ${customer.email || '—'}</div>
-        <div><strong>Phone:</strong> ${customer.phone || '—'}</div>
+        <div><strong>Email:</strong> ${AdminUtils.escapeHtml(customer.email || '—')}</div>
+        <div><strong>Phone:</strong> ${AdminUtils.escapeHtml(customer.phone || '—')}</div>
         <div><strong>Total Orders:</strong> ${customer.orders ?? '—'}</div>
         <div><strong>Total Spent:</strong> ${AdminUtils.formatPrice(spent)}</div>
         ${orders > 0 ? `<div><strong>Average Order Value:</strong> ${AdminUtils.formatPrice(spent / orders)}</div>` : ''}

@@ -21,19 +21,19 @@ const ProductDetailPage = {
         <div class="breadcrumb">
           <a href="#/">Home</a><span class="breadcrumb-sep">›</span>
           <a href="#/category/${product.category}">${product.category.replace(/-/g,' ')}</a>
-          <span class="breadcrumb-sep">›</span><span>${truncate(product.name, 30)}</span>
+          <span class="breadcrumb-sep">›</span><span>${escapeHtml(truncate(product.name, 30))}</span>
         </div>
         <div class="product-detail-layout">
           <!-- Gallery -->
           <div class="product-gallery">
             <div class="gallery-main">
-              <img id="gallery-main-img" src="${product.image}" alt="${product.name}" onerror="this.style.display='none';document.getElementById('gallery-fallback').style.display='flex'">
+              <img id="gallery-main-img" src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" onerror="this.style.display='none';document.getElementById('gallery-fallback').style.display='flex'">
               <div class="gallery-fallback" id="gallery-fallback" style="display:none">🌿</div>
             </div>
             <div class="gallery-thumbs">
               ${product.images.map((img, i) => `
-                <div class="gallery-thumb ${i===0?'active':''}" onclick="ProductDetailPage.switchImage('${img}',${i})">
-                  <img src="${img}" alt="${product.name} view ${i+1}" onerror="this.style.background='var(--color-cream)'">
+                <div class="gallery-thumb ${i===0?'active':''}" onclick="ProductDetailPage.switchImage('${escapeHtml(img)}',${i})">
+                  <img src="${escapeHtml(img)}" alt="${escapeHtml(product.name)} view ${i+1}" onerror="this.style.background='var(--color-cream)'">
                 </div>`).join('')}
             </div>
           </div>
@@ -59,7 +59,7 @@ const ProductDetailPage = {
             <div class="variant-label">Size:</div>
             <div class="variant-options">
               ${product.variants.map(v => `
-                <button class="variant-btn ${v.id===this.selectedVariant.id?'active':''}" onclick="ProductDetailPage.selectVariant('${v.id}')">${v.name} — ${formatPrice(v.price)}</button>`).join('')}
+                <button class="variant-btn ${v.id===this.selectedVariant.id?'active':''}" onclick="ProductDetailPage.selectVariant('${v.id}')">${escapeHtml(v.name)} — ${formatPrice(v.price)}</button>`).join('')}
             </div>
             <hr class="product-divider">` : ''}
 
@@ -94,7 +94,7 @@ const ProductDetailPage = {
             </div>
 
             <div class="product-highlights">
-              ${product.highlights.map(h => `<div class="highlight-item">${h}</div>`).join('')}
+              ${product.highlights.map(h => `<div class="highlight-item">${escapeHtml(h)}</div>`).join('')}
             </div>
           </div>
         </div>
@@ -197,12 +197,12 @@ const ProductDetailPage = {
       desc: `<div class="tab-content-inner"><p>${escapeHtml(p.description)}</p></div>`,
       ingredients: `<div class="tab-content-inner">
         <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);margin-bottom:var(--space-4)">
-          ${p.keyIngredients.map(i=>`<span class="badge badge-organic">🌿 ${i}</span>`).join('')}
+          ${p.keyIngredients.map(i=>`<span class="badge badge-organic">🌿 ${escapeHtml(i)}</span>`).join('')}
         </div>
-        <p class="ingredients-list"><strong>Full Ingredient List:</strong><br>${p.ingredients}</p></div>`,
+        <p class="ingredients-list"><strong>Full Ingredient List:</strong><br>${escapeHtml(p.ingredients)}</p></div>`,
       how: `<div class="tab-content-inner">
         <div class="how-to-steps">
-          ${p.howToUse.split('.').filter(s=>s.trim()).map((s, i)=>`<div class="how-to-step"><div class="step-num">${i+1}</div><p>${s.trim()}.</p></div>`).join('')}
+          ${p.howToUse.split('.').filter(s=>s.trim()).map((s, i)=>`<div class="how-to-step"><div class="step-num">${i+1}</div><p>${escapeHtml(s.trim())}.</p></div>`).join('')}
         </div></div>`,
       reviews: `<div class="tab-content-inner">
         <div class="reviews-summary">

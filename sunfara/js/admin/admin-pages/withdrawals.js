@@ -75,7 +75,7 @@ const AdminWithdrawals = {
             ${rows.length === 0 ? '<tr><td colspan="5" style="text-align:center;padding:32px;color:#6b7280;">No withdrawal requests</td></tr>' :
               rows.map(r => `
               <tr>
-                <td><strong>${r.vendor || r.vendorName || r.id}</strong></td>
+                <td><strong>${AdminUtils.escapeHtml(r.vendor || r.vendorName || r.id)}</strong></td>
                 <td>${AdminUtils.formatPrice(r.amount || 0)}</td>
                 <td><span class="admin-status-badge admin-status-${r.status || 'pending'}">${AdminConfig.statusLabels[r.status] || '🟡 Pending'}</span></td>
                 <td>${r.requestedAt || r.createdAt || '—'}</td>

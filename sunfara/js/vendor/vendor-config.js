@@ -6,7 +6,8 @@ const VendorConfig = {
     { id: 'products', label: 'Products', icon: '📦', route: '#/vendor/products' },
     { id: 'orders', label: 'Orders', icon: '📋', route: '#/vendor/orders' },
     { id: 'returns', label: 'Returns', icon: '↩️', route: '#/vendor/returns' },
-    { id: 'earnings', label: 'Earnings & Payouts', icon: '💰', route: '#/vendor/earnings' }
+    { id: 'earnings', label: 'Earnings & Payouts', icon: '💰', route: '#/vendor/earnings' },
+    { id: 'branding', label: 'Storefront branding', icon: '🎨', route: '#/vendor/branding' }
   ],
 
   statusColors: { active: 'admin-status-active', pending: 'admin-status-pending', rejected: 'admin-status-rejected', processing: 'admin-status-processing' },

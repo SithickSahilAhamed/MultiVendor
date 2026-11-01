@@ -81,6 +81,8 @@ const AdminStore = {
         avatar: (credential.user.displayName || email)[0].toUpperCase(),
         uid: credential.user.uid,
         role: tokenResult.claims.role,
+        staffPerms: tokenResult.claims.staffPerms || '',
+        permissions: Array.from(AdminRbac.parse(tokenResult.claims.role, tokenResult.claims.staffPerms || '')),
         loginTime: new Date()
       };
       this.isLoggedIn = true;
@@ -163,6 +165,8 @@ const AdminStore = {
           avatar: (fbUser.displayName || fbUser.email || "A")[0].toUpperCase(),
           uid: fbUser.uid,
           role: tokenResult.claims.role,
+          staffPerms: tokenResult.claims.staffPerms || '',
+          permissions: Array.from(AdminRbac.parse(tokenResult.claims.role, tokenResult.claims.staffPerms || '')),
           loginTime: new Date()
         };
         this.isLoggedIn = true;

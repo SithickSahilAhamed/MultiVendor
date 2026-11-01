@@ -80,6 +80,17 @@ public sealed class MarketplaceController(FirestoreCatalogStore store, Marketpla
     [Authorize(Policy = "Vendor"), HttpGet("vendor/me")]
     public async Task<IActionResult> VendorMe() => await store.GetAsync("vendors", UserId) is { } vendor ? Ok(vendor) : NotFound(new { error = "No vendor profile found for this account." });
 
+    /* VEN-001: vendor may update public microsite branding fields only. */
+    [Authorize(Policy = "Vendor"), HttpPut("vendor/me")]
+    public async Task<IActionResult> UpdateVendorMe([FromBody] Dictionary<string, object> request)
+    {
+        var allowed = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "tagline", "description", "about", "logo", "banner" };
+        var patch = request.Where(kv => allowed.Contains(kv.Key))
+            .ToDictionary(kv => kv.Key == "about" ? "description" : kv.Key, kv => kv.Value);
+        if (patch.Count == 0) return BadRequest(new { error = "No branding fields provided." });
+        return await store.UpdateAsync("vendors", UserId, patch) ? Ok(new { success = true }) : NotFound(new { error = "No vendor profile found for this account." });
+    }
+
     [Authorize(Policy = "Vendor"), HttpGet("vendor/withdrawals")]
     public async Task<IActionResult> VendorWithdrawals() => Ok(await store.WhereAsync("withdrawals", "vendorId", UserId));
 

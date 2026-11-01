@@ -29,6 +29,7 @@ const VendorAPI = {
   register(data) { return this.request('/vendor-auth/register', { method: 'POST', body: JSON.stringify(data) }); },
 
   getMe() { return this.get('/vendor/me'); },
+  updateMe(data) { return this.put('/vendor/me', data); },
   getMyProducts() { return this.get('/products/mine'); },
   createProduct(data) { return this.post('/products', data); },
   updateProduct(id, data) { return this.put(`/products/${id}`, data); },

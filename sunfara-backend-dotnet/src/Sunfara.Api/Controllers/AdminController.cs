@@ -9,15 +9,20 @@ namespace Sunfara.Api.Controllers;
 [Authorize(Policy = "Admin"), ApiController, Route("api/admin")]
 public sealed class AdminController(FirestoreCatalogStore store, MarketplaceService marketplace) : ControllerBase
 {
-    private static readonly HashSet<string> Collections = ["vendors","products","orders","vendor_orders","customers","commissions","withdrawals","reviews","categories","coupons","inventorySources","shipments","shipping_zones","invoices","refunds","returns","settings","auditLogs","transactions","notifications"];
+    private static readonly HashSet<string> Collections = ["vendors","products","orders","vendor_orders","customers","commissions","withdrawals","reviews","categories","coupons","inventorySources","shipments","shipping_zones","invoices","refunds","returns","settings","auditLogs","transactions","notifications","banners","policies","posts","stock_reservations"];
     [HttpGet("{collection}")] public async Task<IActionResult> List(string collection, [FromQuery] int limit=100) => Allowed(collection) ? Ok(await store.ListAsync(collection,limit)) : NotFound();
     [HttpGet("{collection}/{id}")] public async Task<IActionResult> Get(string collection,string id) => !Allowed(collection) ? NotFound() : await store.GetAsync(collection,id) is { } item ? Ok(item) : NotFound();
 
-    /* AUTH-003: refuse auto-id vendor orphans. All other collections keep generic Add. */
+    /* AUTH-003: refuse auto-id vendor orphans. PAY-005/SETTLE: refuse money-collection creates via generic CRUD. */
     [HttpPost("{collection}")]
     public async Task<IActionResult> Add(string collection, [FromBody] Dictionary<string, object> item)
     {
         if (!Allowed(collection)) return NotFound();
+        if (SettlementRules.IsGenericMoneyMutationForbidden(collection))
+        {
+            await marketplace.WriteAuditLogAsync(SettlementRules.AuditActionWalletBlocked, User.FindFirst("user_id")?.Value ?? "admin", collection, "", "Blocked generic POST on money collection");
+            return BadRequest(new { error = "Money collections require typed admin commands (PAY-005 / SETTLE-001)." });
+        }
         if (VendorProvisioning.IsAutoIdCreateForbidden(collection))
             return BadRequest(new { error = VendorProvisioning.AutoIdRejectedMessage });
         var id = await store.AddAsync(collection, item);
@@ -87,6 +92,11 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
     public async Task<IActionResult> Update(string collection, string id, [FromBody] Dictionary<string, object> item)
     {
         if (!Allowed(collection)) return NotFound();
+        if (SettlementRules.IsGenericMoneyMutationForbidden(collection))
+        {
+            await marketplace.WriteAuditLogAsync(SettlementRules.AuditActionWalletBlocked, User.FindFirst("user_id")?.Value ?? "admin", collection, id, "Blocked generic PUT on money collection");
+            return BadRequest(new { error = "Money collections require typed admin commands (PAY-005 / SETTLE-001)." });
+        }
         if (collection == "vendors" && item.TryGetValue("status", out var statusValue) && statusValue?.ToString() != "active")
         {
             try { await FirebaseAuth.DefaultInstance.RevokeRefreshTokensAsync(id); } catch (FirebaseAuthException) { /* vendor auth account may not exist */ }
@@ -94,9 +104,26 @@ public sealed class AdminController(FirestoreCatalogStore store, MarketplaceServ
         return await store.UpdateAsync(collection, id, item) ? NoContent() : NotFound();
     }
 
-    [HttpDelete("{collection}/{id}")] public async Task<IActionResult> Delete(string collection,string id) => Allowed(collection) && await store.DeleteAsync(collection,id) ? NoContent() : NotFound();
+    [HttpDelete("{collection}/{id}")]
+    public async Task<IActionResult> Delete(string collection, string id)
+    {
+        if (!Allowed(collection)) return NotFound();
+        if (SettlementRules.IsGenericMoneyMutationForbidden(collection))
+        {
+            await marketplace.WriteAuditLogAsync(SettlementRules.AuditActionWalletBlocked, User.FindFirst("user_id")?.Value ?? "admin", collection, id, "Blocked generic DELETE on money collection");
+            return BadRequest(new { error = "Money collections require typed admin commands (PAY-005 / SETTLE-001)." });
+        }
+        return await store.DeleteAsync(collection, id) ? NoContent() : NotFound();
+    }
+
     [HttpPost("reviews/{id}/{action}")] public async Task<IActionResult> Moderate(string id,string action) { if(action is not ("approve" or "reject")) return BadRequest(); return await store.UpdateAsync("reviews",id,new(){["status"]=action=="approve"?"approved":"rejected"}) ? Ok() : NotFound(); }
-    [HttpPost("withdrawals/{id}/approve")] public async Task<IActionResult> ApproveWithdrawal(string id) => await marketplace.ApproveWithdrawalAsync(id) ? Ok() : NotFound();
+    [HttpPost("withdrawals/{id}/approve")]
+    public async Task<IActionResult> ApproveWithdrawal(string id)
+    {
+        var actor = User.FindFirst("user_id")?.Value ?? User.FindFirst("sub")?.Value ?? "admin";
+        var ok = await marketplace.ApproveWithdrawalAsync(id, actor);
+        return ok ? Ok(new { success = true }) : BadRequest(new { error = "Withdrawal not approvable or payout rail failed.", status = SettlementRules.StatusPayoutFailed });
+    }
 
     [HttpGet("revenue")]
     public async Task<IActionResult> Revenue() => Ok(await store.GetAsync("settings", "platformRevenue") ?? new Dictionary<string, object> { ["totalGrossSales"] = 0.0, ["totalCommissionEarned"] = 0.0, ["totalVendorPayouts"] = 0.0 });

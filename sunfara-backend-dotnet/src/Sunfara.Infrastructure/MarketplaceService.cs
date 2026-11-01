@@ -7,10 +7,17 @@ using Sunfara.Domain;
 
 namespace Sunfara.Infrastructure;
 
-public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientFactory httpClientFactory, IConfiguration config)
+public sealed class MarketplaceService(
+    FirestoreCatalogStore store,
+    IHttpClientFactory httpClientFactory,
+    IConfiguration config,
+    IPayoutRail payoutRail,
+    INotificationChannelSender notificationSender)
 {
     private string KeyId => config["RAZORPAY_KEY_ID"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_ID") ?? throw new InvalidOperationException("Razorpay key is not configured.");
     private string KeySecret => config["RAZORPAY_KEY_SECRET"] ?? Environment.GetEnvironmentVariable("RAZORPAY_KEY_SECRET") ?? throw new InvalidOperationException("Razorpay secret is not configured.");
+    private bool StockReservationsEnabled => StockReservationRules.IsEnabled(
+        config["STOCK_RESERVATIONS_ENABLED"] ?? Environment.GetEnvironmentVariable("STOCK_RESERVATIONS_ENABLED"));
 
     /* Checkout creates one master order (customer-facing: what they paid,
        where it ships) plus one vendor_orders document per distinct vendor
@@ -63,11 +70,21 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 var item = items[index];
                 var productId = item["productId"].ToString()!; var quantity = Convert.ToInt32(item["quantity"]);
                 if (quantity <= 0) throw new InvalidOperationException("Quantity must be positive.");
+                var variantId = item.TryGetValue("variantId", out var vid) ? vid?.ToString() : null;
                 var productRef = productRefs[index]; var product = products[index];
                 if (!product.Exists || product.GetValue<string>("status") != "active") throw new InvalidOperationException($"Product {productId} is unavailable.");
-                var stock = product.ContainsField("stock") ? product.GetValue<long>("stock") : 0;
+
+                var variants = ReadProductVariants(product);
+                var variant = ProductVariantRules.Find(variants, variantId);
+                if (!ProductVariantRules.TryValidateSelection(variants, variantId, quantity, out var variantError)
+                    && ProductVariantRules.HasVariants(variants))
+                    throw new InvalidOperationException(variantError);
+
+                var stock = ProductVariantRules.EffectiveStock(variant, product.ContainsField("stock") ? product.GetValue<long>("stock") : 0);
                 if (stock < quantity) throw new InvalidOperationException($"Insufficient stock for {productId}.");
-                var price = Convert.ToDecimal(product.GetValue<double>("price")); var lineTotal = price * quantity; subtotal += lineTotal;
+                var price = ProductVariantRules.EffectivePrice(variant, Convert.ToDecimal(product.GetValue<double>("price")));
+                var lineTotal = price * quantity; subtotal += lineTotal;
+
                 /* Only COD commits stock at order-creation time - it has no
                    separate "payment confirmed" moment before delivery, so this
                    is the earliest point that reservation can happen. Online
@@ -75,19 +92,49 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                    instead: decrementing here meant an abandoned/failed Razorpay
                    payment permanently removed real stock from sale forever
                    (nothing ever released it), since there was no background
-                   job to notice the order stayed unpaid. */
+                   job to notice the order stayed unpaid. INV-001 soft-holds
+                   online units when STOCK_RESERVATIONS_ENABLED is on. */
                 if (isCod)
                 {
-                    var remaining = stock - quantity;
-                    transaction.Update(productRef, new Dictionary<string, object> { ["stock"] = remaining, ["updatedAt"] = FieldValue.ServerTimestamp });
-                    if (remaining <= LowStockThreshold && stock > LowStockThreshold)
-                        committedLowStockAlerts.Add((product.GetValue<string>("vendorId"), product.GetValue<string>("name"), remaining));
+                    ApplyStockDecrement(transaction, productRef, product, variant, quantity, committedLowStockAlerts);
+                }
+                else if (StockReservationsEnabled)
+                {
+                    var heldQuery = store.Database.Collection("stock_reservations")
+                        .WhereEqualTo("productId", productId)
+                        .WhereEqualTo("status", StockReservationRules.StatusHeld);
+                    var heldSnap = await transaction.GetSnapshotAsync(heldQuery);
+                    var alreadyHeld = heldSnap.Documents
+                        .Where(d => !StockReservationRules.IsExpired(
+                            d.ContainsField("expiresAt") ? DateTimeOffset.Parse(d.GetValue<string>("expiresAt")) : DateTimeOffset.MinValue,
+                            DateTimeOffset.UtcNow))
+                        .Where(d => string.Equals(
+                            d.ContainsField("variantId") ? d.GetValue<string>("variantId") : "",
+                            variant?.Id ?? "",
+                            StringComparison.OrdinalIgnoreCase))
+                        .Sum(d => Convert.ToInt64(d.GetValue<long>("quantity")));
+                    if (!StockReservationRules.CanReserve(stock, alreadyHeld, quantity))
+                        throw new InvalidOperationException($"Insufficient reservable stock for {productId}.");
+
+                    var holdRef = store.Database.Collection("stock_reservations").Document();
+                    transaction.Create(holdRef, new Dictionary<string, object>
+                    {
+                        ["orderId"] = orderRef.Id,
+                        ["productId"] = productId,
+                        ["variantId"] = variant?.Id ?? "",
+                        ["quantity"] = quantity,
+                        ["status"] = StockReservationRules.StatusHeld,
+                        ["expiresAt"] = StockReservationRules.ExpiresAt(DateTimeOffset.UtcNow).ToString("o"),
+                        ["createdAt"] = FieldValue.ServerTimestamp
+                    });
                 }
                 orderItems.Add(new()
                 {
                     ["productId"] = productId, ["vendorId"] = product.GetValue<string>("vendorId"),
                     ["vendorName"] = product.ContainsField("vendorName") ? product.GetValue<string>("vendorName") : "",
                     ["name"] = product.GetValue<string>("name"), ["quantity"] = quantity,
+                    ["variantId"] = variant?.Id ?? "",
+                    ["variantName"] = variant?.Name ?? "",
                     ["price"] = (double)price, ["total"] = (double)lineTotal
                 });
             }
@@ -213,6 +260,9 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
        UpdateOrderStatusAsync, since that's when cash is actually collected). */
     public async Task ConfirmAllVendorOrdersForPaymentAsync(string masterOrderId)
     {
+        if (StockReservationsEnabled)
+            await ConfirmReservationsForOrderAsync(masterOrderId);
+
         var vendorOrdersSnap = await store.Database.Collection("vendor_orders").WhereEqualTo("masterOrderId", masterOrderId).GetSnapshotAsync();
         foreach (var doc in vendorOrdersSnap.Documents)
         {
@@ -448,16 +498,137 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             for (var i = 0; i < products.Count; i++)
             {
                 if (!products[i].Exists) continue;
-                var stock = products[i].ContainsField("stock") ? products[i].GetValue<long>("stock") : 0;
-                var quantity = Convert.ToInt64(items[i]["quantity"]);
-                var remaining = Math.Max(0, stock - quantity);
-                transaction.Update(productRefs[i], new Dictionary<string, object> { ["stock"] = remaining, ["updatedAt"] = FieldValue.ServerTimestamp });
-                if (remaining <= LowStockThreshold && stock > LowStockThreshold)
-                    lowStockAlerts.Add((items[i]["vendorId"].ToString()!, items[i]["name"].ToString()!, remaining));
+                var variantId = items[i].TryGetValue("variantId", out var vid) ? vid?.ToString() : null;
+                var variants = ReadProductVariants(products[i]);
+                var variant = ProductVariantRules.Find(variants, variantId);
+                var quantity = Convert.ToInt32(items[i]["quantity"]);
+                ApplyStockDecrement(transaction, productRefs[i], products[i], variant, quantity, lowStockAlerts);
             }
         });
         foreach (var (vendorId, productName, remaining) in lowStockAlerts)
             await NotifyAsync(vendorId, "low_stock", "Low Stock Alert", $"\"{productName}\" is down to {remaining} unit(s) left.", "#/vendor/products");
+    }
+
+    private static List<ProductVariant> ReadProductVariants(DocumentSnapshot product)
+    {
+        if (!product.ContainsField("variants")) return ProductVariantRules.Normalize(null,
+            product.ContainsField("price") ? Convert.ToDecimal(product.GetValue<double>("price")) : 0m,
+            product.ContainsField("stock") ? product.GetValue<long>("stock") : 0).ToList();
+
+        try
+        {
+            var raw = product.GetValue<List<object>>("variants") ?? [];
+            var parsed = new List<ProductVariant>();
+            foreach (var entry in raw)
+            {
+                if (entry is not Dictionary<string, object> map) continue;
+                var id = map.GetValueOrDefault("id")?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(id)) continue;
+                parsed.Add(new ProductVariant(
+                    id,
+                    map.GetValueOrDefault("name")?.ToString() ?? id,
+                    map.GetValueOrDefault("sku")?.ToString(),
+                    map.TryGetValue("price", out var p) ? Convert.ToDecimal(p) : Convert.ToDecimal(product.GetValue<double>("price")),
+                    map.TryGetValue("stock", out var s) ? Convert.ToInt64(s) : 0));
+            }
+            return ProductVariantRules.Normalize(parsed,
+                product.ContainsField("price") ? Convert.ToDecimal(product.GetValue<double>("price")) : 0m,
+                product.ContainsField("stock") ? product.GetValue<long>("stock") : 0).ToList();
+        }
+        catch
+        {
+            return ProductVariantRules.Normalize(null,
+                product.ContainsField("price") ? Convert.ToDecimal(product.GetValue<double>("price")) : 0m,
+                product.ContainsField("stock") ? product.GetValue<long>("stock") : 0).ToList();
+        }
+    }
+
+    private static void ApplyStockDecrement(
+        Transaction transaction,
+        DocumentReference productRef,
+        DocumentSnapshot product,
+        ProductVariant? variant,
+        int quantity,
+        List<(string VendorId, string ProductName, long RemainingStock)> lowStockAlerts)
+    {
+        var productStock = product.ContainsField("stock") ? product.GetValue<long>("stock") : 0;
+        var updates = new Dictionary<string, object> { ["updatedAt"] = FieldValue.ServerTimestamp };
+
+        if (variant is not null && !variant.IsSynthetic && product.ContainsField("variants"))
+        {
+            try
+            {
+                var raw = product.GetValue<List<object>>("variants") ?? [];
+                var next = new List<Dictionary<string, object>>();
+                long remainingVariant = 0;
+                foreach (var entry in raw)
+                {
+                    if (entry is not Dictionary<string, object> map)
+                    {
+                        continue;
+                    }
+                    var copy = new Dictionary<string, object>(map);
+                    if (string.Equals(copy.GetValueOrDefault("id")?.ToString(), variant.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var before = copy.TryGetValue("stock", out var s) ? Convert.ToInt64(s) : 0;
+                        remainingVariant = Math.Max(0, before - quantity);
+                        copy["stock"] = remainingVariant;
+                    }
+                    next.Add(copy);
+                }
+                updates["variants"] = next;
+                updates["stock"] = Math.Max(0, productStock - quantity);
+                transaction.Update(productRef, updates);
+                if (remainingVariant <= LowStockThreshold)
+                    lowStockAlerts.Add((product.GetValue<string>("vendorId"), product.GetValue<string>("name"), remainingVariant));
+                return;
+            }
+            catch
+            {
+                // fall through to product-level decrement
+            }
+        }
+
+        var remaining = Math.Max(0, productStock - quantity);
+        updates["stock"] = remaining;
+        transaction.Update(productRef, updates);
+        if (remaining <= LowStockThreshold && productStock > LowStockThreshold)
+            lowStockAlerts.Add((product.GetValue<string>("vendorId"), product.GetValue<string>("name"), remaining));
+    }
+
+    private async Task ConfirmReservationsForOrderAsync(string masterOrderId)
+    {
+        var holds = await store.Database.Collection("stock_reservations")
+            .WhereEqualTo("orderId", masterOrderId)
+            .WhereEqualTo("status", StockReservationRules.StatusHeld)
+            .GetSnapshotAsync();
+        foreach (var doc in holds.Documents)
+        {
+            if (!StockReservationRules.CanConfirm(doc.GetValue<string>("status"))) continue;
+            await doc.Reference.UpdateAsync(new Dictionary<string, object>
+            {
+                ["status"] = StockReservationRules.StatusConfirmed,
+                ["confirmedAt"] = FieldValue.ServerTimestamp
+            });
+        }
+    }
+
+    private async Task ReleaseReservationsForOrderAsync(string masterOrderId, bool expired)
+    {
+        var holds = await store.Database.Collection("stock_reservations")
+            .WhereEqualTo("orderId", masterOrderId)
+            .WhereEqualTo("status", StockReservationRules.StatusHeld)
+            .GetSnapshotAsync();
+        var status = StockReservationRules.ReleaseReason(expired);
+        foreach (var doc in holds.Documents)
+        {
+            if (!StockReservationRules.CanRelease(doc.GetValue<string>("status"))) continue;
+            await doc.Reference.UpdateAsync(new Dictionary<string, object>
+            {
+                ["status"] = status,
+                ["releasedAt"] = FieldValue.ServerTimestamp
+            });
+        }
     }
 
     /* Advances a single vendor's sub-order status, validating the transition
@@ -584,6 +755,26 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             ["userId"] = userId, ["type"] = type, ["title"] = title, ["message"] = message,
             ["link"] = link, ["read"] = false
         });
+
+        // NOTIF-001: fan-out to email/SMS/FCM when prefs allow (prefs doc optional).
+        try
+        {
+            var prefsDoc = await store.GetAsync("notification_prefs", userId);
+            var prefs = new NotificationPrefs(
+                EmailEnabled: prefsDoc is null || !prefsDoc.TryGetValue("emailEnabled", out var ee) || Convert.ToBoolean(ee),
+                SmsEnabled: prefsDoc is not null && prefsDoc.TryGetValue("smsEnabled", out var se) && Convert.ToBoolean(se),
+                PushEnabled: prefsDoc is not null && prefsDoc.TryGetValue("pushEnabled", out var pe) && Convert.ToBoolean(pe),
+                Email: prefsDoc?.GetValueOrDefault("email")?.ToString(),
+                Phone: prefsDoc?.GetValueOrDefault("phone")?.ToString(),
+                FcmToken: prefsDoc?.GetValueOrDefault("fcmToken")?.ToString());
+            var plan = NotificationDispatchRules.BuildPlan(userId, type, title, message, prefs);
+            foreach (var channel in plan.Channels)
+                await notificationSender.SendAsync(channel, plan);
+        }
+        catch
+        {
+            // Fan-out must never break the commerce path.
+        }
     }
 
     /* Single aggregate document - not per-vendor, this is the platform's own
@@ -650,19 +841,37 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
         return vendorSnap.Exists && vendorSnap.ContainsField("status") && vendorSnap.GetValue<string>("status") == "active";
     }
 
-    /* Debits the vendor's wallet only on admin approval - a pending request
-       reserves against the balance (see RequestWithdrawalAsync) but doesn't
-       move money until approved, matching the existing admin-approval UX. */
-    public async Task<bool> ApproveWithdrawalAsync(string withdrawalId)
+    /* SETTLE-001: initiate payout rail first; debit wallet only on success.
+       Failed payouts leave wallet intact, mark withdrawal payout_failed, and audit. */
+    public async Task<bool> ApproveWithdrawalAsync(string withdrawalId, string? actorUid = null)
     {
         var withdrawalRef = store.Database.Collection("withdrawals").Document(withdrawalId);
         var snapshot = await withdrawalRef.GetSnapshotAsync();
-        if (!snapshot.Exists || snapshot.GetValue<string>("status") != "pending") return false;
+        if (!snapshot.Exists) return false;
+        var currentStatus = snapshot.GetValue<string>("status");
+        if (!SettlementRules.CanApprove(currentStatus)) return false;
 
         var vendorId = snapshot.GetValue<string>("vendorId");
         var amount = Convert.ToDecimal(snapshot.GetValue<double>("amount"));
-        var walletRef = store.Database.Collection("vendor_wallets").Document(vendorId);
+        var attempt = await payoutRail.InitiateVendorPayoutAsync(vendorId, withdrawalId, amount);
+        var decision = SettlementRules.Decide(attempt, amount);
 
+        if (!decision.DebitWallet)
+        {
+            await withdrawalRef.UpdateAsync(new Dictionary<string, object>
+            {
+                ["status"] = decision.WithdrawalStatus,
+                ["payoutError"] = decision.Error ?? "payout_failed",
+                ["updatedAt"] = FieldValue.ServerTimestamp
+            });
+            await WriteAuditLogAsync(SettlementRules.AuditActionPayoutFailed, actorUid ?? "system", "withdrawals", withdrawalId,
+                $"Payout failed for ₹{(double)amount:N2}: {decision.Error}");
+            await NotifyAsync(vendorId, "payout_failed", "Payout Failed",
+                $"Your withdrawal of ₹{(double)amount:N2} could not be paid out. Support will retry.", "#/vendor/earnings");
+            return false;
+        }
+
+        var walletRef = store.Database.Collection("vendor_wallets").Document(vendorId);
         await store.Database.RunTransactionAsync(async transaction =>
         {
             var walletSnap = await transaction.GetSnapshotAsync(walletRef);
@@ -674,13 +883,34 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
                 ["totalWithdrawn"] = (double)(totalWithdrawn + amount),
                 ["updatedAt"] = FieldValue.ServerTimestamp
             }, SetOptions.MergeAll);
-            transaction.Update(withdrawalRef, new Dictionary<string, object> { ["status"] = "approved", ["approvedAt"] = FieldValue.ServerTimestamp });
+            transaction.Update(withdrawalRef, new Dictionary<string, object>
+            {
+                ["status"] = SettlementRules.StatusApproved,
+                ["payoutStatus"] = decision.WithdrawalStatus,
+                ["payoutReference"] = decision.ProviderReference ?? "",
+                ["approvedAt"] = FieldValue.ServerTimestamp
+            });
         });
 
         await RecordTransactionAsync("payout", withdrawalId, vendorId, amount, $"Withdrawal payout of ₹{(double)amount:N2} approved");
         await UpdatePlatformRevenueAsync(grossDelta: 0, commissionDelta: 0, payoutDelta: amount);
+        await WriteAuditLogAsync(SettlementRules.AuditActionApproveWithdrawal, actorUid ?? "system", "withdrawals", withdrawalId,
+            $"Approved payout ₹{(double)amount:N2} ref={decision.ProviderReference}");
         await NotifyAsync(vendorId, "withdrawal_approved", "Withdrawal Approved", $"Your withdrawal of ₹{(double)amount:N2} has been approved and processed.", "#/vendor/earnings");
         return true;
+    }
+
+    public async Task WriteAuditLogAsync(string action, string actorUid, string entityType, string entityId, string detail)
+    {
+        await store.AddAsync("auditLogs", new Dictionary<string, object>
+        {
+            ["action"] = action,
+            ["actorUid"] = actorUid,
+            ["entityType"] = entityType,
+            ["entityId"] = entityId,
+            ["detail"] = detail,
+            ["createdAt"] = FieldValue.ServerTimestamp
+        });
     }
 
     /* Customer-initiated: only valid once a vendor's sub-order is
@@ -913,6 +1143,9 @@ public sealed class MarketplaceService(FirestoreCatalogStore store, IHttpClientF
             await AppendStatusAsync(doc.Reference, doc, "cancelled", by: "admin:unpaid_reconciliation");
             await doc.Reference.UpdateAsync(new Dictionary<string, object> { ["paymentStatus"] = "cancelled", ["updatedAt"] = FieldValue.ServerTimestamp });
         }
+
+        // INV-001: release soft holds so cancelled unpaid checkouts do not pin stock.
+        await ReleaseReservationsForOrderAsync(masterOrderId, expired: false);
     }
 
     private static OrderPaymentSnapshot ToOrderPaymentSnapshot(Dictionary<string, object> order)

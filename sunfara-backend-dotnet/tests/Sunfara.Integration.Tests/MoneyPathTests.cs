@@ -37,7 +37,9 @@ public sealed class MoneyPathTests : IClassFixture<SunfaraApiFactory>
         Assert.NotNull(order);
         Assert.Equal(400.0, Convert.ToDouble(order!["subtotal"]));
         Assert.Equal(40.0, Convert.ToDouble(order["discountAmount"]));
-        Assert.Equal(360.0, Convert.ToDouble(order["totalAmount"]));
+        // SHIP-001: merchandise after discount (360) + default fallback shipping (₹49 under free-above 599)
+        Assert.Equal(49.0, Convert.ToDouble(order["shippingAmount"]));
+        Assert.Equal(409.0, Convert.ToDouble(order["totalAmount"]));
 
         var vendorOrders = await store.WhereAsync("vendor_orders", "masterOrderId", orderId, 10);
         Assert.Equal(2, vendorOrders.Count);
@@ -272,7 +274,12 @@ public sealed class MoneyPathTests : IClassFixture<SunfaraApiFactory>
             ["RAZORPAY_KEY_SECRET"] = SunfaraApiFactory.KeySecret,
             ["RAZORPAY_WEBHOOK_SECRET"] = SunfaraApiFactory.WebhookSecret,
         }).Build();
-        return new MarketplaceService(store, new FixedHttpClientFactory(_factory.HttpHandler), config);
+        return new MarketplaceService(
+            store,
+            new FixedHttpClientFactory(_factory.HttpHandler),
+            config,
+            new SandboxPayoutRail(),
+            new RecordingNotificationChannelSender());
     }
 
     private static Dictionary<string, object> CheckoutBody(string productId, string method, int qty = 1)

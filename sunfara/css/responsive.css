@@ -152,3 +152,12 @@
 button, a, .clickable { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
 .badge, .chip { min-height: auto; min-width: auto; }
 .product-card-brand, .product-card-name { min-height: auto; }
+
+/* WEB-001/002 — portal-safe account & vendor storefront tweaks */
+@media (max-width: 768px) {
+  .vendor-storefront-header { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .vendor-storefront-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .orders-page .order-card,
+  .profile-layout { padding: var(--space-4); }
+  .admin-page-header { gap: var(--space-3); }
+}

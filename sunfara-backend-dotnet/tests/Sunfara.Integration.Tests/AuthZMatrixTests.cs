@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Sunfara.Integration.Tests.Infrastructure;
+using Sunfara.Infrastructure;
 
 namespace Sunfara.Integration.Tests;
 
@@ -85,9 +86,14 @@ public sealed class AuthZMatrixTests : IClassFixture<SunfaraApiFactory>
 
         using var client = _factory.CreateAuthedClient(vendorId, "vendor");
         var response = await client.PostAsJsonAsync("/api/vendor/withdrawal", new { amount = 10 });
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        // AUTH-006 VendorActiveFilter rejects mutating Vendor-policy calls with 403
+        // before MarketplaceService.RequestWithdrawalAsync (which would 400).
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         var payload = await response.Content.ReadAsStringAsync();
-        Assert.Contains("not in good standing", payload, StringComparison.OrdinalIgnoreCase);
+        Assert.True(
+            payload.Contains("not active", StringComparison.OrdinalIgnoreCase)
+            || payload.Contains("not in good standing", StringComparison.OrdinalIgnoreCase),
+            $"Unexpected body: {payload}");
     }
 
     [EmulatorFact]
@@ -145,6 +151,11 @@ public sealed class AuthZMatrixTests : IClassFixture<SunfaraApiFactory>
             ["RAZORPAY_KEY_SECRET"] = SunfaraApiFactory.KeySecret,
             ["RAZORPAY_WEBHOOK_SECRET"] = SunfaraApiFactory.WebhookSecret,
         }).Build();
-        return new Sunfara.Infrastructure.MarketplaceService(store, new FixedHttpClientFactory(_factory.HttpHandler), config);
+        return new Sunfara.Infrastructure.MarketplaceService(
+            store,
+            new FixedHttpClientFactory(_factory.HttpHandler),
+            config,
+            new SandboxPayoutRail(),
+            new RecordingNotificationChannelSender());
     }
 }

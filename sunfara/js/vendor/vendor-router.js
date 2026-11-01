@@ -9,7 +9,8 @@ const VendorRouter = {
     '/vendor/products': 'products',
     '/vendor/orders': 'orders',
     '/vendor/returns': 'returns',
-    '/vendor/earnings': 'earnings'
+    '/vendor/earnings': 'earnings',
+    '/vendor/branding': 'branding'
   },
 
   resolve() {
@@ -33,6 +34,7 @@ const VendorRouter = {
     else if (page === 'orders') VendorOrders.render();
     else if (page === 'returns') VendorReturns.render();
     else if (page === 'earnings') VendorEarnings.render();
+    else if (page === 'branding') VendorBranding.render();
     else VendorDashboard.render();
 
     VendorLayout.highlightActiveItem();

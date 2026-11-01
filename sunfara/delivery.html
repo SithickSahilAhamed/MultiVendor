@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sunfara Delivery Partner Portal — claim and complete shipments" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Sunfara Delivery</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚚</text></svg>" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/typography.css" />
+  <link rel="stylesheet" href="css/admin/admin-variables.css" />
+  <link rel="stylesheet" href="css/admin/admin-layout.css" />
+  <link rel="stylesheet" href="css/admin/admin-components.css" />
+  <link rel="stylesheet" href="css/admin/admin-tables.css" />
+  <link rel="stylesheet" href="css/admin/admin-responsive.css" />
+  <link rel="stylesheet" href="css/delivery-portal.css" />
+</head>
+<body class="admin-body delivery-body">
+  <div id="delivery-app" class="delivery-shell">
+    <header class="delivery-header">
+      <div>
+        <p class="delivery-brand">Sunfara Delivery</p>
+        <h1>Partner portal</h1>
+        <p class="delivery-sub">Claim packed orders and mark them delivered. Same .NET API as storefront.</p>
+      </div>
+      <button id="delivery-login-btn" class="admin-btn admin-btn-primary" type="button">Sign in</button>
+    </header>
+    <main id="delivery-content" class="delivery-main">
+      <p class="delivery-hint">WEB-003 scaffold — requires Firebase claim <code>role=delivery</code> and shipping assignment APIs.</p>
+    </main>
+  </div>
+  <script>
+    window.SUNFARA_API_BASE = window.SUNFARA_API_BASE || (
+      location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+        ? 'http://localhost:5187/api'
+        : 'https://sunfara-api-production.up.railway.app/api'
+    );
+  </script>
+  <script type="module" src="js/delivery/delivery-app.js"></script>
+</body>
+</html>

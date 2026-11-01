@@ -21,6 +21,7 @@ const AdminConfig = {
     '/admin/returns': 'returns',
     '/admin/reports': 'reports',
     '/admin/shipping': 'shipping',
+    '/admin/cms': 'cms',
     '/admin/settings': 'settings',
   },
 
@@ -101,6 +102,13 @@ const AdminConfig = {
       label: 'Shipping',
       icon: '🚚',
       route: '#/admin/shipping',
+      badge: null
+    },
+    {
+      id: 'cms',
+      label: 'CMS',
+      icon: '📰',
+      route: '#/admin/cms',
       badge: null
     },
     {

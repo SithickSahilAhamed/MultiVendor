@@ -30,10 +30,10 @@ const VendorOrders = {
                 return `<tr>
                   <td><strong>${o.orderNumber || o.id}</strong></td>
                   <td>${(o.items || []).map(i => `${VendorUtils.escapeHtml(i.name)} ×${i.quantity}`).join(', ')}</td>
-                  <td>${VendorUtils.formatPrice(o.subtotal)}</td>
+                  <td>${VendorUtils.formatPrice(o.subtotal)}${typeof o.shippingAmount === 'number' ? `<div style="font-size:11px;color:#6b7280">Ship: ${o.shippingAmount === 0 ? 'FREE' : VendorUtils.formatPrice(o.shippingAmount)}</div>` : ''}</td>
                   <td>${o.paymentStatus === 'paid' ? '✅ Paid' : o.paymentMethod === 'Cash on Delivery' ? '💵 COD' : '⏳ Pending'}</td>
                   <td><span class="admin-status-badge ${VendorConfig.statusColors[o.status] || 'admin-status-pending'}">${VendorConfig.statusLabels[o.status] || o.status}</span></td>
-                  <td>${o.trackingNumber ? `${VendorUtils.escapeHtml(o.carrier || '')} ${VendorUtils.escapeHtml(o.trackingNumber)}` : '—'}</td>
+                  <td>${o.trackingNumber ? `${VendorUtils.escapeHtml(o.carrier || '')} ${VendorUtils.escapeHtml(o.trackingNumber)}${o.lastCarrierStatus ? ` · ${VendorUtils.escapeHtml(o.lastCarrierStatus)}` : ''}` : '—'}</td>
                   <td>${VendorUtils.formatDate(o.createdAt)}</td>
                   <td>${next ? `<button class="admin-btn admin-btn-sm admin-btn-primary" onclick="VendorOrders.advance('${o.id}','${next}')">${VendorConfig.nextVendorStatusLabel[o.status]}</button>` : '—'}</td>
                 </tr>`;

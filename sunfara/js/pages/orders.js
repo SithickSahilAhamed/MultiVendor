@@ -61,6 +61,11 @@ const OrdersPage = {
         </div>
         <div class="order-details-accordion" id="details-${order.id}">
           ${vendorOrders.length ? vendorOrders.map(vo => this.renderVendorSubOrder(vo)).join('') : (order.items || []).map(item => this.renderLineItem(item)).join('')}
+          ${typeof order.shippingAmount === 'number' ? `
+          <div class="order-address-section">
+            <h5>Shipping</h5>
+            <p style="font-size:.85rem;color:var(--color-text-secondary)">${order.shippingAmount === 0 ? 'FREE' : formatPrice(order.shippingAmount)}${order.shippingZoneName ? ` · ${order.shippingZoneName}` : ''}</p>
+          </div>` : ''}
           ${order.shippingAddress ? `
           <div class="order-address-section">
             <h5>Delivered to</h5>
@@ -82,7 +87,8 @@ const OrdersPage = {
           <span class="order-status status-${(vo.status||'pending').toLowerCase()}" style="font-size:.75rem">${label.icon} ${label.label}</span>
         </div>
         ${(vo.items || []).map(item => this.renderLineItem(item)).join('')}
-        ${vo.trackingNumber ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">🚚 ${escapeHtml(vo.carrier || '')} · Tracking: <strong>${escapeHtml(vo.trackingNumber)}</strong></p>` : ''}
+        ${typeof vo.shippingAmount === 'number' ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">Shipping on order: ${vo.shippingAmount === 0 ? 'FREE' : formatPrice(vo.shippingAmount)}${vo.shippingZoneName ? ` · ${escapeHtml(vo.shippingZoneName)}` : ''}</p>` : ''}
+        ${vo.trackingNumber ? `<p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:4px">🚚 ${escapeHtml(vo.carrier || '')} · Tracking: <strong>${escapeHtml(vo.trackingNumber)}</strong>${vo.lastCarrierStatus ? ` · ${escapeHtml(vo.lastCarrierStatus)}` : ''}${vo.estimatedDelivery ? ` · ETA ${escapeHtml(new Date(vo.estimatedDelivery).toLocaleDateString())}` : ''}</p>` : ''}
         ${vo.status === 'delivered' ? `<button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="OrdersPage.requestReturn('${vo.id}')">↩️ Return this item</button>` : ''}
         ${vo.status === 'return_rejected' ? `<p style="font-size:.8rem;color:var(--color-danger,#c0392b);margin-top:4px">Your return request was declined by the seller.</p>` : ''}
         ${vo.status === 'refunded' ? `<p style="font-size:.8rem;color:var(--color-primary);margin-top:4px">✅ Refund completed for this item.</p>` : ''}

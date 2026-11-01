@@ -74,11 +74,17 @@
   <!-- Back to top button -->
   <button id="back-to-top" aria-label="Back to top">↑</button>
 
+  <!-- SEC-003: optional App Check reCAPTCHA v3 site key (ops sets before enablement).
+       Leave empty until Firebase console App Check + Auth domains are ready. -->
+  <script>
+    window.SUNFARA_APPCHECK_SITE_KEY = window.SUNFARA_APPCHECK_SITE_KEY || '';
+  </script>
+
   <!-- Firebase Configuration -->
   <script type="module">
-    import { app, analytics, auth, database, storage, db, authService } from "./js/firebase-config.js";
+    import { app, analytics, auth, database, storage, db, authService, appCheck } from "./js/firebase-config.js";
     // Firebase is now initialized and available globally
-    window.firebase = { app, analytics, auth, database, storage, db };
+    window.firebase = { app, analytics, auth, database, storage, db, appCheck };
     window.FirebaseAuth = authService;
   </script>
 
